@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CSE281 Presentation (Draft Skeleton)</title>
+<style>
+@page { size: 254mm 142.875mm; margin: 0; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Segoe UI", Calibri, Arial, sans-serif; color: #1b2430;
+       background: #fff; }
+.slide { width: 254mm; height: 142.875mm; padding: 11mm 14mm 9mm; position: relative;
+         break-after: page; overflow: hidden; display: flex; flex-direction: column; }
+.slide:last-child { break-after: auto; }
+.bar { position: absolute; left: 0; top: 0; bottom: 0; width: 5mm; background: #1f4e79; }
+h1 { font-size: 22pt; margin: 0 0 4mm; color: #1f4e79; }
+h2 { font-size: 13pt; margin: 0 0 3mm; color: #5b6676; font-weight: 500; }
+ul { margin: 0; padding-left: 6mm; font-size: 12.5pt; line-height: 1.45; }
+li { margin-bottom: 1mm; }
+.meta { position: absolute; right: 14mm; bottom: 6mm; font-size: 8.5pt; color: #5b6676; }
+.speaker { position: absolute; left: 14mm; bottom: 6mm; font-size: 8.5pt; color: #fff;
+           background: #1f4e79; padding: 1mm 3mm; border-radius: 2mm; }
+.ph { border: 1.2pt dashed #9aa6b6; background: #f4f6f9; color: #7a8596; border-radius: 2mm;
+      display: flex; align-items: center; justify-content: center; font-size: 10pt;
+      text-align: center; padding: 3mm; }
+.row { display: flex; gap: 6mm; flex: 1; min-height: 0; margin-bottom: 10mm; }
+.row > * { flex: 1; }
+.draft { position: absolute; right: 14mm; top: 6mm; font-size: 8pt; font-weight: 700;
+         color: #8a4b00; background: #fff4e0; padding: 1mm 3mm; border-radius: 2mm; }
+.title-slide { justify-content: center; }
+.title-slide h1 { font-size: 30pt; }
+.notes { font-size: 9pt; color: #6b3d00; background: #fff7e8; border-left: 2pt solid #d8a24a;
+         padding: 2mm 3mm; margin-top: 3mm; }
+table { border-collapse: collapse; font-size: 10.5pt; width: 100%; }
+th, td { border: 1px solid #d5dbe3; padding: 1.5mm 2.5mm; text-align: left; }
+th { background: #1f4e79; color: #fff; }
+</style>
+</head>
+<body>
+
+<section class="slide title-slide"><div class="bar"></div>
+  <div class="draft">DRAFT SKELETON v0.2 &middot; dataset selected &middot; no results yet</div>
+  <h2>CSE281 Digital Image Processing &middot; Course Project</h2>
+  <h1>Finding and Measuring Cracks in Concrete</h1>
+  <ul style="font-size:13pt;list-style:none;padding:0">
+    <li>MEM1 &middot; MEM2 &middot; MEM3 &middot; MEM4 &middot; MEM5</li>
+    <li style="color:#5b6676">Alamein International University &middot; Week 14</li>
+  </ul>
+  <div class="notes">Total pitch 10:00 &middot; every member speaks &middot; timings on each slide.
+  Every number on these slides must come from the repository CSVs.</div>
+</section>
+
+<section class="slide"><div class="bar"></div><div class="draft">DRAFT</div>
+  <h1>The problem</h1>
+  <div class="row">
+    <ul><li>User: building-inspection engineer</li><li>Output: crack mask, area %, length, severity class</li>
+        <li>Missed crack = safety risk; false crack = wasted inspection</li><li>Metric: IoU of the crack class (cracks are only ~1.4% of pixels)</li></ul>
+    <div class="ph">Example input image &rarr; desired output</div>
+  </div>
+  <div class="speaker">MEM1 &middot; 0:45</div><div class="meta">2</div>
+</section>
+
+<section class="slide"><div class="bar"></div><div class="draft">DRAFT</div>
+  <h1>Dataset and image difficulties</h1>
+  <div class="row">
+    <ul><li>&Ouml;zgenel 2019, Mendeley, CC BY 4.0: 458 photos + pixel masks</li><li>Dev / test 70/30, group split by ID blocks, seed 42</li>
+        <li>Shadows and vignetting, low contrast, broken thin cracks, stains and pores</li></ul>
+    <div class="ph">2&ndash;3 difficult examples, each labelled with its defect</div>
+  </div>
+  <div class="speaker">MEM1 &middot; 0:45</div><div class="meta">3</div>
+</section>
+
+<section class="slide"><div class="bar"></div><div class="draft">DRAFT</div>
+  <h1>Image analysis &rarr; design decisions</h1>
+  <div class="row">
+    <div class="ph">Histograms (typical vs difficult) &middot; centred spectrum &middot; resolution / gray-level study</div>
+    <table><tr><th>Finding</th><th>Decision</th></tr><tr><td>&mdash;</td><td>&mdash;</td></tr>
+      <tr><td>&mdash;</td><td>&mdash;</td></tr><tr><td>&mdash;</td><td>&mdash;</td></tr></table>
+  </div>
+  <div class="speaker">MEM1 &middot; 0:30</div><div class="meta">4</div>
+</section>
+
+<section class="slide"><div class="bar"></div><div class="draft">DRAFT</div>
+  <h1>Baselines and three pipelines</h1>
+  <div class="row">
+    <div class="ph">Block diagrams: Trivial &middot; Simple &middot; A &middot; B &middot; C (dtype/range on arrows)</div>
+  </div>
+  <div class="speaker">MEM1 &middot; 0:30</div><div class="meta">5</div>
+</section>
+
+<section class="slide"><div class="bar"></div><div class="draft">DRAFT</div>
+  <h1>Enhancement</h1>
+  <div class="row">
+    <div class="ph">Before / after + histograms for the key methods</div>
+    <ul><li>Which defect each method fixes</li><li>NumPy vs OpenCV: max |diff| = &mdash;</li>
+        <li>Kernel-size study (3 / 5 / 7) &rarr; chosen k = &mdash;</li><li>Limitation shown honestly</li></ul>
+  </div>
+  <div class="speaker">MEM2 &middot; 1:30</div><div class="meta">6</div>
+</section>
+
+<section class="slide"><div class="bar"></div><div class="draft">DRAFT</div>
+  <h1>Restoration and frequency domain</h1>
+  <div class="row">
+    <div class="ph">PSNR heatmap: filter &times; noise type/level</div>
+    <div class="ph">Spectrum before/after &middot; D0 = 3 values &middot; ringing (ideal) vs Gaussian</div>
+  </div>
+  <div class="speaker">MEM3 &middot; 1:30</div><div class="meta">7</div>
+</section>
+
+<section class="slide"><div class="bar"></div><div class="draft">DRAFT</div>
+  <h1>Segmentation</h1>
+  <div class="row">
+    <div class="ph">Detector comparison: Roberts / Prewitt / Sobel / Laplacian / LoG</div>
+    <div class="ph">Threshold comparison: global / Otsu / adaptive (metric &plusmn; std)</div>
+  </div>
+  <div class="speaker">MEM4 &middot; 1:30</div><div class="meta">8</div>
+</section>
+
+<section class="slide"><div class="bar"></div><div class="draft">DRAFT</div>
+  <h1>Morphology and test-set results</h1>
+  <div class="row">
+    <div class="ph">SE size &times; shape study &middot; before/after morphology</div>
+    <table><tr><th>Method (test)</th><th>Mean &plusmn; std</th></tr><tr><td>Trivial baseline</td><td>&mdash;</td></tr>
+      <tr><td>Simple baseline</td><td>&mdash;</td></tr><tr><td>Pipeline A / B</td><td>&mdash;</td></tr><tr><td>Final (C)</td><td>&mdash;</td></tr></table>
+  </div>
+  <div class="speaker">MEM5 &middot; 0:45</div><div class="meta">9</div>
+</section>
+
+<section class="slide"><div class="bar"></div><div class="draft">DRAFT</div>
+  <h1>Failures: where and why it breaks</h1>
+  <div class="row">
+    <div class="ph">Failure categories with counts &middot; one panel showing every stage</div>
+    <ul><li>Most common failure: &mdash;</li><li>Responsible stage: &mdash;</li><li>Proposed fix, and result on dev: &mdash;</li></ul>
+  </div>
+  <div class="speaker">MEM5 &middot; 0:30</div><div class="meta">10</div>
+</section>
+
+<section class="slide"><div class="bar"></div><div class="draft">DRAFT</div>
+  <h1>Live demo</h1>
+  <div class="row">
+    <ul><li>Unseen image &rarr; every stage &rarr; result + measurement</li><li>One deliberate failure case</li>
+        <li>Public URL: <i>[TBD]</i> &middot; backup recording on Canvas</li></ul>
+    <div class="ph">Demo screenshot</div>
+  </div>
+  <div class="speaker">MEM5 &middot; 0:45</div><div class="meta">11</div>
+</section>
+
+<section class="slide"><div class="bar"></div><div class="draft">DRAFT</div>
+  <h1>Robustness, lessons, bonus</h1>
+  <div class="row">
+    <table><tr><th>Noise level</th><th>Mean &plusmn; std (3 seeds)</th></tr><tr><td>Low</td><td>&mdash;</td></tr>
+      <tr><td>Medium</td><td>&mdash;</td></tr><tr><td>High</td><td>&mdash;</td></tr></table>
+    <ul><li>Lessons learned (2&ndash;3)</li><li>Bonus: only items with evidence</li></ul>
+  </div>
+  <div class="speaker">MEM1 &middot; 0:45</div><div class="meta">12</div>
+</section>
+
+</body>
+</html>

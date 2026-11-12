@@ -1,0 +1,190 @@
+/* CSE281 planning documents - print stylesheet (rendered to PDF with headless Edge). */
+
+/* ---------- Page setup ---------- */
+@page {
+  size: A4;
+  margin: 17mm 15mm 18mm 15mm;
+  @bottom-left {
+    content: "CSE281 \00B7  Team Execution Plan";
+    font-family: "Segoe UI", sans-serif; font-size: 7.5pt; color: #8a94a6;
+  }
+  @bottom-right {
+    content: counter(page) " / " counter(pages);
+    font-family: "Segoe UI", sans-serif; font-size: 7.5pt; color: #8a94a6;
+  }
+}
+@page cover { margin: 0; @bottom-left { content: none; } @bottom-right { content: none; } }
+
+/* ---------- Tokens ---------- */
+:root {
+  --ink: #141b2d; --muted: #667085; --line: #e3e7ee; --paper: #ffffff; --soft: #f5f7fb;
+  --navy: #0f1e3d; --c: #2f5bea; --c-soft: #eaf0ff;
+  --amber: #b45309; --amber-soft: #fff6e6; --red: #b42318; --red-soft: #fff1f0;
+  --head: "Bahnschrift", "Segoe UI Semibold", "Segoe UI", sans-serif;
+}
+.m1 { --c: #2f5bea; --c-soft: #eaf0ff; }
+.m2 { --c: #0e9384; --c-soft: #e6f6f4; }
+.m3 { --c: #7a3cdb; --c-soft: #f2ecfd; }
+.m4 { --c: #d9480f; --c-soft: #fff0e8; }
+.m5 { --c: #2b8a3e; --c-soft: #eaf6ec; }
+
+* { box-sizing: border-box; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body {
+  font-family: "Segoe UI", "Segoe UI Variable Text", Calibri, sans-serif;
+  font-size: 9.4pt; line-height: 1.5; color: var(--ink); background: var(--paper); margin: 0;
+}
+
+/* ---------- Headings ---------- */
+h1, h2, h3, h4 { font-family: var(--head); line-height: 1.2; break-after: avoid; }
+h1 {
+  font-size: 17pt; font-weight: 600; color: #fff; background: var(--navy);
+  margin: 0 0 12pt; padding: 11pt 14pt 11pt 16pt; border-radius: 6pt;
+  border-left: 7pt solid var(--c); letter-spacing: .2pt;
+}
+section.mem > h1:first-child {
+  background: var(--c); border-left: 7pt solid var(--navy);
+}
+h2 {
+  font-size: 12.5pt; font-weight: 600; color: var(--navy); margin: 16pt 0 6pt;
+  padding-bottom: 3pt; border-bottom: 1.5pt solid var(--c);
+  display: block; width: fit-content; min-width: 40%;
+}
+h2 + *, h3 + *, h4 + * { break-before: avoid; }
+h2 + p.small, h3 + p.small { break-after: avoid; }
+p.small + pre, p.small + table { break-before: avoid; }
+h3 { font-size: 10.5pt; font-weight: 600; color: var(--c); margin: 11pt 0 4pt; }
+h4 { font-size: 9.8pt; font-weight: 600; color: var(--navy); margin: 9pt 0 3pt; }
+p { margin: 3pt 0 7pt; }
+ul, ol { margin: 2pt 0 7pt 15pt; padding: 0; }
+li { margin: 1.5pt 0; }
+li::marker { color: var(--c); }
+b, strong { font-weight: 600; }
+
+/* ---------- Code ---------- */
+code, pre { font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 8.1pt; }
+code { background: var(--soft); color: #1d2a4a; padding: .5pt 3pt; border-radius: 3pt; }
+pre {
+  background: #0f1729; color: #dbe4ff; border-radius: 6pt; padding: 8pt 10pt; margin: 5pt 0 10pt;
+  white-space: pre-wrap; break-inside: avoid; line-height: 1.45; border-left: 4pt solid var(--c);
+}
+pre code { background: none; color: inherit; padding: 0; }
+
+/* ---------- Tables ---------- */
+table {
+  width: 100%; border-collapse: separate; border-spacing: 0; margin: 5pt 0 11pt;
+  font-size: 8.4pt; break-inside: avoid; border: 1px solid var(--line); border-radius: 6pt;
+  overflow: hidden;
+}
+th, td { padding: 4pt 6pt; vertical-align: top; text-align: left; }
+th {
+  background: var(--c-soft); color: var(--navy); font-family: var(--head); font-weight: 600;
+  font-size: 8.4pt; border-bottom: 1.5pt solid var(--c);
+}
+td { border-bottom: 1px solid var(--line); }
+tr:last-child td { border-bottom: none; }
+tr { break-inside: avoid; }
+tbody tr:nth-child(even) td { background: #fafbfd; }
+
+/* Task cards */
+.task-title {
+  margin: 13pt 0 0; padding: 5pt 10pt; font-family: var(--head); font-weight: 600;
+  font-size: 10pt; color: #fff; background: var(--c); border-radius: 6pt 6pt 0 0;
+  break-after: avoid;
+}
+.task-title .tag { background: rgba(255,255,255,.22); color: #fff; }
+table.card { margin-top: 0; border-radius: 0 0 6pt 6pt; border-top: none; }
+table.card th {
+  width: 17%; background: var(--soft); color: var(--c); border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line); font-size: 8pt; text-transform: uppercase;
+  letter-spacing: .4pt;
+}
+table.card tbody tr:nth-child(even) td { background: #fff; }
+
+/* ---------- Callouts ---------- */
+.note, .draft, .warn {
+  border-radius: 6pt; padding: 7pt 10pt 7pt 12pt; margin: 6pt 0 10pt; break-inside: avoid;
+  position: relative;
+}
+.note { background: var(--c-soft); border-left: 4pt solid var(--c); }
+.draft { background: var(--amber-soft); border-left: 4pt solid var(--amber); }
+.warn { background: var(--red-soft); border-left: 4pt solid var(--red); }
+.tbd {
+  background: #ffe58f; color: #5c3d00; padding: 0 3pt; border-radius: 3pt; font-weight: 600;
+  font-size: .92em;
+}
+.tag {
+  display: inline-block; font-family: "Segoe UI", sans-serif; font-size: 7.2pt; font-weight: 600;
+  padding: .5pt 6pt; border-radius: 8pt; background: var(--c-soft); color: var(--c);
+  vertical-align: middle; margin-left: 4pt; letter-spacing: .2pt;
+}
+
+/* ---------- Layout helpers ---------- */
+.page-break { break-before: page; }
+.muted { color: var(--muted); }
+.small { font-size: 8pt; color: var(--muted); }
+.check { font-family: "Segoe UI Symbol", "Segoe UI", sans-serif; text-align: center; }
+table th.check { width: 7%; }
+.qa dt { font-weight: 600; margin-top: 7pt; color: var(--navy); }
+.qa dd { margin: 2pt 0 6pt 0; padding: 4pt 8pt; background: var(--soft); border-radius: 4pt;
+         border-left: 2.5pt solid var(--c); }
+
+/* ---------- Cover ---------- */
+.cover {
+  page: cover; width: 210mm; height: 297mm; position: relative; overflow: hidden;
+  background: linear-gradient(155deg, #0b1630 0%, #13254d 55%, #1d3a78 100%); color: #fff;
+  padding: 30mm 22mm 22mm;
+}
+.cover .stripes { position: absolute; right: 0; top: 0; bottom: 0; width: 26mm; display: flex; }
+.cover .stripes span { flex: 1; }
+.cover .uni { font-size: 9pt; letter-spacing: 2.2pt; color: #9fb3e0; text-transform: uppercase; }
+.cover .course {
+  margin-top: 48mm; font-family: var(--head); font-size: 13pt; color: #7ea2ff;
+  letter-spacing: 3pt; text-transform: uppercase;
+}
+.cover .title {
+  font-family: var(--head); font-size: 40pt; font-weight: 700; line-height: 1.02;
+  margin: 6pt 0 10pt; color: #fff;
+}
+.cover .sub { font-size: 13pt; color: #c9d5f2; margin-bottom: 26pt; max-width: 135mm; }
+.cover .pill {
+  display: inline-block; font-family: var(--head); font-size: 9pt; padding: 3pt 10pt;
+  border-radius: 12pt; background: #ffb547; color: #2b1a00; font-weight: 700; letter-spacing: .5pt;
+}
+.cover .meta {
+  position: absolute; left: 22mm; right: 48mm; bottom: 26mm; display: grid;
+  grid-template-columns: repeat(3, 1fr); gap: 10pt 14pt;
+}
+.cover .meta div { border-top: 1px solid rgba(255,255,255,.25); padding-top: 5pt; }
+.cover .meta small {
+  display: block; font-size: 7pt; letter-spacing: 1.4pt; text-transform: uppercase; color: #8fa6d8;
+}
+.cover .meta span { font-size: 9.6pt; color: #fff; }
+.cover .members { display: flex; gap: 6pt; margin: 14pt 0 0; flex-wrap: wrap; }
+.cover .members div {
+  border-radius: 6pt; padding: 6pt 9pt; min-width: 27mm; background: rgba(255,255,255,.07);
+  border-top: 3pt solid var(--c);
+}
+.cover .members b { display: block; font-family: var(--head); font-size: 11pt; color: #fff; }
+.cover .members i { font-style: normal; font-size: 7.6pt; color: #b8c6e8; }
+
+/* ---------- Contents ---------- */
+.toc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5pt 12pt; margin: 6pt 0 14pt; }
+.toc-grid div {
+  display: flex; align-items: center; gap: 8pt; padding: 5pt 8pt; border-radius: 5pt;
+  background: var(--soft); break-inside: avoid; font-size: 9.2pt;
+}
+.toc-grid div b {
+  font-family: var(--head); min-width: 18pt; height: 18pt; border-radius: 4pt; display: flex;
+  align-items: center; justify-content: center; color: #fff; background: var(--navy);
+  font-size: 9pt;
+}
+.toc-grid div.m1 b, .toc-grid div.m2 b, .toc-grid div.m3 b, .toc-grid div.m4 b,
+.toc-grid div.m5 b { background: var(--c); }
+
+/* Member legend chips */
+.legend { display: flex; gap: 6pt; flex-wrap: wrap; margin: 4pt 0 10pt; }
+.legend span {
+  font-size: 8pt; font-weight: 600; padding: 2pt 8pt; border-radius: 10pt;
+  background: var(--c-soft); color: var(--c); border: 1px solid var(--c);
+}
