@@ -41,7 +41,7 @@ def test_log_run_appends_rows_with_fixed_columns(tmp_path):
                      method="fixed", params={"t": 127}, seed=0, split="dev", n_images=3,
                      time_s=0.5, metric="iou", value=0.42)
     pipeline.log_run(log, author="MEM1", pipeline="baseline_simple", metric="iou", value=0.1)
-    rows = list(csv.DictReader(log.open(encoding="utf-8")))
+    rows = list(csv.DictReader(log.read_text(encoding="utf-8").splitlines()))
     assert list(rows[0]) == pipeline.LOG_COLUMNS
     assert [r["pipeline"] for r in rows] == ["baseline_trivial", "baseline_simple"]
     assert rows[0]["params_json"] == '{"t": 127}'

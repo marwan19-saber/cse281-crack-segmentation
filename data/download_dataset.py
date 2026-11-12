@@ -1,4 +1,4 @@
-"""Download and extract the Concrete Crack Segmentation Dataset (Ozgenel, Mendeley Data, CC BY 4.0).
+"""Download and extract the Concrete Crack Segmentation Dataset (Ozgenel, Mendeley, CC BY 4.0).
 
 Usage:
     python data/download_dataset.py --out data/raw

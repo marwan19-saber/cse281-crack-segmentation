@@ -1,4 +1,4 @@
-"""Tests for src/metrics.py: hand-worked examples (plan Section 19.1), edge cases, library check."""
+"""Tests for src/metrics.py: hand-worked examples (plan 19.1), edge cases, library check."""
 import math
 
 import numpy as np

@@ -17,7 +17,7 @@ LOG_COLUMNS = ["run_id", "date", "author", "pipeline", "stage", "method", "param
 
 
 def baseline_trivial(gray):
-    """Spec trivial baseline: fixed global threshold 127 on the raw gray image (crack = dark)."""
+    """Spec trivial baseline: fixed threshold 127 on the raw gray image (crack = dark)."""
     return np.asarray(gray) < 127
 
 
@@ -37,7 +37,10 @@ def log_run(path, *, author="", pipeline="", stage="", method="", params=None, s
     """
     path = Path(path)
     is_new = not path.exists() or path.stat().st_size == 0
-    n_rows = 0 if is_new else sum(1 for _ in path.open(encoding="utf-8")) - 1
+    n_rows = 0
+    if not is_new:
+        with path.open(encoding="utf-8") as f:
+            n_rows = sum(1 for _ in f) - 1
     today = datetime.now().strftime("%Y-%m-%d")
     row = {
         "run_id": f"{today.replace('-', '')}-{n_rows + 1:04d}", "date": today,
