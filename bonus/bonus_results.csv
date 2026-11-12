@@ -1,0 +1,6 @@
+bonus_id,objective,owner,reviewer,status,evidence_path,tests_or_measurements,documentation,completion_date
+B1,Public deployed demo,MEM5,MEM1,not_started,,,,
+B2,Unit tests and CI,MEM1,MEM4,in_progress,,,,
+B3,Second dataset generalization,MEM1+MEM5,MEM2,not_started,,,,
+B4,Lossless compression,MEM3,MEM1,not_started,,,,
+B5,Speed optimization,MEM1,MEM3,not_started,,,,

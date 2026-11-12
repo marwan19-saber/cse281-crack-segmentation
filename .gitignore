@@ -1,0 +1,18 @@
+# Raw dataset and downloads (never commit: 1.6 GB, re-download with data/download_dataset.py)
+data/raw/
+
+# Python environment and caches
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+
+# IDE local state (shared PyCharm settings in .idea/ may stay)
+.idea/workspace.xml
+.idea/shelf/
+
+# Generated outputs
+out/
+*.log

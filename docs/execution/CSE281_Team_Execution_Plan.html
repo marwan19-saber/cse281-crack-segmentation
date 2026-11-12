@@ -1,0 +1,1284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CSE281 Team Execution Plan (Draft v0.2)</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============================== COVER ============================== -->
+<section class="cover">
+  <div class="stripes">
+    <span style="background:#2f5bea"></span><span style="background:#0e9384"></span>
+    <span style="background:#7a3cdb"></span><span style="background:#d9480f"></span>
+    <span style="background:#2b8a3e"></span>
+  </div>
+  <div class="uni">Alamein International University &middot; Faculty of Computer Science &amp; Engineering</div>
+  <div class="course">CSE281 &middot; Digital Image Processing</div>
+  <div class="title">Team<br>Execution Plan</div>
+  <div class="sub">Five individual plans, the shared roadmap and every checklist the team needs
+    from Week 9 to the Week 14 final discussion.</div>
+  <span class="pill">DRAFT v0.2 &middot; DATASET SELECTED &middot; AWAITING TEAM APPROVAL</span>
+  <div class="members">
+    <div class="m1"><b>MEM1</b><i>Tech Lead + Data &amp; Baselines</i></div>
+    <div class="m2"><b>MEM2</b><i>Enhancement</i></div>
+    <div class="m3"><b>MEM3</b><i>Restoration &amp; Frequency</i></div>
+    <div class="m4"><b>MEM4</b><i>Segmentation</i></div>
+    <div class="m5"><b>MEM5</b><i>Morphology, Eval &amp; Demo</i></div>
+  </div>
+  <div class="meta">
+    <div><small>Date</small><span>12 November 2026</span></div>
+    <div><small>Source of truth</small><span>CSE281 Project Specification</span></div>
+    <div><small>Status</small><span>Dataset chosen; plan awaiting approval</span></div>
+    <div style="grid-column: span 3"><small>Draft notice</small><span style="font-size:8.6pt;color:#c9d5f2">
+      Dataset: Concrete Crack Segmentation (Mendeley, CC BY 4.0), downloaded and checked. Items still
+      marked TBD wait on decisions not yet made. The commands are planned and have not been run,
+      because the repository does not exist yet. No result in this document is real yet.</span></div>
+  </div>
+</section>
+
+<!-- ============================== TOC ============================== -->
+<section class="page-break toc">
+<h1>Contents</h1>
+<div class="toc-grid">
+  <div><b>1</b>Project overview and course requirements</div>
+  <div><b>2</b>Team structure</div>
+  <div><b>3</b>Shared team roadmap</div>
+  <div class="m1"><b>4</b>MEM1 execution plan &middot; Tech Lead + Data</div>
+  <div class="m2"><b>5</b>MEM2 execution plan &middot; Enhancement</div>
+  <div class="m3"><b>6</b>MEM3 execution plan &middot; Restoration &amp; Frequency</div>
+  <div class="m4"><b>7</b>MEM4 execution plan &middot; Segmentation</div>
+  <div class="m5"><b>8</b>MEM5 execution plan &middot; Morphology &amp; Demo</div>
+  <div><b>9</b>Team responsibility matrix</div>
+  <div><b>10</b>File ownership matrix</div>
+  <div><b>11</b>Dependencies and integration workflow</div>
+  <div><b>12</b>Milestones and timeline</div>
+  <div><b>13</b>Commands (planned, not yet verified)</div>
+  <div><b>14</b>Required experiments and evidence</div>
+  <div><b>15</b>Testing and verification checklists</div>
+  <div><b>16</b>Bonus-task ownership and tracking</div>
+  <div><b>17</b>Report responsibilities</div>
+  <div><b>18</b>Presentation responsibilities</div>
+  <div><b>19</b>Individual defense preparation</div>
+  <div><b>20</b>Daily MEM1 checklist</div>
+  <div><b>21</b>Shared progress tracker</div>
+</div>
+<div class="legend">
+  <span class="m1">MEM1 &middot; Tech Lead + Data</span><span class="m2">MEM2 &middot; Enhancement</span>
+  <span class="m3">MEM3 &middot; Restoration &amp; Frequency</span><span class="m4">MEM4 &middot; Segmentation</span>
+  <span class="m5">MEM5 &middot; Morphology &amp; Demo</span>
+</div>
+<p class="small">Each member's chapter and task cards use that member's colour throughout the document.</p>
+
+<h2>How to use this document</h2>
+<ul>
+  <li>Every member reads Sections 1&ndash;3 and 9&ndash;15, plus their own plan in Sections 4&ndash;8.</li>
+  <li>Each task card has nine parts: <b>What</b>, <b>Why</b>, <b>File</b>, <b>Functions</b>,
+      <b>How</b>, <b>Expected output</b>, <b>Test</b>, <b>Evidence</b> and <b>Done when</b>.
+      A task is complete only when <i>Done when</i> is met (see Section 15).</li>
+  <li>Text still marked <span class="tbd">TBD</span> waits on an open decision (dates, repo URL, second dataset, results). Do not guess it.</li>
+  <li>Work you can start before the dataset arrives is marked <span class="tag">dataset-free</span>.
+      This includes NumPy algorithm implementations, hand-worked examples and unit tests on small
+      arrays, since none of them need real images.</li>
+</ul>
+
+<h2>Current state (audit, 12 Nov 2026)</h2>
+<table>
+  <tr><th>Item</th><th>Finding</th><th>Action</th></tr>
+  <tr><td>Repository</td><td>Contains only <code>.idea/</code> and <code>.venv/</code>. Not a git repository. No source files.</td><td>MEM1 creates the skeleton after the plan is approved</td></tr>
+  <tr><td>Python (local)</td><td>3.13.14, venv contains only <code>pip</code></td><td>Pin versions that install on both local Python and Colab</td></tr>
+  <tr><td>Git / GitHub CLI</td><td>Git 2.56.1 installed. <code>gh</code> not installed</td><td>Pull requests through the GitHub web UI, or install <code>gh</code></td></tr>
+  <tr><td>Dataset</td><td>Concrete Crack Segmentation (Mendeley), downloaded to <code>data/raw/</code>, SHA-256 verified</td><td><code>.gitignore</code> must exclude <code>data/raw/</code> <b>before</b> <code>git init</code> / <code>git add</code></td></tr>
+  <tr><td>Members' GitHub accounts</td><td>Unknown</td><td>Needed for repository invites and branch protection</td></tr>
+</table>
+</section>
+
+<!-- ============================== 1 ============================== -->
+<section class="page-break">
+<h1>1. Project overview and course requirements</h1>
+
+<h2>1.1 Goal</h2>
+<p>Deliver a working <b>classical</b> image-processing pipeline for a real problem on real,
+imperfect images, together with evidence that it works and an honest account of where it fails.
+The final output must be a <b>measurement or a decision</b> (a count, area, location, pass/fail
+or clean binary image), and reaching it must require separating objects from the background.
+The marking rewards rigour over attractive images.</p>
+
+<div class="warn"><b>Hard constraints from the specification.</b>
+(1) No neural networks and no machine-learning models. Projects whose result depends on a learned
+model are not accepted. (2) A one-call solution that hides the whole task (a ready-made detector
+or segmenter) is not accepted. (3) Python 3 with NumPy, OpenCV, scikit-image, SciPy and
+Matplotlib. (4) The test set must run in under 10 minutes on a free Colab CPU.
+(5) No private or scraped personal data.</div>
+
+<h2>1.2 Chosen dataset and acceptance check</h2>
+<table>
+  <tr><th>Item</th><th>Value (checked 12 Nov 2026)</th></tr>
+  <tr><td>Dataset</td><td><b>Concrete Crack Segmentation Dataset</b>, &Ccedil;a&#287;lar F&#305;rat &Ouml;zgenel,
+    Mendeley Data v1 (3 Apr 2019), DOI <code>10.17632/jwsn7tfbrp.1</code></td></tr>
+  <tr><td>Licence</td><td>CC BY 4.0 (academic use allowed, citation required)</td></tr>
+  <tr><td>Download</td><td>One RAR, 745,914,150 bytes, SHA-256 <code>1b8458ab&hellip;a6b2</code>
+    (matches Mendeley). Extracted to <code>data/raw/concrete_crack/{rgb,BW}</code> (git-ignored).</td></tr>
+  <tr><td>Contents</td><td>458 RGB JPEG photos + 458 BW JPEG masks, paired by file name (all 458 pair)</td></tr>
+  <tr><td>Image sizes</td><td>437 at 4032&times;3024 (landscape or portrait), 20 at 3264&times;2448 (second camera).
+    Every mask has the same size as its photo.</td></tr>
+  <tr><td>Masks</td><td>JPEG, mostly 3-channel. Binarize gray &gt; 127. JPEG blur touches only ~0.005% of pixels.</td></tr>
+  <tr><td>Foreground</td><td>Cracks cover 1.36% of pixels on average (0.39&ndash;8.67%). <b>Every image contains a
+    crack</b> (no empty masks).</td></tr>
+  <tr><td>Intensity</td><td>Bright concrete (mean gray 180), low global contrast (gray std &asymp; 20). Cracks are
+    <b>darker</b> than the background.</td></tr>
+</table>
+<table>
+  <tr><th>Criterion</th><th>Minimum requirement</th><th>Status</th></tr>
+  <tr><td>Size</td><td>&ge;100 real images, or &ge;20 with pixel masks</td><td>&#10004; 458 with masks</td></tr>
+  <tr><td>Ground truth</td><td>Reference answer for every test image</td><td>&#10004; every image has a mask</td></tr>
+  <tr><td>Task difficulty</td><td>Measurement/decision needing object/background separation</td><td>&#10004; crack mask &rarr; area %, length, severity</td></tr>
+  <tr><td>Real-world mess</td><td>&ge;2 listed defects</td><td>&#10004; uneven illumination (hard shadows: 366, 148; dark corners: 385), low contrast (274, 295, 109), gaps in thin branch cracks after thresholding; plus stains and pores that look like cracks</td></tr>
+  <tr><td>Not a toy</td><td>Real photos, not solvable by one threshold</td><td>&#10004; real site photos; thin dark lines on textured, unevenly lit concrete</td></tr>
+  <tr><td>Licence</td><td>Public, academic use, cited</td><td>&#10004; CC BY 4.0. Citation goes into the README and report.</td></tr>
+  <tr><td>Feasibility</td><td>Test set &lt;10 min on Colab CPU</td><td>&#9888; Only at reduced resolution. Measured locally: JPEG decode 245 ms/img at full size; NumPy 3&times;3 median 0.85 s (full), 0.25 s (&frac12;), 0.07 s (&frac14;). The resolution study (T1.12) fixes the working size.</td></tr>
+</table>
+<div class="warn"><b>Pre-split sanity check.</b> Before any split existed, two library thresholds were tried
+on 42 images to check the data loads correctly. Those numbers include future test images, so they are
+<b>not reported and must not influence any choice</b>. The official baselines are run on the dev set only (T1.13).</div>
+
+<h3>Problem formulation (draft for team approval)</h3>
+<p>A building-inspection engineer surveys concrete walls and slabs and needs to know where the cracks are
+and how much of the surface is cracked. The pipeline takes one photo and outputs a binary crack mask, the
+cracked-area percentage, the crack length (pixels along the mask skeleton) and a severity class
+(minor / moderate / severe). A <b>missed crack</b> means structural damage may go unrepaired, which is a
+safety cost. A <b>false crack</b> (a stain, shadow edge or pore) wastes inspection time and lowers trust in
+the tool. Cracks are only about 1.4% of the pixels, so pixel accuracy is misleading: an empty mask would score
+about 98.6%. The <b>primary metric is IoU of the crack class</b>, because it ignores the easy background and
+penalises both missed and false crack pixels. Dice/F1 and the absolute error of crack-area % are secondary.</p>
+<table>
+  <tr><th>Input</th><th>Output</th><th>Primary metric</th><th>Secondary</th></tr>
+  <tr><td>RGB JPEG, 8-bit, 4032&times;3024 or 3264&times;2448, converted once to gray uint8 and resized so the
+    long side equals the working size L (chosen by the resolution study)</td>
+    <td>bool crack mask (H&times;W at size L); crack area %; skeleton length; severity class</td>
+    <td>IoU (crack class), per image, mean &plusmn; std</td>
+    <td>Dice/F1; |area % error|; severity accuracy vs the class computed from the GT mask</td></tr>
+</table>
+<h3>Decisions this dataset forces</h3>
+<table>
+  <tr><th>Finding</th><th>Decision</th></tr>
+  <tr><td>Every image has a crack</td><td>No crack/no-crack decision. The decision is a severity class from area % and length, with cut-offs from dev-set GT quantiles.</td></tr>
+  <tr><td>Cracks are darker than the background</td><td>Every threshold marks foreground as <b>below</b> T (trivial baseline: gray &lt; 127; Otsu: inverted).</td></tr>
+  <tr><td>Cracks are about 1.4% of pixels</td><td>Global histogram methods (Otsu) are expected to struggle. Local and line-based methods are needed.</td></tr>
+  <tr><td>Shadows and vignetting</td><td>Background flattening (morphological black-hat or division by a large Gaussian blur), decided by ablation.</td></tr>
+  <tr><td>Thin, line-like cracks with gaps</td><td>Line masks and LoG in Pipeline B. Closing with line or disk SEs and edge linking to bridge gaps in C.</td></tr>
+  <tr><td>Round stains and pores</td><td>Object selection by area and elongation (circularity) in Pipeline C.</td></tr>
+  <tr><td>Neighbouring IDs show the same wall (e.g. 030&ndash;032)</td><td>Group split by blocks of 10 consecutive IDs, so near-duplicates can't land in both dev and test.</td></tr>
+  <tr><td>Masks are often wider than the visible crack</td><td>Expect a moderate IoU ceiling. Report it in the failure analysis.</td></tr>
+  <tr><td>12-megapixel images</td><td>Resize once in <code>load_image</code>. Working size from the resolution study (candidates: long side 2016 or 1008).</td></tr>
+</table>
+
+<h2>1.3 Mandatory technical content</h2>
+<table>
+  <tr><th>Area</th><th>What must be delivered</th><th>Owner</th></tr>
+  <tr><td>Problem formulation</td><td>One paragraph covering the user, the output and the cost of a wrong output. Input/output definition. Primary metric justified by the cost of errors.</td><td>MEM1</td></tr>
+  <tr><td>Image analysis</td><td>Size, dtype, range, histograms of typical and difficult images, noise, illumination, centred log-magnitude spectrum, resolution and gray-level study, findings leading to design decisions</td><td>MEM1 (+ MEM2 histograms, MEM3 spectra)</td></tr>
+  <tr><td>Data preparation</td><td>Dev/test split (about 70/30) with the test set used once, one loader, controlled degradation (Gaussian, salt-and-pepper, speckle, Poisson) with fixed seeds</td><td>MEM1</td></tr>
+  <tr><td>Metrics</td><td>MSE, PSNR, IoU and count error, written once, tested on hand-worked arrays</td><td>MEM1</td></tr>
+  <tr><td>Baselines</td><td>Trivial: threshold 127 on raw gray (restoration: unprocessed input). Simple: Otsu + one 3&times;3 opening (restoration: 3&times;3 median).</td><td>MEM1</td></tr>
+  <tr><td>Spatial enhancement</td><td>Negative, log, gamma, contrast stretching, histogram equalization, mean, Gaussian and median smoothing, Laplacian and gradient sharpening</td><td>MEM2</td></tr>
+  <tr><td>Restoration</td><td>Mean-type filters, median, max, min, midpoint and alpha-trimmed filters, &ge;2 noise models, MSE/PSNR per noise type, level and filter</td><td>MEM3</td></tr>
+  <tr><td>Frequency domain</td><td>DFT, centred spectrum, inverse DFT. Ideal, Butterworth and Gaussian filters, LP/HP. Effect of D0, ringing, comparison with spatial filters.</td><td>MEM3</td></tr>
+  <tr><td>Segmentation</td><td>Roberts, Prewitt, Sobel, Laplacian, LoG. Global, Otsu and adaptive thresholding. Point/line masks, edge linking or Hough where the task needs them.</td><td>MEM4</td></tr>
+  <tr><td>Morphology and measurement</td><td>Erosion, dilation, opening and closing with different SE shapes and sizes. Hole filling, small-object removal, labelling, count, area, bounding box, decision rule.</td><td>MEM5</td></tr>
+  <tr><td>Three pipelines</td><td>A &lt; B &lt; C in sophistication, each with a block diagram and the dtype and range between stages</td><td>MEM1 integrates</td></tr>
+  <tr><td>NumPy depth</td><td>&ge;2 NumPy implementations per work package, compared with the library, a hand-worked 3&times;3 or 5&times;5 example, border handling stated</td><td>Everyone</td></tr>
+  <tr><td>Experiments</td><td>One CSV log. One-factor-at-a-time tuning: kernel &times;3, D0 &times;3, threshold method &times;3, SE size &times;3, SE shape &times;2. &ge;4 ablations. 3 noise levels &times; 3 seeds.</td><td>Everyone, MEM1 owns the log</td></tr>
+  <tr><td>Evaluation</td><td>Test set: per-image metric, mean, std, best and worst. &ge;20 worst cases grouped into categories with one fix.</td><td>MEM5 (+ MEM1)</td></tr>
+  <tr><td>Runnable pipeline and demo</td><td>One final config file, <code>run_pipeline.py</code> entry point, demo app, time per image and per stage</td><td>MEM5 (+ MEM1)</td></tr>
+</table>
+
+<h2>1.4 Grading weights</h2>
+<table>
+  <tr><th>Criterion</th><th>Weight</th><th>Main risk to avoid</th></tr>
+  <tr><td>Problem formulation and image analysis</td><td>10%</td><td>Generic histograms with no conclusions</td></tr>
+  <tr><td>Data preparation and baselines</td><td>10%</td><td>Tuning on the test set; no baseline</td></tr>
+  <tr><td>Pipeline design and technical depth</td><td>20%</td><td>Library calls with no explanation; choices not justified</td></tr>
+  <tr><td>Experimentation and ablations</td><td>15%</td><td>Unlogged trial and error; one lucky image</td></tr>
+  <tr><td>Evaluation and failure analysis</td><td>10%</td><td>Showing only good results</td></tr>
+  <tr><td>Code quality and reproducibility</td><td>10%</td><td>One-commit upload; results that cannot be reproduced</td></tr>
+  <tr><td>Technical report</td><td>10%</td><td>Numbers that don't match the repository</td></tr>
+  <tr><td>Presentation and live demo</td><td>5%</td><td>One member presents everything</td></tr>
+  <tr><td>Individual defense</td><td>10%</td><td>Not being able to explain your own code</td></tr>
+  <tr><td><b>Bonus</b></td><td>up to +5%</td><td>At the instructor's discretion. Never claim it is guaranteed.</td></tr>
+</table>
+<div class="warn"><b>Individual adjustment.</b> A member who cannot explain their own work package,
+or who has no meaningful commits, receives a reduced share of the team mark, down to 50% of it.
+The evidence is the commit history, the contribution table and the defense.</div>
+
+<h2>1.5 Where the master prompt and the specification differ</h2>
+<table>
+  <tr><th>Topic</th><th>Master prompt</th><th>Specification (wins)</th><th>Resolution</th></tr>
+  <tr><td>Report structure</td><td>20 headings</td><td>10 sections, including <i>Deployment</i> and <i>Limitations, ethical considerations and future work</i></td><td>Use the spec's 10 sections and put the extra items inside them</td></tr>
+  <tr><td>Machine learning</td><td>Not mentioned</td><td>Forbidden</td><td>No learned models anywhere, including the demo</td></tr>
+  <tr><td>Live demo</td><td>Run live</td><td>Reviewed on Canvas</td><td>Still prepare it to run live, and keep a Canvas-ready recording as a backup</td></tr>
+  <tr><td>Bonus</td><td>All 5 mandatory</td><td>Up to 5% at discretion</td><td>Pursue all 5 and promise nothing</td></tr>
+</table>
+</section>
+
+<!-- ============================== 2 ============================== -->
+<section class="page-break">
+<h1>2. Team structure</h1>
+<p>The specification defines six work packages and states that in a team of five, roles 1 and 2
+are merged: <i>&ldquo;the Tech Lead also owns the data, the metrics and the baselines.&rdquo;</i></p>
+<table>
+  <tr><th>Member</th><th>Role</th><th>Work package</th><th>Code owned</th><th>Required studies</th><th>Bonus</th></tr>
+  <tr><td><b>MEM1</b></td><td>Tech Lead + Data &amp; Baseline Engineer</td><td>Problem formulation, architecture, config, integration, reviews, final pipeline selection, data, metrics, baselines</td><td>skeleton, <code>configs/</code>, <code>src/data.py</code>, <code>src/metrics.py</code>, <code>src/pipeline.py</code>, baseline script, CI</td><td>Resolution and gray-level study. Pipeline A vs both baselines. Final pipeline at 3 noise levels &times; 3 seeds. Final results table.</td><td>CI (coord.), generalization (co-owner), speed (coord.)</td></tr>
+  <tr><td><b>MEM2</b></td><td>Enhancement Engineer</td><td>Histogram analysis, point transforms, histogram equalization, smoothing and sharpening</td><td><code>src/enhancement.py</code></td><td>Enhancement comparison. Histogram analysis. Kernel-size study.</td><td>Tests and speed for own module</td></tr>
+  <tr><td><b>MEM3</b></td><td>Restoration &amp; Frequency Engineer</td><td>Noise models (with MEM1), restoration filters, DFT and frequency filters</td><td><code>src/restoration.py</code>, <code>src/frequency.py</code></td><td>PSNR per noise type. Restoration filter comparison. Spatial vs frequency ablation. D0 study.</td><td><b>Lossless compression (owner)</b></td></tr>
+  <tr><td><b>MEM4</b></td><td>Segmentation Engineer</td><td>Edge, point and line detection, thresholding, edge linking or Hough</td><td><code>src/segmentation.py</code></td><td>Detector comparison. Threshold-method comparison.</td><td>Tests and speed for own module</td></tr>
+  <tr><td><b>MEM5</b></td><td>Morphology, Evaluation &amp; Demo Engineer</td><td>Morphology, measurement, test-set evaluation, failure analysis, demo</td><td><code>src/morphology.py</code>, <code>src/evaluate.py</code>, <code>src/run_pipeline.py</code>, <code>app/</code></td><td>SE shape and size studies. Failure analysis for every pipeline.</td><td><b>Public deployment (owner)</b>, generalization (co-owner)</td></tr>
+</table>
+
+<h2>2.1 Review pairs (every PR is reviewed by a different member)</h2>
+<table>
+  <tr><th>Author</th><th>Primary reviewer</th><th>Why this pairing</th></tr>
+  <tr><td>MEM1</td><td>MEM5</td><td>MEM5 consumes the metrics and loader in <code>evaluate.py</code></td></tr>
+  <tr><td>MEM2</td><td>MEM3</td><td>Both work on filters (spatial vs frequency, smoothing vs restoration)</td></tr>
+  <tr><td>MEM3</td><td>MEM2</td><td>Same reason, in the other direction</td></tr>
+  <tr><td>MEM4</td><td>MEM5</td><td>MEM5's morphology consumes MEM4's binary masks</td></tr>
+  <tr><td>MEM5</td><td>MEM4</td><td>Same reason, in the other direction</td></tr>
+  <tr><td>Integration PRs (<code>pipeline.py</code>, configs)</td><td>MEM1 + module owner</td><td>MEM1 owns integration. The stage owner confirms correct use of their stage.</td></tr>
+  <tr><td>Bonus: deployment, compression</td><td>MEM1</td><td>As stated in the master prompt</td></tr>
+</table>
+
+<h2>2.2 Fairness of workload</h2>
+<p>Every member has: &ge;2 genuine NumPy implementations with library comparison and a hand-worked
+example; &ge;1 logged experiment; a report section; a presentation slot; unit tests for their own
+module; a review duty; and a defense topic. MEM1's extra coordination load is balanced by MEM2 and
+MEM4 taking on extra tests and speed work in their own modules.</p>
+</section>
+
+<!-- ============================== 3 ============================== -->
+<section class="page-break">
+<h1>3. Shared team roadmap</h1>
+<p>Week numbers follow the specification (Week 9 to Week 14, final discussion in Week 14).
+Calendar dates are <span class="tbd">TBD</span> until MEM1 confirms the Week 14 discussion date.</p>
+
+<table>
+  <tr><th>Phase</th><th>When</th><th>Goal</th><th>Exit criteria</th></tr>
+  <tr><td>P1 Audit</td><td>W9 (done)</td><td>Read the spec, audit repo and tools</td><td>Audit report accepted</td></tr>
+  <tr><td>P2 Topic &amp; dataset</td><td>W9</td><td>Validate the dataset against every criterion and fix the primary metric</td><td>Dataset checklist (Section 1.2) all green; licence cited</td></tr>
+  <tr><td>P3 Team planning</td><td>W9</td><td>This document, v0.2 with dataset details</td><td>All 5 members confirm they have read their plan</td></tr>
+  <tr><td>P4 Architecture &amp; baselines</td><td>W9&ndash;W10</td><td>Skeleton, interfaces, loader, split, metrics, both baselines, CI</td><td><b>Checkpoint 2</b>: baselines measured on the dev set; metric tests pass in CI</td></tr>
+  <tr><td>P5 Parallel implementation</td><td>W10&ndash;W12</td><td>All module NumPy implementations, library comparisons, unit tests</td><td>Each module PR merged with tests green</td></tr>
+  <tr><td>P6 Integration</td><td>W11&ndash;W12</td><td>Pipelines A, B and C run end to end through configs</td><td><b>Checkpoint 3</b>: <code>run_pipeline.py</code> runs A/B/C on dev images</td></tr>
+  <tr><td>P7 Experiments &amp; evaluation</td><td>W12&ndash;W13</td><td>OFAT tuning, 4+ ablations, robustness, then test set <i>once</i>, failure analysis</td><td><b>Checkpoint 4</b>: results frozen, final config tagged</td></tr>
+  <tr><td>P8 Bonus</td><td>W11&ndash;W13 (in parallel)</td><td>CI, compression, deployment, generalization, speed</td><td>Evidence in <code>bonus/</code>, tracker updated</td></tr>
+  <tr><td>P9 Report, demo, slides</td><td>W13&ndash;W14</td><td>Report PDF, slides, README, demo verified on another device</td><td>Numbers in the report match the CSVs; repo tagged <code>v1.0</code></td></tr>
+  <tr><td>P10 Defense prep</td><td>W13&ndash;W14</td><td>Mock defenses: each member questioned on their own package and the whole pipeline</td><td>Each member passes a mock Q&amp;A run by another member</td></tr>
+</table>
+
+<h2>3.1 Parallel work (who can start what, and when)</h2>
+<table>
+  <tr><th></th><th>Before dataset <span class="tag">dataset-free</span></th><th>After dataset, before baselines</th><th>After baselines</th></tr>
+  <tr><td>MEM1</td><td>Skeleton design, interfaces, metrics and tests, noise generators, CI design</td><td>Loader, split, GT checks, image analysis</td><td>Baselines, Pipeline A vs baselines, integration</td></tr>
+  <tr><td>MEM2</td><td>convolve2d, point transforms, hist-eq, kernels and their tests</td><td>Histogram analysis of dev images</td><td>Enhancement comparison, kernel-size study</td></tr>
+  <tr><td>MEM3</td><td>Order-statistic filters, DFT and frequency filters, RLE/Huffman and tests</td><td>Spectra of sample images</td><td>PSNR study, D0 study, spatial vs frequency ablation</td></tr>
+  <tr><td>MEM4</td><td>Gradient operators, Otsu, adaptive threshold, Hough and tests</td><td>Edge maps of difficult images</td><td>Detector and threshold studies</td></tr>
+  <tr><td>MEM5</td><td>Erosion, dilation, hole filling, CCL and tests; demo UI shell</td><td>Measurement definition per the GT type</td><td>SE studies, evaluation, failure analysis, demo</td></tr>
+</table>
+
+<h2>3.2 Architecture and data flow (dataset-independent part)</h2>
+<pre>
+ raw file --> data.load_image() --> gray uint8 [0,255] (H x W)
+                  |                         |
+       data.add_noise(seed)   (controlled degradation, robustness only)
+                  v
+ [enhancement]  uint8 -> uint8    point transforms, smoothing, sharpening   (MEM2)
+ [restoration]  uint8 -> uint8    order-statistic / mean filters            (MEM3)
+ [frequency]    uint8 -> uint8    DFT -> H(u,v) -> IDFT, clip to [0,255]   (MEM3)
+ [segmentation] uint8 -> bool     gradients, thresholds, Hough              (MEM4)
+ [morphology]   bool  -> bool     open/close, fill holes, remove small      (MEM5)
+ [measurement]  bool  -> dict     labels, count, area, bbox, decision       (MEM5)
+                  v
+ metrics.iou / psnr / count_abs_error vs ground truth  (MEM1)   --> CSV log
+</pre>
+<p><b>Conventions everyone must follow</b> (fixed now, so modules plug together):</p>
+<ul>
+  <li>Between stages: grayscale images are <code>np.uint8</code> in [0, 255] with shape (H, W).
+      Masks are <code>np.bool_</code> with shape (H, W). Inside a function you may work in
+      <code>float64</code>, but you must convert back to the stage output type.</li>
+  <li>Default border handling for neighbourhood operations: <b>reflect-101</b>, which is
+      <code>np.pad(mode="reflect")</code> = <code>cv2.BORDER_REFLECT_101</code> =
+      <code>scipy.ndimage mode="mirror"</code>. Note that NumPy <code>"symmetric"</code> equals
+      OpenCV <code>BORDER_REFLECT</code> equals SciPy <code>"reflect"</code>. The names do not
+      line up, so always state which one you use.</li>
+  <li>Kernels are applied as <b>correlation</b> (OpenCV <code>filter2D</code> convention). For
+      symmetric kernels this is the same as convolution.</li>
+  <li>Colour: OpenCV loads BGR. <code>data.load_image</code> converts once, and only there.
+      Convert BGR to RGB before any <code>matplotlib</code> display.</li>
+  <li>Every function that uses randomness takes a <code>seed</code> argument and uses
+      <code>np.random.default_rng(seed)</code>. Nothing uses global RNG state.</li>
+  <li>Every stage function is pure: image in, image out, parameters as keyword arguments. No file
+      I/O inside stage functions.</li>
+  <li>Docstrings on every public function. Lines of at most 95 characters. No hard-coded paths
+      (paths come from config or CLI).</li>
+  <li><b>Working size:</b> <code>load_image</code> resizes once (INTER_AREA) so the long side is L. Masks
+      are resized the same way (INTER_AREA, then &ge; 0.5). All metrics are computed at size L.</li>
+</ul>
+
+<h2>3.3 Proposed pipelines for crack segmentation (v0.2)</h2>
+<p class="small">Proposed for team approval. The stage parameters are fixed later by the dev-set studies.
+Every pipeline ends in the same measurement stage (area %, skeleton length, severity).</p>
+<table>
+  <tr><th>Pipeline</th><th>Stages (dtype between stages)</th><th>What it adds</th></tr>
+  <tr><td><b>Trivial baseline</b></td><td>gray uint8 &rarr; foreground = gray &lt; 127 &rarr; bool</td><td>Spec benchmark</td></tr>
+  <tr><td><b>Simple baseline</b></td><td>gray &rarr; inverted Otsu &rarr; 3&times;3 opening &rarr; bool</td><td>Spec benchmark</td></tr>
+  <tr><td><b>A &middot; basic</b></td><td>gray &rarr; contrast stretch (uint8) &rarr; Gaussian smoothing (uint8) &rarr; global or inverted-Otsu threshold (bool) &rarr; measurement</td><td>Spatial enhancement plus a global threshold</td></tr>
+  <tr><td><b>B &middot; intermediate</b></td><td>gray &rarr; median (noise removal) &rarr; background flattening &rarr; adaptive threshold <i>or</i> LoG / line-mask response + threshold (bool) &rarr; edge linking &rarr; measurement</td><td>Noise removal, local or edge-based segmentation</td></tr>
+  <tr><td><b>C &middot; advanced</b></td><td>B &rarr; tuned closing (line or disk SE) to bridge gaps &rarr; hole filling &rarr; remove small objects and round blobs (area + circularity) &rarr; measurement</td><td>Tuned morphology, hole filling, shape-based selection</td></tr>
+</table>
+<p class="small">Frequency filtering appears in the restoration study, in ablation AB2 (spatial vs frequency
+smoothing) and as a candidate background-flattening step (Gaussian high-pass).</p>
+</section>
+
+<!-- ============================== 4 MEM1 ============================== -->
+<section class="page-break mem m1">
+<h1>4. Detailed MEM1 execution plan &mdash; Tech Lead + Data &amp; Baseline Engineer</h1>
+
+<h2>4.A Responsibilities</h2>
+<table>
+  <tr><th>Area</th><th>Duties</th></tr>
+  <tr><td>Leadership</td><td>Problem formulation, architecture, configuration management, integration, merges, code reviews, final pipeline selection, team coordination, risk management</td></tr>
+  <tr><td>Data</td><td>Dataset research and validation, licence, image loading, normalization, split, ground-truth management, controlled degradation, <code>data/README.md</code></td></tr>
+  <tr><td>Metrics &amp; baselines</td><td>MSE, PSNR, IoU, count error. Trivial and simple baselines. Pipeline A vs baselines.</td></tr>
+  <tr><td>Studies</td><td>Resolution and gray-level study. Final pipeline at 3 noise levels &times; 3 seeds. Final results table.</td></tr>
+  <tr><td>Bonus</td><td>Coordinate CI (B2) and speed (B5). Co-own generalization (B3). Review deployment (B1) and compression (B4).</td></tr>
+  <tr><td>Reviews</td><td>Every integration PR. Second reviewer on any PR that changes shared interfaces.</td></tr>
+</table>
+
+<h2>4.B File ownership</h2>
+<table>
+  <tr><th>Owns (edits freely)</th><th>Shared (coordinate first)</th><th>Must not edit without the owner's agreement</th></tr>
+  <tr><td><code>README.md</code>, <code>requirements.txt</code>, <code>.gitignore</code>, <code>configs/*.yaml</code>, <code>data/README.md</code>, <code>data/download_dataset.py</code>, <code>src/__init__.py</code>, <code>src/data.py</code>, <code>src/metrics.py</code>, <code>src/pipeline.py</code>, <code>experiments/experiment_log.csv</code> (schema), <code>.github/workflows/</code>, <code>bonus/bonus_results.csv</code>, <code>tests/test_data.py</code>, <code>tests/test_metrics.py</code>, <code>tests/test_pipeline.py</code></td>
+      <td><code>src/run_pipeline.py</code> (MEM5 owns, MEM1 sets the interface), <code>configs/final_pipeline.yaml</code> (decided together), <code>report/</code></td>
+      <td><code>src/enhancement.py</code>, <code>src/restoration.py</code>, <code>src/frequency.py</code>, <code>src/segmentation.py</code>, <code>src/morphology.py</code>, <code>src/evaluate.py</code>, <code>app/</code></td></tr>
+</table>
+
+<h3>Planned interfaces in MEM1's files (proposed, confirmed in v0.2)</h3>
+<pre>
+# src/data.py
+load_image(path, mode="gray", size=None) -&gt; np.ndarray        # uint8, (H,W) or (H,W,3) RGB
+load_ground_truth(path, size=None) -&gt; np.ndarray             # bool (H,W): gray &gt; 127
+list_pairs(root) -&gt; list[tuple[Path, Path]]                  # image path, GT path
+make_split(pairs, dev_frac=0.7, seed=42) -&gt; dict[str, list]  # {"dev": [...], "test": [...]}
+save_split(split, path) / load_split(path)                   # JSON, committed to git
+add_noise(img, kind, level, seed) -&gt; np.ndarray              # gaussian|salt_pepper|speckle|poisson
+reduce_resolution(img, factor) -&gt; np.ndarray                 # NumPy block-average downsampling
+quantize_gray_levels(img, levels) -&gt; np.ndarray              # NumPy k-level quantisation
+# src/metrics.py
+mse(a, b) -&gt; float ; psnr(a, b, data_range=255) -&gt; float
+iou(pred, gt) -&gt; float ; count_abs_error(pred_count, gt_count) -&gt; int
+# src/pipeline.py
+STAGES: dict[str, Callable]          # registry: name -&gt; stage function
+run(img, config: dict, keep_intermediates=True) -&gt; tuple[result, dict[str, np.ndarray]]
+baseline_trivial(img) / baseline_simple(img)
+</pre>
+
+<h3>MEM1's genuine NumPy implementations (at least 2)</h3>
+<table>
+  <tr><th>#</th><th>NumPy implementation</th><th>Compared with</th><th>Comparison measure</th></tr>
+  <tr><td>1</td><td><code>quantize_gray_levels</code> and <code>reduce_resolution</code> (block average)</td><td><code>cv2.resize(..., INTER_AREA)</code></td><td>Max abs difference (expect &le;1 from rounding when the factor divides the size)</td></tr>
+  <tr><td>2</td><td><code>add_noise</code> for 4 noise models</td><td><code>skimage.util.random_noise</code></td><td>Statistical, not pixel-equal (different RNG streams): compare mean and variance of the noise and the S&amp;P pixel fraction</td></tr>
+  <tr><td>3</td><td><code>mse</code>, <code>psnr</code>, <code>iou</code></td><td><code>skimage.metrics.mean_squared_error</code>, <code>peak_signal_noise_ratio</code>; IoU checked against a manual set count</td><td><code>np.isclose</code></td></tr>
+</table>
+</section>
+
+<section class="m1">
+<h2>4.C Step-by-step tasks</h2>
+<p class="small">Every card has the nine required parts. Items that wait on an open decision are marked TBD.</p>
+<p class="task-title">T1.1 &middot; Course-specification audit <span class="tag">done</span></p>
+<table class="card"><tr><th>What</th><td>Extract every mandatory requirement from the 11-page spec into Section 1 of this plan.</td></tr><tr><th>Why</th><td>The spec is the source of truth. A requirement we miss is marks we lose.</td></tr><tr><th>File</th><td><code>docs/execution/CSE281_Team_Execution_Plan.html</code> (Section 1)</td></tr><tr><th>Functions</th><td>None (documentation task)</td></tr><tr><th>How</th><td>Turn every &ldquo;must&rdquo; into a table row with an owner. List the conflicts with the master prompt (Section 1.5).</td></tr><tr><th>Expected output</th><td>Tables 1.2&ndash;1.5 in this plan.</td></tr><tr><th>Test</th><td>Every rubric criterion (Section 1.4) maps to at least one task in Sections 4&ndash;8.</td></tr><tr><th>Evidence</th><td>This PDF, Section 1.</td></tr><tr><th>Done when</th><td>All 5 members confirm in the team chat that they have read Section 1.</td></tr></table>
+<p class="task-title">T1.2 &middot; Repository and environment audit <span class="tag">done</span></p>
+<table class="card"><tr><th>What</th><td>Inspect the project folder, git state, Python version, installed packages and tools.</td></tr><tr><th>Why</th><td>We must preserve existing work and know our starting point before creating the skeleton.</td></tr><tr><th>File</th><td>&ldquo;Current state&rdquo; table on the Contents page</td></tr><tr><th>Functions</th><td>None</td></tr><tr><th>How</th><td>List the files, run <code>git status</code>, <code>python --version</code> and <code>pip list</code>, and check whether <code>gh</code> is installed.</td></tr><tr><th>Expected output</th><td>Audit table: empty folder, not a git repo, Python 3.13.14, only pip, no <code>gh</code>.</td></tr><tr><th>Test</th><td>A second member repeats the Python and pip checks on their own machine.</td></tr><tr><th>Evidence</th><td>Audit table in this PDF.</td></tr><tr><th>Done when</th><td>Audit accepted by the team.</td></tr></table>
+<p class="task-title">T1.3 &middot; Dataset research and validation <span class="tag">W9 &middot; blocking</span></p>
+<table class="card"><tr><th>What</th><td>For the chosen dataset (and 1&ndash;2 fallbacks), record the source, image count, GT type and coverage, formats, sizes, bit depth, visible defects, download steps and runtime per image.</td></tr><tr><th>Why</th><td>A dataset that fails any criterion invalidates the project. Data preparation is worth 10%.</td></tr><tr><th>File</th><td><code>data/README.md</code> (dataset card), <code>docs/dataset_validation.md</code></td></tr><tr><th>Functions</th><td><code>data/download_dataset.py: main(out_dir)</code>: Mendeley public-files URL, SHA-256 check, RAR extraction</td></tr><tr><th>How</th><td>Download into <code>data/raw/</code> (git-ignored). Count the files. Check that every image has a GT file. Open 20 random images and note their defects.</td></tr><tr><th>Expected output</th><td>The Section 1.2 checklist with every row filled in and evidence linked.</td></tr><tr><th>Test</th><td>MEM5 independently re-counts the images and GT files on their own machine.</td></tr><tr><th>Evidence</th><td>Dataset card, the counts printed by the script, sample images showing the defects.</td></tr><tr><th>Done when</th><td>All 7 criteria are green and MEM5 has confirmed.</td></tr></table>
+<p class="task-title">T1.4 &middot; Licence and citation <span class="tag">W9</span></p>
+<table class="card"><tr><th>What</th><td>Confirm the licence allows academic use and write the exact citation.</td></tr><tr><th>Why</th><td>The spec requires a public licence that permits academic use, with the source cited. The PCB dataset is a warning example.</td></tr><tr><th>File</th><td><code>data/README.md</code> (Licence section), <code>report/</code> references</td></tr><tr><th>Functions</th><td>None</td></tr><tr><th>How</th><td>Copy the licence name and URL from the dataset page. Save a screenshot of the licence. Write a BibTeX entry.</td></tr><tr><th>Expected output</th><td>Licence name, URL, citation and the date it was checked.</td></tr><tr><th>Test</th><td>MEM5 re-reads the licence page and agrees it permits academic use.</td></tr><tr><th>Evidence</th><td>Licence screenshot in <code>docs/evidence/</code>.</td></tr><tr><th>Done when</th><td>The licence is cited in the README and in the report references.</td></tr></table>
+<p class="task-title">T1.5 &middot; Problem formulation and primary metric <span class="tag">W9</span></p>
+<table class="card"><tr><th>What</th><td>One paragraph covering the user, the output, and what a false positive or false negative costs. Define the input (size, colour or gray, bit depth), the output, and the primary metric.</td></tr><tr><th>Why</th><td>Worth 10% of the grade. The metric must be justified by the cost of errors.</td></tr><tr><th>File</th><td><code>README.md</code> (Problem section), report Section I</td></tr><tr><th>Functions</th><td>None</td></tr><tr><th>How</th><td>Draft written (Section 1.2): an inspection engineer needs the crack mask, area %, length and severity. Missed cracks are a safety cost, false cracks waste time. Therefore IoU of the crack class. To be approved by the team.</td></tr><tr><th>Expected output</th><td>The paragraph plus an input/output/metric table.</td></tr><tr><th>Test</th><td>Every member can restate it in one sentence at the W9 meeting.</td></tr><tr><th>Evidence</th><td>README commit.</td></tr><tr><th>Done when</th><td>The team agrees on it and it is merged to <code>main</code>.</td></tr></table>
+<p class="task-title">T1.6 &middot; Repository skeleton and environment <span class="tag">after approval</span></p>
+<table class="card"><tr><th>What</th><td>Run <code>git init</code>, create the folder tree (Section 10), <code>.gitignore</code>, pinned <code>requirements.txt</code>, empty modules with docstrings, and a README skeleton. Push and invite the members.</td></tr><tr><th>Why</th><td>Everyone needs the same structure before parallel work starts. The commit history is graded from the first day.</td></tr><tr><th>File</th><td>Root files, <code>src/__init__.py</code>, all module stubs, <code>tests/conftest.py</code></td></tr><tr><th>Functions</th><td>Stub functions with the signatures from Section 4.B (each raises <code>NotImplementedError</code>)</td></tr><tr><th>How</th><td>Pin versions that install on local Python 3.13 and on Colab (check <code>!python --version</code> first). Protect <code>main</code>: require a PR, 1 approval and passing CI.</td></tr><tr><th>Expected output</th><td>The repo on GitHub, the 5 members invited, the feature branches created.</td></tr><tr><th>Test</th><td>Fresh clone, then <code>pip install -r requirements.txt</code>, then <code>pytest</code>, both locally and on Colab.</td></tr><tr><th>Evidence</th><td>First commits, branch-protection screenshot, Colab install log.</td></tr><tr><th>Done when</th><td>All 5 members have cloned the repo and run <code>pytest</code> successfully.</td></tr></table>
+<p class="task-title">T1.7 &middot; Architecture and module interfaces <span class="tag">W9&ndash;W10</span></p>
+<table class="card"><tr><th>What</th><td>Freeze the function signatures, the data types between stages and the border convention (Section 3.2) before parallel work starts.</td></tr><tr><th>Why</th><td>Without a fixed interface, five people's modules will not plug together.</td></tr><tr><th>File</th><td><code>docs/architecture.md</code>, module stubs</td></tr><tr><th>Functions</th><td>All public signatures listed in Sections 4.B, 5.B, 6.B, 7.B and 8.B</td></tr><tr><th>How</th><td>Hold a 30-minute interface review with all members. Record decisions about dtype, range, shape and border handling. Changes after Checkpoint 2 need an issue.</td></tr><tr><th>Expected output</th><td>Architecture document with the data-flow diagram and signatures.</td></tr><tr><th>Test</th><td><code>tests/test_pipeline.py::test_imports</code> imports every module and checks the signatures.</td></tr><tr><th>Evidence</th><td>Architecture document plus review meeting notes.</td></tr><tr><th>Done when</th><td>Every member has approved the PR that adds it.</td></tr></table>
+<p class="task-title">T1.8 &middot; Metrics module <span class="tag">dataset-free</span></p>
+<table class="card"><tr><th>What</th><td>Implement <code>mse</code>, <code>psnr</code>, <code>iou</code> and <code>count_abs_error</code>.</td></tr><tr><th>Why</th><td>Every number in the project goes through these functions. The spec requires hand-checked tests.</td></tr><tr><th>File</th><td><code>src/metrics.py</code>, <code>tests/test_metrics.py</code></td></tr><tr><th>Functions</th><td><code>mse(a,b)</code>, <code>psnr(a,b,data_range=255)</code>, <code>iou(pred,gt)</code>, <code>count_abs_error(p,g)</code></td></tr><tr><th>How</th><td>Cast to <code>float64</code> before subtracting (uint8 arithmetic wraps). PSNR returns <code>inf</code> when MSE = 0. IoU of two empty masks is 1.0 (documented). Shape mismatch raises <code>ValueError</code>.</td></tr><tr><th>Expected output</th><td>Hand example (Section 19.1): MSE 5.0, PSNR 41.14 dB, IoU 0.5.</td></tr><tr><th>Test</th><td>Hand examples, identical inputs, empty masks, shape mismatch, and comparison with <code>skimage.metrics</code>.</td></tr><tr><th>Evidence</th><td>Passing CI run, the hand example printed in notebook 01.</td></tr><tr><th>Done when</th><td>Merged with tests green, reviewed by MEM5.</td></tr></table>
+<p class="task-title">T1.9 &middot; Single loader and ground-truth management <span class="tag">after dataset</span></p>
+<table class="card"><tr><th>What</th><td>One <code>load_image</code> for the whole project and one <code>load_ground_truth</code>. Verify every image is paired with its GT.</td></tr><tr><th>Why</th><td>The spec requires a single loading function. No stage may reload images its own way.</td></tr><tr><th>File</th><td><code>src/data.py</code>, <code>tests/test_data.py</code></td></tr><tr><th>Functions</th><td><code>load_image(path, mode, size)</code>, <code>load_ground_truth(path)</code>, <code>list_pairs(root)</code></td></tr><tr><th>How</th><td><code>cv2.imread</code> &rarr; check for <code>None</code> &rarr; <code>cvtColor</code> to GRAY or RGB &rarr; uint8. Masks are JPEG (mostly 3-channel): convert to gray, then &gt; 127. Resize the image (INTER_AREA) and the mask (INTER_AREA, then &ge; 0.5) to working size L.</td></tr><tr><th>Expected output</th><td>uint8 (H,W) images, bool (H,W) masks, a list of (image, GT) pairs.</td></tr><tr><th>Test</th><td>A tiny PNG fixture: dtype, shape, BGR&rarr;RGB channel order, the missing-file error, image and GT the same size.</td></tr><tr><th>Evidence</th><td>Test run, and the pair count printed and recorded in the README.</td></tr><tr><th>Done when</th><td>Every dev image loads and has a matching GT.</td></tr></table>
+<p class="task-title">T1.10 &middot; Development / test split <span class="tag">after dataset</span></p>
+<table class="card"><tr><th>What</th><td>A 70/30 split with a fixed seed, saved and committed.</td></tr><tr><th>Why</th><td>Test-set discipline. Any sign of tuning on the test set costs the experimentation marks.</td></tr><tr><th>File</th><td><code>src/data.py</code>, <code>data/split.json</code></td></tr><tr><th>Functions</th><td><code>make_split(pairs, dev_frac=0.7, seed=42, group=lambda n: int(n) // 10)</code>, <code>save_split</code>, <code>load_split</code></td></tr><tr><th>How</th><td>Sort the names, then shuffle with <code>default_rng(42)</code>. Group split by blocks of 10 consecutive image IDs (ID // 10). Neighbouring IDs often show the same wall, so a plain shuffle would leak near-duplicates into the test set. Expect about 320 dev / 138 test images.</td></tr><tr><th>Expected output</th><td><code>split.json</code> with dev and test lists.</td></tr><tr><th>Test</th><td>No overlap, union equals all images, identical on re-run.</td></tr><tr><th>Evidence</th><td><code>split.json</code> commit, counts in the README.</td></tr><tr><th>Done when</th><td>Merged, and nobody tunes on the test list from then on.</td></tr></table>
+<p class="task-title">T1.11 &middot; Controlled degradation <span class="tag">dataset-free</span></p>
+<table class="card"><tr><th>What</th><td><code>add_noise</code> for Gaussian, salt-and-pepper, speckle and Poisson noise, with 3 levels each defined in config.</td></tr><tr><th>Why</th><td>Needed for MEM3's PSNR study and for the 3-level &times; 3-seed robustness test.</td></tr><tr><th>File</th><td><code>src/data.py</code>, <code>configs/noise.yaml</code></td></tr><tr><th>Functions</th><td><code>add_noise(img, kind, level, seed)</code></td></tr><tr><th>How</th><td>Gaussian: add <code>rng.normal(0,&sigma;)</code> and clip. S&amp;P: draw uniform u; set 0 where u&lt;p/2 and 255 where u&gt;1&minus;p/2. Speckle: <code>f + f&middot;n</code>. Poisson: <code>rng.poisson(f)</code>.</td></tr><tr><th>Expected output</th><td>uint8 degraded copies, identical for the same seed.</td></tr><tr><th>Test</th><td>Same seed gives an identical result. Noise statistics are within tolerance. Compared statistically with <code>skimage.util.random_noise</code>.</td></tr><tr><th>Evidence</th><td>Test run, a figure showing the 4 noise types &times; 3 levels.</td></tr><tr><th>Done when</th><td>MEM3 confirms the API and the levels.</td></tr></table>
+<p class="task-title">T1.12 &middot; Image analysis, resolution and gray-level study <span class="tag">after dataset</span></p>
+<table class="card"><tr><th>What</th><td>Sizes, data types, ranges, histograms, noise, illumination, centred spectrum, resolution (&times;1/2/4/8), gray levels (256&hellip;2), and the findings that lead to design decisions.</td></tr><tr><th>Why</th><td>The spec requires analysis before design (10% criterion).</td></tr><tr><th>File</th><td><code>notebooks/01_image_analysis.ipynb</code></td></tr><tr><th>Functions</th><td><code>reduce_resolution</code>, <code>quantize_gray_levels</code>; uses MEM2's <code>histogram</code> and MEM3's <code>centered_spectrum</code></td></tr><tr><th>How</th><td>Run on 5 typical and 5 difficult dev images. Score each resolution and gray-level setting with the simple baseline's metric.</td></tr><tr><th>Expected output</th><td>A figure grid, the lowest workable setting, and a findings &rarr; decision table.</td></tr><tr><th>Test</th><td>NumPy downsampling vs <code>cv2.resize(INTER_AREA)</code>: max abs diff &le;1.</td></tr><tr><th>Evidence</th><td><code>experiments/figures/analysis_*.png</code>, log rows.</td></tr><tr><th>Done when</th><td>The findings table has been reviewed by the team.</td></tr></table>
+<p class="task-title">T1.13 &middot; Both baselines <span class="tag">before any pipeline design</span></p>
+<table class="card"><tr><th>What</th><td>Trivial baseline: threshold 127 on raw gray (restoration: unprocessed input). Simple baseline: Otsu then one 3&times;3 opening (restoration: 3&times;3 median). Run on the dev set.</td></tr><tr><th>Why</th><td>Every later pipeline is reported as an improvement over these numbers.</td></tr><tr><th>File</th><td><code>src/pipeline.py</code>, <code>configs/baseline_trivial.yaml</code>, <code>configs/baseline_simple.yaml</code></td></tr><tr><th>Functions</th><td><code>baseline_trivial(img)</code>, <code>baseline_simple(img)</code></td></tr><tr><th>How</th><td>Use library Otsu and opening until the NumPy versions from MEM4 and MEM5 are merged, then swap them in and log the swap.</td></tr><tr><th>Expected output</th><td>Per-image CSV and the dev mean&plusmn;std of the primary metric.</td></tr><tr><th>Test</th><td>Unit test on a synthetic two-level image with a known answer.</td></tr><tr><th>Evidence</th><td><code>experiments/results/baselines_dev.csv</code>, log rows.</td></tr><tr><th>Done when</th><td>Baseline numbers posted to the team. Checkpoint 2 met.</td></tr></table>
+<p class="task-title">T1.14 &middot; Experiment tracking <span class="tag">W10</span></p>
+<table class="card"><tr><th>What</th><td><code>log_run</code> helper with the CSV schema: run_id, date, author, pipeline, stage, method, params_json, seed, split, n_images, time_s, metric, value, notes.</td></tr><tr><th>Why</th><td>The rubric gives no credit for unlogged trial and error.</td></tr><tr><th>File</th><td><code>src/pipeline.py</code> (owned by MEM1), <code>experiments/experiment_log.csv</code></td></tr><tr><th>Functions</th><td><code>log_run(**fields)</code></td></tr><tr><th>How</th><td>Append-only writes with the <code>csv</code> module. Run IDs as date plus counter. Author from config or CLI.</td></tr><tr><th>Expected output</th><td>One row per experiment run.</td></tr><tr><th>Test</th><td>A test writes two rows to a temporary file and reads them back.</td></tr><tr><th>Evidence</th><td>The CSV file in the repo.</td></tr><tr><th>Done when</th><td>Every study script calls <code>log_run</code>.</td></tr></table>
+<p class="task-title">T1.15 &middot; Pipeline integration (A, B, C) and config system <span class="tag">W11&ndash;W12</span></p>
+<table class="card"><tr><th>What</th><td>Stage registry plus YAML configs listing the stages and their parameters. <code>run()</code> returns the result, the intermediates and the time per stage.</td></tr><tr><th>Why</th><td>Three pipelines must be reproducible from config, not from edited code.</td></tr><tr><th>File</th><td><code>src/pipeline.py</code>, <code>configs/pipeline_a|b|c.yaml</code></td></tr><tr><th>Functions</th><td><code>STAGES</code>, <code>run(img, config, keep_intermediates=True)</code>, <code>load_config(path)</code></td></tr><tr><th>How</th><td>Map each stage name to a module function. Validate parameter names when the config loads. Record dtype and range after each stage.</td></tr><tr><th>Expected output</th><td>Pipelines A, B and C run end to end. Block diagrams with dtype and range on every arrow.</td></tr><tr><th>Test</th><td><code>tests/test_pipeline.py</code>: each config runs on a 32&times;32 synthetic image and gives deterministic output.</td></tr><tr><th>Evidence</th><td>Intermediate images from 3 dev images per pipeline.</td></tr><tr><th>Done when</th><td>All dev images run through A, B and C without errors.</td></tr></table>
+<p class="task-title">T1.16 &middot; Pipeline A vs both baselines (dev) <span class="tag">W11</span></p>
+<table class="card"><tr><th>What</th><td>Per-image comparison of Trivial, Simple and A on the dev set, including a win count.</td></tr><tr><th>Why</th><td>This is the first evidence that design work beats the benchmark, as the spec requires.</td></tr><tr><th>File</th><td><code>experiments/results/a_vs_baselines.csv</code>, notebook 02</td></tr><tr><th>Functions</th><td>Uses <code>evaluate()</code> and <code>run()</code></td></tr><tr><th>How</th><td>Run all three on every dev image. Paired difference per image. Box plot.</td></tr><tr><th>Expected output</th><td>Table of mean&plusmn;std, wins and losses, and the 3 images where A loses most.</td></tr><tr><th>Test</th><td>Spot-check 3 images by hand against their GT.</td></tr><tr><th>Evidence</th><td>Box plot and loss panels with intermediate stages.</td></tr><tr><th>Done when</th><td>Interpretation written (2&ndash;4 sentences).</td></tr></table>
+<p class="task-title">T1.17 &middot; Code reviews and pull-request management <span class="tag">ongoing</span></p>
+<table class="card"><tr><th>What</th><td>Review every integration PR. Make sure every PR has a different-member reviewer (Section 2.1). Merge only when CI is green.</td></tr><tr><th>Why</th><td>The spec requires reviews by a different member. Commit history is evidence of individual contribution.</td></tr><tr><th>File</th><td>GitHub PR pages, <code>.github/pull_request_template.md</code></td></tr><tr><th>Functions</th><td>None</td></tr><tr><th>How</th><td>PR template with a checklist (tests, docstrings, line length, hand example, library comparison). Review within 24 h. Squash only trivial fix-up commits.</td></tr><tr><th>Expected output</th><td>Every merged PR has an approving review from someone other than its author.</td></tr><tr><th>Test</th><td>Check weekly: no direct pushes to <code>main</code>.</td></tr><tr><th>Evidence</th><td>PR list screenshot for the report's contribution section.</td></tr><tr><th>Done when</th><td>All work packages are merged through reviewed PRs.</td></tr></table>
+<p class="task-title">T1.18 &middot; Unit-test coordination and CI (Bonus 2) <span class="tag">W10 onward</span></p>
+<table class="card"><tr><th>What</th><td>GitHub Actions running <code>pytest</code> on push and PR, branch protection that requires CI, and test standards for every member.</td></tr><tr><th>Why</th><td>Bonus 2. It also catches integration breaks early.</td></tr><tr><th>File</th><td><code>.github/workflows/tests.yml</code>, <code>tests/conftest.py</code>, <code>bonus/ci/README.md</code></td></tr><tr><th>Functions</th><td>Shared fixtures: <code>rng</code>, <code>small_gray</code>, <code>small_mask</code></td></tr><tr><th>How</th><td>Workflow: checkout &rarr; setup-python (Colab's version) &rarr; <code>pip install -r requirements.txt</code> &rarr; <code>pytest -q</code>. Add the required status check.</td></tr><tr><th>Expected output</th><td>A green check on every PR. A failing test blocks the merge.</td></tr><tr><th>Test</th><td>Open a deliberately failing PR and confirm the merge is blocked.</td></tr><tr><th>Evidence</th><td>Workflow run URLs, branch-rule screenshot, <code>bonus_results.csv</code> row.</td></tr><tr><th>Done when</th><td>CI has been green on <code>main</code> for a week and every module has tests.</td></tr></table>
+<p class="task-title">T1.19 &middot; Speed-optimization coordination (Bonus 5) <span class="tag">W13</span></p>
+<table class="card"><tr><th>What</th><td>Profile the final pipeline, find the bottlenecks, have the owners optimize them, and measure the speedup without changing the outputs.</td></tr><tr><th>Why</th><td>Bonus 5, and it secures the 10-minute Colab limit.</td></tr><tr><th>File</th><td><code>bonus/optimization/</code> (profile output, results CSV, README)</td></tr><tr><th>Functions</th><td><code>cProfile</code> run of <code>run()</code> on 10 dev images</td></tr><tr><th>How</th><td>Profile, then rank stages by time, then the owner optimizes (vectorise or use <code>sliding_window_view</code>), then confirm <code>np.array_equal</code> on the outputs.</td></tr><tr><th>Expected output</th><td>Before and after table per stage and per image, with speedup = T<sub>orig</sub>/T<sub>opt</sub>.</td></tr><tr><th>Test</th><td>The outputs before and after are identical (or within a documented tolerance).</td></tr><tr><th>Evidence</th><td>Profile dumps, timing CSV, tracker row.</td></tr><tr><th>Done when</th><td>At least one meaningful speedup with evidence, or an honest &ldquo;incomplete&rdquo;.</td></tr></table>
+<p class="task-title">T1.20 &middot; Final pipeline selection (dev only) and robustness <span class="tag">W13</span></p>
+<table class="card"><tr><th>What</th><td>Choose the final pipeline from the dev metrics and the ablations. Freeze it in config with a tag. Run 3 noise levels &times; seeds 0, 1, 2.</td></tr><tr><th>Why</th><td>The spec requires dev-only selection and mean&plusmn;std over 3 levels &times; 3 seeds.</td></tr><tr><th>File</th><td><code>configs/final_pipeline.yaml</code>, <code>experiments/results/robustness.csv</code></td></tr><tr><th>Functions</th><td><code>run()</code>, <code>add_noise()</code>, <code>evaluate()</code></td></tr><tr><th>How</th><td>Write a selection rationale table. <code>git tag results-frozen</code>. Loop over levels &times; seeds.</td></tr><tr><th>Expected output</th><td>Final config plus a robustness table of mean&plusmn;std.</td></tr><tr><th>Test</th><td>Re-running one cell reproduces the same number.</td></tr><tr><th>Evidence</th><td>Tag, CSV, figure of intermediates at the high noise level.</td></tr><tr><th>Done when</th><td>Tagged before any test-set run.</td></tr></table>
+<p class="task-title">T1.21 &middot; Test-set evaluation (once) and final results table <span class="tag">W13</span></p>
+<table class="card"><tr><th>What</th><td>With MEM5, run the final pipeline and both baselines on the test set once.</td></tr><tr><th>Why</th><td>This is the headline result. It is only valid if it was not used for selection.</td></tr><tr><th>File</th><td><code>experiments/results/test_final.csv</code>, README results table</td></tr><tr><th>Functions</th><td><code>evaluate(config, split="test")</code></td></tr><tr><th>How</th><td>Run from the <code>results-frozen</code> tag. Record the commit hash in the CSV.</td></tr><tr><th>Expected output</th><td>Per-image metric, mean, std, best and worst image, for all three methods.</td></tr><tr><th>Test</th><td>A fresh clone reproduces the same means.</td></tr><tr><th>Evidence</th><td>CSV, README table, log row.</td></tr><tr><th>Done when</th><td>The numbers are copied into the report and slides unchanged.</td></tr></table>
+<p class="task-title">T1.22 &middot; Second-dataset generalization (Bonus 3, with MEM5) <span class="tag">W13</span></p>
+<table class="card"><tr><th>What</th><td>Pick a second suitable dataset, check its licence and GT, and run the frozen pipeline on it with no tuning.</td></tr><tr><th>Why</th><td>Bonus 3. It shows whether our design choices generalize.</td></tr><tr><th>File</th><td><code>bonus/generalization/</code>, <code>configs/final_pipeline.yaml</code> (unchanged)</td></tr><tr><th>Functions</th><td><code>load_image</code> (adapter if the file layout differs), <code>evaluate()</code></td></tr><tr><th>How</th><td>Candidates (licences still to check): CrackForest (CFD), DeepCrack, Crack500. It must not reuse &Ouml;zgenel's photos, so Cai's Mendeley set is excluded. Only loader adapters may change, never parameters.</td></tr><tr><th>Expected output</th><td>Comparison table of primary vs second dataset, and a discussion of the differences.</td></tr><tr><th>Test</th><td>A config hash check proves the final config is unchanged.</td></tr><tr><th>Evidence</th><td>CSV, sample panels, tracker row.</td></tr><tr><th>Done when</th><td>Results and the limitations discussion are written.</td></tr></table>
+<p class="task-title">T1.23 &middot; Report review, presentation coordination, demo review <span class="tag">W13&ndash;W14</span></p>
+<table class="card"><tr><th>What</th><td>Edit the full report for consistency. Coordinate the slides and rehearsals. Test the demo on another device.</td></tr><tr><th>Why</th><td>The report (10%) and the presentation (5%) are graded as one team product. The numbers must match the repository.</td></tr><tr><th>File</th><td><code>report/</code>, slides, <code>app/</code></td></tr><tr><th>Functions</th><td>None</td></tr><tr><th>How</th><td>Check every table against its CSV. Run 2 timed rehearsals. Test the demo from a phone on the public URL.</td></tr><tr><th>Expected output</th><td>Report PDF and slides in <code>report/</code>. Rehearsal under 10:00.</td></tr><tr><th>Test</th><td>Number audit: every value in the report is traced to a CSV row.</td></tr><tr><th>Evidence</th><td>Rehearsal timing notes, demo screenshot from a second device.</td></tr><tr><th>Done when</th><td>Final versions committed before the <code>v1.0</code> tag.</td></tr></table>
+<p class="task-title">T1.24 &middot; Individual defense preparation (team) <span class="tag">W13&ndash;W14</span></p>
+<table class="card"><tr><th>What</th><td>Run mock defenses in rotation (1&rarr;2&rarr;3&rarr;4&rarr;5&rarr;1) on each member's own package and on the whole pipeline.</td></tr><tr><th>Why</th><td>Defense is 10% per member, and a member who cannot explain their work can lose up to 50% of their share of the team mark.</td></tr><tr><th>File</th><td>Section 19 of this plan</td></tr><tr><th>Functions</th><td>None</td></tr><tr><th>How</th><td>10 minutes per member: 5 questions on their own package and 3 on the pipeline. Re-test the weak answers 2 days later.</td></tr><tr><th>Expected output</th><td>Every member can answer every Section 19 question without notes.</td></tr><tr><th>Test</th><td>Mock-defense score sheet.</td></tr><tr><th>Evidence</th><td>Score sheets.</td></tr><tr><th>Done when</th><td>Every member passes a mock defense.</td></tr></table>
+<h2>4.D Commands (MEM1)</h2>
+<p class="small">Planned and not yet run (no repository exists yet). Shared setup and the git
+workflow are in Section 13.</p>
+<pre># 1. FIRST create .gitignore: data/raw/  .venv/  .idea/workspace.xml  __pycache__/  out/
+git init
+git status            # check: data/raw and .venv must NOT be listed
+git add . ; git commit -m "chore: project skeleton"
+git branch -M main
+git remote add origin https://github.com/&lt;org&gt;/&lt;repo&gt;.git     # TBD
+git push -u origin main
+git checkout -b feature/mem1-data-baselines
+pytest tests/test_metrics.py tests/test_data.py -q
+python data/download_dataset.py --out data/raw     # 746 MB, verifies SHA-256
+python -m src.pipeline --config configs/baseline_simple.yaml --split dev
+git tag -a results-frozen -m "final config selected on dev" ; git push origin --tags</pre>
+<h2>4.E Experiments owned by MEM1</h2>
+<table><tr><th>Experiment</th><th>Parameters</th><th>Data</th><th>Metric</th><th>Output</th></tr><tr><td>Resolution study</td><td>Downsampling factor &isin; {1, 2, 4, 8}</td><td>10 dev images</td><td>Primary metric under the simple baseline</td><td>Figure, CSV, lowest workable setting</td></tr><tr><td>Gray-level study</td><td>Levels &isin; {256, 64, 16, 8, 4, 2}</td><td>Same</td><td>Same</td><td>Figure, CSV</td></tr><tr><td>Baselines</td><td>Fixed</td><td>All dev</td><td>Primary metric</td><td><code>baselines_dev.csv</code></td></tr><tr><td>Pipeline A vs baselines</td><td>A's frozen parameters</td><td>All dev</td><td>Primary metric, wins</td><td>Table, box plot</td></tr><tr><td>Robustness</td><td>Gaussian &sigma; &isin; {10, 20, 30} &times; seeds {0, 1, 2}</td><td>Dev, then test once</td><td>Mean &plusmn; std</td><td>Robustness table</td></tr><tr><td>Final test evaluation</td><td>Final, trivial, simple</td><td>Test (once)</td><td>Per-image metric, mean, std, best, worst</td><td>Final results table</td></tr><tr><td>Generalization (B3)</td><td>Frozen final config</td><td>Second dataset</td><td>Same metric</td><td>Comparison table</td></tr></table>
+<h2>4.F Defense preparation (MEM1)</h2>
+<p>See Section 19.1 for questions and model answers. Topics: why this metric (cost of errors);
+how the split prevents leakage; why PSNR uses 255&sup2;; why uint8 subtraction is wrong; what IoU
+rewards and punishes; what the two baselines show; how the final pipeline was chosen without the
+test set; mean &plusmn; std over seeds; the dtype and range between every stage of Pipeline C;
+how the noise models are generated; and why the resolution and gray-level study set our working
+resolution.</p>
+<h2>4.G Priorities and dependencies</h2>
+<table><tr><th>Task</th><th>Priority</th><th>Effort</th><th>Needs</th><th>Unblocks</th></tr><tr><td>T1.3&ndash;T1.5 Dataset, licence, problem</td><td>P0</td><td>6 h</td><td>Dataset (chosen)</td><td>Split, baselines, every study</td></tr><tr><td>T1.6&ndash;T1.7 Skeleton, interfaces</td><td>P0</td><td>5 h</td><td>Plan approval</td><td>All members' PRs</td></tr><tr><td>T1.8 Metrics</td><td>P0</td><td>3 h</td><td>&mdash;</td><td>Every experiment</td></tr><tr><td>T1.9&ndash;T1.11 Loader, split, noise</td><td>P0</td><td>6 h</td><td>T1.3</td><td>Baselines, MEM3 study</td></tr><tr><td>T1.13 Baselines</td><td>P0</td><td>3 h</td><td>T1.8&ndash;T1.10</td><td>Pipeline design (Checkpoint 2)</td></tr><tr><td>T1.12, T1.14 Analysis, logging</td><td>P1</td><td>6 h</td><td>T1.9, MEM2/MEM3 helpers</td><td>Design decisions</td></tr><tr><td>T1.15&ndash;T1.16 Integration, A vs baselines</td><td>P1</td><td>9 h</td><td>Module PRs</td><td>All pipeline studies</td></tr><tr><td>T1.17&ndash;T1.19 Reviews, CI, speed</td><td>P1</td><td>ongoing</td><td>&mdash;</td><td>Bonus 2, 5</td></tr><tr><td>T1.20&ndash;T1.24 Final, test, B3, report, defense</td><td>P1</td><td>12 h</td><td>All studies</td><td>Submission</td></tr></table>
+<p><b>Next task after completion:</b> update this plan to v0.2 and keep the progress tracker (Section 21) current every week.</p>
+</section>
+
+<!-- ============================== 5 MEM2 ============================== -->
+<section class="page-break mem m2">
+<h1>5. Detailed MEM2 execution plan &mdash; Image Enhancement Engineer</h1>
+<h2>5.A Responsibilities</h2>
+<table><tr><th>Area</th><th>Details</th></tr><tr><td>Role</td><td>Enhancement engineer: histogram analysis, point transformations, histogram equalization, spatial smoothing and sharpening.</td></tr><tr><td>Owned deliverables</td><td><code>src/enhancement.py</code>, its tests, the enhancement comparison, the kernel-size study, the smoothing-filter selection study, ablation AB1, report Section III-B, slide 6.</td></tr><tr><td>Collaboration</td><td>Provides <code>convolve2d</code> (also used by MEM3 and MEM4) and <code>histogram</code> (used by MEM1's analysis). Uses MEM3's <code>median_filter</code> and MEM4's <code>sobel</code>.</td></tr><tr><td>Review</td><td>Primary reviewer of MEM3's PRs. Reviewer of Bonus 3 (generalization).</td></tr></table>
+<h2>5.B File ownership</h2>
+<table><tr><th>Owns (edits freely)</th><th>Shared (coordinate first)</th><th>Must not edit without agreement</th></tr><tr><td><code>src/enhancement.py</code>, <code>tests/test_enhancement.py</code>, <code>experiments/configs/enh_*.yaml</code>, <code>experiments/results/enh_*.csv</code>, <code>experiments/figures/enh_*</code></td><td>Stage entries in <code>configs/pipeline_*.yaml</code> (requested from MEM1). The <code>convolve2d</code> signature is frozen after merge.</td><td>All other <code>src/</code> modules, <code>configs/final_pipeline.yaml</code></td></tr></table>
+<h3>Functions and classes to implement</h3>
+<pre># src/enhancement.py
+histogram(img, bins=256) -> np.ndarray                         # NumPy (np.bincount)
+negative(img) ; log_transform(img, c=None) ; gamma_transform(img, gamma, c=1.0)
+contrast_stretch(img, low_pct=2, high_pct=98)
+hist_equalize(img, variant="gw") -> np.ndarray                  # NumPy CDF mapping
+convolve2d(img, kernel, border="reflect101") -> np.ndarray      # shared core
+mean_kernel(k) ; gaussian_kernel(k, sigma) ; mean_filter(img,k) ; gaussian_filter(img,k,s)
+laplacian_sharpen(img, c=-1, kernel="8n")
+gradient_sharpen(img, mask_k=5)       # Gonzalez & Woods combined method (see T2.4)
+histogram_match(img, ref)             # optional extra (AB6)</pre>
+<h3>Genuine NumPy implementations (at least 2 required)</h3>
+<table><tr><th>#</th><th>Implementation</th><th>Compared with</th><th>Measure</th></tr><tr><td>1</td><td><code>convolve2d</code> (reflect-101 padding plus a <code>sliding_window_view</code> weighted sum)</td><td><code>cv2.filter2D(..., borderType=BORDER_REFLECT_101)</code></td><td>Max abs diff on float output (~1e-12); &le;1 after uint8 rounding</td></tr><tr><td>2</td><td><code>hist_equalize</code></td><td><code>cv2.equalizeHist</code></td><td>Max abs diff; &plusmn;1 differences explained by OpenCV's CDF-minimum convention</td></tr><tr><td>3</td><td><code>gamma_transform</code>, <code>gaussian_kernel</code></td><td><code>skimage.exposure.adjust_gamma</code>, <code>cv2.getGaussianKernel</code></td><td><code>np.allclose</code></td></tr></table>
+<h2>5.C Step-by-step tasks</h2>
+<p class="task-title">T2.1 &middot; Histogram and point transformations <span class="tag">dataset-free</span></p>
+<table class="card"><tr><th>What</th><td><code>histogram</code>, <code>negative</code>, <code>log_transform</code>, <code>gamma_transform</code>, <code>contrast_stretch</code>.</td></tr><tr><th>Why</th><td>They correct low contrast and dark or bright bias, the first defects the analysis will reveal.</td></tr><tr><th>File</th><td><code>src/enhancement.py</code>, <code>tests/test_enhancement.py</code></td></tr><tr><th>Functions</th><td><code>histogram</code>, <code>negative</code>, <code>log_transform</code>, <code>gamma_transform</code>, <code>contrast_stretch</code></td></tr><tr><th>How</th><td>Work in float64 on [0,1] internally, then <code>np.clip</code> and round back to uint8. Log uses <code>c = 255/ln 256</code>. Gamma: <code>255&middot;(r/255)^&gamma;</code>. Stretch between the low and high percentiles.</td></tr><tr><th>Expected output</th><td>uint8 outputs in [0,255]. A histogram of length 256 that sums to H&middot;W.</td></tr><tr><th>Test</th><td>log(15)&rarr;127.5. Gamma 0.5 at 63.75&rarr;127.5. Negative applied twice is the identity. Constant image. 1&times;1 image.</td></tr><tr><th>Evidence</th><td>Test run, and a before/after figure with histograms.</td></tr><tr><th>Done when</th><td>Tests green, docstrings written, PR approved by MEM3.</td></tr></table>
+<p class="task-title">T2.2 &middot; Histogram equalization <span class="tag">dataset-free</span></p>
+<table class="card"><tr><th>What</th><td>NumPy histogram equalization by CDF mapping, compared with <code>cv2.equalizeHist</code>.</td></tr><tr><th>Why</th><td>This is a required NumPy implementation. It spreads intensities in low-contrast images.</td></tr><tr><th>File</th><td><code>src/enhancement.py</code></td></tr><tr><th>Functions</th><td><code>hist_equalize(img, variant="gw"|"cv")</code></td></tr><tr><th>How</th><td>Histogram, then normalized CDF, then <code>s_k = round((L&minus;1)&middot;cdf_k)</code> (Gonzalez &amp; Woods). The <code>"cv"</code> variant uses <code>(cdf&minus;cdf_min)/(N&minus;cdf_min)</code>. Apply with a lookup table.</td></tr><tr><th>Expected output</th><td>An image with a roughly flat histogram. Max abs diff vs OpenCV of 0 for the <code>cv</code> variant.</td></tr><tr><th>Test</th><td>Hand example in Section 19.2 (3-bit). Constant image (avoid divide by zero). Already-equalized input.</td></tr><tr><th>Evidence</th><td>Comparison table, the hand example printed.</td></tr><tr><th>Done when</th><td>Both variants tested and the difference explained in a docstring.</td></tr></table>
+<p class="task-title">T2.3 &middot; Convolution core, mean and Gaussian smoothing <span class="tag">dataset-free &middot; P0</span></p>
+<table class="card"><tr><th>What</th><td><code>convolve2d</code> plus the mean and Gaussian kernels and filters.</td></tr><tr><th>Why</th><td>This is the shared core for every neighbourhood operation. MEM3 and MEM4 depend on it.</td></tr><tr><th>File</th><td><code>src/enhancement.py</code></td></tr><tr><th>Functions</th><td><code>convolve2d</code>, <code>mean_kernel</code>, <code>gaussian_kernel</code>, <code>mean_filter</code>, <code>gaussian_filter</code></td></tr><tr><th>How</th><td><code>np.pad(mode="reflect")</code>, then <code>sliding_window_view</code>, then <code>einsum</code> with the kernel (correlation). Kernels sum to 1. Gaussian &sigma; defaults to <code>0.3&middot;((k&minus;1)&middot;0.5&minus;1)+0.8</code> (OpenCV's rule).</td></tr><tr><th>Expected output</th><td>Same-size output: (N&minus;F+2P)/S+1 = N with P=(F&minus;1)/2, S=1.</td></tr><tr><th>Test</th><td>vs <code>cv2.filter2D</code>. Identity kernel returns the input. A constant image is unchanged. Hand 3&times;3 example (centre value 5). Even k raises an error.</td></tr><tr><th>Evidence</th><td>Comparison test, timing of the loop vs the vectorised version (speed bonus).</td></tr><tr><th>Done when</th><td>Merged early in W9&ndash;W10. MEM3 and MEM4 confirm they can import it.</td></tr></table>
+<p class="task-title">T2.4 &middot; Laplacian and gradient sharpening <span class="tag">dataset-free</span></p>
+<table class="card"><tr><th>What</th><td>Laplacian sharpening, and gradient sharpening using the Gonzalez &amp; Woods &ldquo;combining spatial enhancement methods&rdquo; scheme.</td></tr><tr><th>Why</th><td>Both are required methods. They restore edge detail lost to blur or smoothing.</td></tr><tr><th>File</th><td><code>src/enhancement.py</code></td></tr><tr><th>Functions</th><td><code>laplacian_sharpen</code>, <code>gradient_sharpen</code></td></tr><tr><th>How</th><td>Laplacian: <code>g = f + c&middot;&nabla;&sup2;f</code> with c = &minus;1 for the centre-negative kernel. Gradient: Sobel magnitude M = |&nabla;f|, smooth it with a 5&times;5 mean, normalize to [0,1], then <code>g = f + M<sub>s</sub>&middot;(f<sub>lap</sub> &minus; f)</code>. Detail is added only where edges are strong, so flat noisy areas are not amplified.</td></tr><tr><th>Expected output</th><td>Sharper edges, with noise in flat regions not boosted (gradient version).</td></tr><tr><th>Test</th><td>A constant image is unchanged. A step edge gets overshoot. Compare the Laplacian with <code>cv2.Laplacian(ksize=1)</code>.</td></tr><tr><th>Evidence</th><td>Before/after crops with the edge profile plotted.</td></tr><tr><th>Done when</th><td>Tests green, and the method can be explained from the equations.</td></tr></table>
+<p class="task-title">T2.5 &middot; Histogram analysis of dev images <span class="tag">after dataset</span></p>
+<table class="card"><tr><th>What</th><td>Histograms of 5 typical and 5 difficult dev images, plus local histograms in bright and dark regions.</td></tr><tr><th>Why</th><td>This feeds MEM1's findings &rarr; decisions table and justifies which enhancements to use.</td></tr><tr><th>File</th><td><code>notebooks/01_image_analysis.ipynb</code> (MEM2 section)</td></tr><tr><th>Functions</th><td><code>histogram</code></td></tr><tr><th>How</th><td>Overlay the histograms and mark modes, clipping and dynamic range. Compare the foreground and background distributions using the GT masks.</td></tr><tr><th>Expected output</th><td>A figure plus 3&ndash;5 written findings.</td></tr><tr><th>Test</th><td>Histogram counts sum to the pixel count.</td></tr><tr><th>Evidence</th><td><code>experiments/figures/enh_hist_*.png</code></td></tr><tr><th>Done when</th><td>Findings handed to MEM1 and agreed.</td></tr></table>
+<p class="task-title">T2.6 &middot; Enhancement method comparison (dev) <span class="tag">after baselines</span></p>
+<table class="card"><tr><th>What</th><td>Apply all 10 methods in front of the simple baseline. Report the histograms and the primary metric.</td></tr><tr><th>Why</th><td>The spec requires every method compared on our own data, with the defect each one corrects.</td></tr><tr><th>File</th><td><code>experiments/configs/enh_compare.yaml</code>, <code>experiments/results/enh_compare.csv</code></td></tr><tr><th>Functions</th><td>All T2.1&ndash;T2.4 functions, <code>baseline_simple</code>, <code>log_run</code></td></tr><tr><th>How</th><td>One run per method on all dev images, everything else fixed.</td></tr><tr><th>Expected output</th><td>A table: method, the defect it corrects, metric mean&plusmn;std, histogram spread.</td></tr><tr><th>Test</th><td>The &ldquo;none&rdquo; row reproduces the simple-baseline number exactly.</td></tr><tr><th>Evidence</th><td>CSV, figure grid, log rows.</td></tr><tr><th>Done when</th><td>Interpretation written, including the methods that made results worse.</td></tr></table>
+<p class="task-title">T2.7 &middot; Kernel-size study (one factor at a time) <span class="tag">after baselines</span></p>
+<table class="card"><tr><th>What</th><td>Mean, Gaussian and median filters at k = 3, 5, 7, inside the reference pipeline.</td></tr><tr><th>Why</th><td>A required one-factor-at-a-time study. It justifies the chosen kernel size.</td></tr><tr><th>File</th><td><code>experiments/configs/enh_kernel.yaml</code>, <code>experiments/results/enh_kernel.csv</code></td></tr><tr><th>Functions</th><td><code>mean_filter</code>, <code>gaussian_filter</code>, MEM3's <code>median_filter</code></td></tr><tr><th>How</th><td>Change only k. Save crops to show over-smoothing at k = 7.</td></tr><tr><th>Expected output</th><td>Plot of metric vs k for each filter, and the chosen k.</td></tr><tr><th>Test</th><td>Each run is logged with its parameters.</td></tr><tr><th>Evidence</th><td>Plot, crops, log rows.</td></tr><tr><th>Done when</th><td>Choice justified in 1&ndash;2 sentences.</td></tr></table>
+<p class="task-title">T2.8 &middot; Smoothing-filter selection per noise type (with MEM3) <span class="tag">after baselines</span></p>
+<table class="card"><tr><th>What</th><td>Compare mean, Gaussian and median smoothing under each noise type and level.</td></tr><tr><th>Why</th><td>The spec says &ldquo;choose the smoothing filter from evidence&rdquo; on our own images.</td></tr><tr><th>File</th><td><code>experiments/results/enh_smoothing_selection.csv</code></td></tr><tr><th>Functions</th><td>Smoothing filters, MEM1's <code>add_noise</code>, <code>psnr</code>, primary metric</td></tr><tr><th>How</th><td>For 4 noise types &times; 3 levels &times; 3 filters (k fixed from T2.7), record PSNR against the clean image and the downstream primary metric.</td></tr><tr><th>Expected output</th><td>A heatmap and the selected filter for each noise type.</td></tr><tr><th>Test</th><td>Seeds fixed. The result is the same when re-run.</td></tr><tr><th>Evidence</th><td>CSV, heatmap, log rows.</td></tr><tr><th>Done when</th><td>The selection is used in Pipeline B's config.</td></tr></table>
+<p class="task-title">T2.9 &middot; Ablation AB1: with vs without enhancement <span class="tag">W12&ndash;W13</span></p>
+<table class="card"><tr><th>What</th><td>Remove the enhancement stage from the full pipeline and keep everything else fixed.</td></tr><tr><th>Why</th><td>A required ablation. It shows whether enhancement actually helps the task.</td></tr><tr><th>File</th><td><code>experiments/configs/ab1_no_enh.yaml</code></td></tr><tr><th>Functions</th><td><code>run()</code>, <code>evaluate()</code></td></tr><tr><th>How</th><td>Run the full pipeline and the version without enhancement on the dev set.</td></tr><tr><th>Expected output</th><td>&Delta; in the primary metric, mean&plusmn;std, and images where removing it helps or hurts.</td></tr><tr><th>Test</th><td>Same seed and same split.</td></tr><tr><th>Evidence</th><td>CSV, figure, log rows.</td></tr><tr><th>Done when</th><td>Result explained, even if enhancement turns out not to help.</td></tr></table>
+<p class="task-title">T2.10 &middot; Optional extra: histogram matching <span class="tag">optional</span></p>
+<table class="card"><tr><th>What</th><td>Match each image's histogram to a reference dev image.</td></tr><tr><th>Why</th><td>The spec recommends it and says it counts as an ablation.</td></tr><tr><th>File</th><td><code>src/enhancement.py</code></td></tr><tr><th>Functions</th><td><code>histogram_match(img, ref)</code></td></tr><tr><th>How</th><td>Map the source CDF to the reference CDF (inverse lookup).</td></tr><tr><th>Expected output</th><td>Image with a histogram close to the reference.</td></tr><tr><th>Test</th><td>vs <code>skimage.exposure.match_histograms</code>.</td></tr><tr><th>Evidence</th><td>Comparison test, ablation row AB6.</td></tr><tr><th>Done when</th><td>Only after T2.1&ndash;T2.9 are done.</td></tr></table>
+<p class="task-title">T2.11 &middot; Tests, speed, report section, slide <span class="tag">W13</span></p>
+<table class="card"><tr><th>What</th><td>Full test coverage of the module, a speed check of <code>convolve2d</code>, report Section III-B, slide 6.</td></tr><tr><th>Why</th><td>Bonus 2 and Bonus 5 evidence. Report and presentation duties.</td></tr><tr><th>File</th><td><code>tests/test_enhancement.py</code>, <code>bonus/optimization/</code>, <code>report/</code></td></tr><tr><th>Functions</th><td>All of the module's functions</td></tr><tr><th>How</th><td>Profile the loop vs vectorised version. Write about 0.75 page with equations and a hand example.</td></tr><tr><th>Expected output</th><td>Speedup row, report text, slide.</td></tr><tr><th>Test</th><td><code>pytest tests/test_enhancement.py</code> passes.</td></tr><tr><th>Evidence</th><td>Timing CSV, report PR.</td></tr><tr><th>Done when</th><td>Reviewed by MEM3 and MEM1.</td></tr></table>
+<h2>5.D Commands</h2>
+<p class='small'>Planned and not yet run. Environment setup and the full git workflow are in Section 13.</p>
+<pre>git checkout -b feature/mem2-enhancement
+pytest tests/test_enhancement.py -q
+python -m src.evaluate --config experiments/configs/enh_compare.yaml --split dev
+git add src/enhancement.py tests/test_enhancement.py
+git commit -m "feat(enhancement): NumPy convolve2d with reflect-101 borders and tests"
+git push -u origin feature/mem2-enhancement      # then open a PR, reviewer: MEM3</pre>
+<h2>5.E Experiments</h2>
+<p class='small'>All runs use dev data only, fixed seeds, the reference config with one factor changed, a row in <code>experiment_log.csv</code>, saved figures, and 2&ndash;4 sentences of interpretation.</p>
+<table><tr><th>Study</th><th>Factor and values</th><th>Held fixed</th><th>Metric</th><th>Output</th></tr><tr><td>Enhancement comparison</td><td>Method (10 + none)</td><td>Simple baseline after it</td><td>Primary metric, histogram spread</td><td>Table + figure grid</td></tr><tr><td>Kernel size</td><td>k = 3, 5, 7</td><td>Filter type, rest of the pipeline</td><td>Primary metric</td><td>Plot</td></tr><tr><td>Smoothing selection</td><td>Mean / Gaussian / median &times; 4 noise &times; 3 levels</td><td>k from the kernel study</td><td>PSNR + primary metric</td><td>Heatmap</td></tr><tr><td>AB1</td><td>Enhancement on/off</td><td>Final pipeline</td><td>Primary metric</td><td>Table</td></tr><tr><td>AB6 (optional)</td><td>Histogram matching vs equalization</td><td>Final pipeline</td><td>Primary metric</td><td>Table</td></tr></table>
+<h2>5.F Defense preparation</h2>
+<p>Point transformations and their equations. Why histogram equalization can hurt segmentation. Mean vs Gaussian (ringing, frequency response). Why median is not linear. Laplacian sign convention. Why the gradient mask in the combined method suppresses noise. Border handling (reflect-101). Output-size formula. Hand examples in Section 19.2. Questions and model answers: Section 19.2. Whole-pipeline questions: Section 19.6.</p>
+<h2>5.G Priorities and dependencies</h2>
+<table><tr><th>Task</th><th>Priority</th><th>Effort</th><th>Needs</th><th>Unblocks</th></tr><tr><td>T2.3 convolve2d</td><td>P0</td><td>4 h</td><td>Skeleton</td><td>MEM3, MEM4</td></tr><tr><td>T2.1&ndash;T2.2</td><td>P0</td><td>5 h</td><td>&mdash;</td><td>Analysis, Pipeline A</td></tr><tr><td>T2.4</td><td>P1</td><td>3 h</td><td>MEM4's Sobel</td><td>Pipeline B/C</td></tr><tr><td>T2.5&ndash;T2.8</td><td>P1</td><td>8 h</td><td>Dataset, baselines</td><td>Pipeline B choice</td></tr><tr><td>T2.9&ndash;T2.11</td><td>P2</td><td>5 h</td><td>Pipelines</td><td>Report</td></tr></table>
+<p><b>Next task after completion:</b> Help MEM5 with the demo's histogram panel.</p>
+</section>
+
+<!-- ============================== 6 MEM3 ============================== -->
+<section class="page-break mem m3">
+<h1>6. Detailed MEM3 execution plan &mdash; Restoration &amp; Frequency Engineer</h1>
+<h2>6.A Responsibilities</h2>
+<table><tr><th>Area</th><th>Details</th></tr><tr><td>Role</td><td>Restoration and frequency engineer: noise models (validates MEM1's generators), restoration filters, DFT, frequency-domain filters.</td></tr><tr><td>Owned deliverables</td><td><code>src/restoration.py</code>, <code>src/frequency.py</code>, their tests, the PSNR study, the D0 study, ablations AB2 and AB5, Bonus 4 (compression), report Section III-C, slide 7.</td></tr><tr><td>Collaboration</td><td>Provides <code>median_filter</code> (simple restoration baseline, MEM2's studies) and <code>centered_spectrum</code> (MEM1's analysis). Uses MEM1's <code>add_noise</code> and MEM2's <code>convolve2d</code>.</td></tr><tr><td>Review</td><td>Primary reviewer of MEM2's PRs. Reviewer of Bonus 5 (speed).</td></tr></table>
+<h2>6.B File ownership</h2>
+<table><tr><th>Owns (edits freely)</th><th>Shared (coordinate first)</th><th>Must not edit without agreement</th></tr><tr><td><code>src/restoration.py</code>, <code>src/frequency.py</code>, <code>tests/test_restoration.py</code>, <code>tests/test_frequency.py</code>, <code>bonus/compression/</code>, <code>experiments/*/res_*</code></td><td>Noise levels in <code>configs/noise.yaml</code> (agreed with MEM1)</td><td>Other modules, <code>configs/final_pipeline.yaml</code></td></tr></table>
+<h3>Functions and classes to implement</h3>
+<pre># src/restoration.py   (all NumPy, reflect-101 borders)
+arithmetic_mean(img,k) ; geometric_mean(img,k) ; harmonic_mean(img,k)
+contraharmonic_mean(img,k,Q) ; median_filter(img,k) ; max_filter(img,k)
+min_filter(img,k) ; midpoint_filter(img,k) ; alpha_trimmed_mean(img,k,d)
+wiener_filter(img, H, K)                  # optional extra (AB7)
+# src/frequency.py
+dft2(img) ; idft2(F) ; centered_spectrum(img) -> log(1+|F|)
+distance_grid(shape) -> D(u,v)
+ideal_lowpass(shape,D0) ; butterworth_lowpass(shape,D0,n) ; gaussian_lowpass(shape,D0)
+highpass(H_lp) = 1 - H_lp ; apply_filter(img, H, pad=True) -> uint8
+# bonus/compression/codec.py
+rle_encode / rle_decode ; huffman_encode / huffman_decode</pre>
+<h3>Genuine NumPy implementations (at least 2 required)</h3>
+<table><tr><th>#</th><th>Implementation</th><th>Compared with</th><th>Measure</th></tr><tr><td>1</td><td>Order-statistic filters (median, max, min) by sorting <code>sliding_window_view</code> windows</td><td><code>scipy.ndimage.*_filter(mode="mirror")</code>, <code>cv2.medianBlur</code></td><td><code>np.array_equal</code> (exact)</td></tr><tr><td>2</td><td>Ideal, Butterworth and Gaussian H(u,v), with centring by (&minus;1)<sup>x+y</sup></td><td><code>np.fft.fftshift</code> path; spatial <code>cv2.GaussianBlur</code></td><td>Max abs diff; PSNR between the outputs</td></tr><tr><td>3</td><td>Naive matrix DFT <code>W&middot;f&middot;W</code> for N&le;64</td><td><code>np.fft.fft2</code></td><td><code>np.allclose</code></td></tr></table>
+<h2>6.C Step-by-step tasks</h2>
+<p class="task-title">T3.1 &middot; Mean-type restoration filters <span class="tag">dataset-free</span></p>
+<table class="card"><tr><th>What</th><td>Arithmetic, geometric, harmonic and contraharmonic mean filters.</td></tr><tr><th>Why</th><td>Required restoration methods, each suited to different noise.</td></tr><tr><th>File</th><td><code>src/restoration.py</code>, <code>tests/test_restoration.py</code></td></tr><tr><th>Functions</th><td><code>arithmetic_mean</code>, <code>geometric_mean</code>, <code>harmonic_mean</code>, <code>contraharmonic_mean</code></td></tr><tr><th>How</th><td>Windows from reflect-101 padding plus <code>sliding_window_view</code>. Geometric mean via <code>exp(mean(log(f+1)))&minus;1</code>. Contraharmonic: &Sigma;f<sup>Q+1</sup>/&Sigma;f<sup>Q</sup> (Q&gt;0 removes pepper, Q&lt;0 removes salt).</td></tr><tr><th>Expected output</th><td>uint8 outputs the same size as the input.</td></tr><tr><th>Test</th><td>Arithmetic mean vs <code>cv2.blur</code>. Hand 3&times;3 example (mean 37.1). Constant image. Q = 0 equals the arithmetic mean.</td></tr><tr><th>Evidence</th><td>Test run.</td></tr><tr><th>Done when</th><td>Tests green, PR approved by MEM2.</td></tr></table>
+<p class="task-title">T3.2 &middot; Order-statistic filters <span class="tag">dataset-free &middot; P0</span></p>
+<table class="card"><tr><th>What</th><td>Median, max, min, midpoint and alpha-trimmed mean filters.</td></tr><tr><th>Why</th><td>The median is needed for the simple restoration baseline. These are the required order-statistic filters.</td></tr><tr><th>File</th><td><code>src/restoration.py</code></td></tr><tr><th>Functions</th><td><code>median_filter</code>, <code>max_filter</code>, <code>min_filter</code>, <code>midpoint_filter</code>, <code>alpha_trimmed_mean</code></td></tr><tr><th>How</th><td>Sort each window along the last axis. Alpha-trimmed: drop d/2 values from each end and average the rest.</td></tr><tr><th>Expected output</th><td>Hand window (Section 19.3): median 11, max 255, min 0, midpoint 127.5, alpha-trimmed(d=2) 11.29.</td></tr><tr><th>Test</th><td><code>np.array_equal</code> vs SciPy with <code>mode="mirror"</code>. d = 0 equals the mean. d = k&sup2;&minus;1 equals the median.</td></tr><tr><th>Evidence</th><td>Comparison test, the hand example printed.</td></tr><tr><th>Done when</th><td>Merged by the end of W9 so the baselines can use it.</td></tr></table>
+<p class="task-title">T3.3 &middot; DFT, centred spectrum, inverse DFT <span class="tag">dataset-free</span></p>
+<table class="card"><tr><th>What</th><td>Forward and inverse 2-D DFT, centring and log-magnitude display.</td></tr><tr><th>Why</th><td>Required frequency-domain foundation, also used in MEM1's image analysis.</td></tr><tr><th>File</th><td><code>src/frequency.py</code>, <code>tests/test_frequency.py</code></td></tr><tr><th>Functions</th><td><code>dft2</code>, <code>idft2</code>, <code>centered_spectrum</code></td></tr><tr><th>How</th><td>Multiply by (&minus;1)<sup>x+y</sup>, then DFT (<code>np.fft.fft2</code>, plus a naive matrix version for small N to prove understanding), then display <code>log(1+|F|)</code>.</td></tr><tr><th>Expected output</th><td>Spectrum image with DC at the centre.</td></tr><tr><th>Test</th><td>IDFT(DFT(f)) = f within 1e-9. DC term equals the sum of pixels. Naive DFT vs <code>np.fft.fft2</code>.</td></tr><tr><th>Evidence</th><td>Spectrum figure of a dev image.</td></tr><tr><th>Done when</th><td>Tests green.</td></tr></table>
+<p class="task-title">T3.4 &middot; Ideal, Butterworth and Gaussian LP/HP filters <span class="tag">dataset-free</span></p>
+<table class="card"><tr><th>What</th><td>Transfer functions and padded frequency-domain filtering.</td></tr><tr><th>Why</th><td>Required methods, used to show cutoff effects, blurring and ringing.</td></tr><tr><th>File</th><td><code>src/frequency.py</code></td></tr><tr><th>Functions</th><td><code>distance_grid</code>, <code>ideal_lowpass</code>, <code>butterworth_lowpass</code>, <code>gaussian_lowpass</code>, <code>highpass</code>, <code>apply_filter</code></td></tr><tr><th>How</th><td>Pad to 2M&times;2N, centre, multiply by H, inverse DFT, un-centre, crop, take the real part, clip to uint8.</td></tr><tr><th>Expected output</th><td>Filtered image plus the spectrum before and after.</td></tr><tr><th>Test</th><td>H(D0): ideal 1, Butterworth 0.5, Gaussian 0.607. LP + HP = 1. H = 1 returns the input.</td></tr><tr><th>Evidence</th><td>Figure of the 3 filter types at the same D0.</td></tr><tr><th>Done when</th><td>Tests green, padding choice documented.</td></tr></table>
+<p class="task-title">T3.5 &middot; Spectra for the image analysis <span class="tag">after dataset</span></p>
+<table class="card"><tr><th>What</th><td>Centred log spectra of typical and difficult dev images, with the dominant structures interpreted.</td></tr><tr><th>Why</th><td>The spec requires spectra in the analysis. They show periodic noise and texture.</td></tr><tr><th>File</th><td><code>notebooks/01_image_analysis.ipynb</code> (MEM3 section)</td></tr><tr><th>Functions</th><td><code>centered_spectrum</code></td></tr><tr><th>How</th><td>Compare the spectra of clean and noisy versions. Mark the energy concentration.</td></tr><tr><th>Expected output</th><td>Figure plus 2&ndash;3 findings.</td></tr><tr><th>Test</th><td>&mdash; (analysis)</td></tr><tr><th>Evidence</th><td><code>experiments/figures/res_spectrum_*.png</code></td></tr><tr><th>Done when</th><td>Findings handed to MEM1.</td></tr></table>
+<p class="task-title">T3.6 &middot; PSNR study per noise type, level and filter <span class="tag">after dataset</span></p>
+<table class="card"><tr><th>What</th><td>MSE and PSNR of every restoration filter for each noise type and level, against the clean dev images.</td></tr><tr><th>Why</th><td>Required report item. It shows which filter fits which noise.</td></tr><tr><th>File</th><td><code>experiments/configs/res_psnr.yaml</code>, <code>experiments/results/res_psnr.csv</code></td></tr><tr><th>Functions</th><td>All T3.1&ndash;T3.2 filters, <code>add_noise</code>, <code>mse</code>, <code>psnr</code>, <code>log_run</code></td></tr><tr><th>How</th><td>Gaussian and salt-and-pepper required (speckle and Poisson recommended) &times; 3 levels &times; 9 filters, k = 3. Include the unprocessed input and the 3&times;3 median baselines.</td></tr><tr><th>Expected output</th><td>Heatmap and the best filter per noise type with a reason.</td></tr><tr><th>Test</th><td>Fixed seeds. The input row equals the PSNR of the noisy image.</td></tr><tr><th>Evidence</th><td>CSV, heatmap, log rows.</td></tr><tr><th>Done when</th><td>Interpretation written (for example, median beats mean for salt-and-pepper).</td></tr></table>
+<p class="task-title">T3.7 &middot; Cutoff (D0) study <span class="tag">after baselines</span></p>
+<table class="card"><tr><th>What</th><td>Ideal, Butterworth (n = 2) and Gaussian low-pass at D0 = 2%, 5% and 10% of the padded image's short side (pixel values fixed once the working size is known).</td></tr><tr><th>Why</th><td>A required one-factor-at-a-time study. It shows the blurring vs noise trade-off and ringing.</td></tr><tr><th>File</th><td><code>experiments/results/res_d0.csv</code></td></tr><tr><th>Functions</th><td>Frequency filters, <code>psnr</code></td></tr><tr><th>How</th><td>Change only D0. Show the spectrum before and after and a crop near edges.</td></tr><tr><th>Expected output</th><td>PSNR/metric vs D0 plot, ringing visible for the ideal filter.</td></tr><tr><th>Test</th><td>Larger D0 keeps more detail (monotone sanity check).</td></tr><tr><th>Evidence</th><td>Plot, figure, log rows.</td></tr><tr><th>Done when</th><td>D0 chosen and justified.</td></tr></table>
+<p class="task-title">T3.8 &middot; Ablations AB2 and AB5 <span class="tag">W12&ndash;W13</span></p>
+<table class="card"><tr><th>What</th><td>AB2: Gaussian smoothing in frequency vs in space with matched &sigma; (spatial &sigma; &asymp; N/(2&pi;D0)). AB5: mean vs median under salt-and-pepper.</td></tr><tr><th>Why</th><td>Required ablations (spatial vs frequency is named in the spec).</td></tr><tr><th>File</th><td><code>experiments/configs/ab2_*.yaml</code>, <code>ab5_*.yaml</code></td></tr><tr><th>Functions</th><td><code>gaussian_filter</code>, <code>gaussian_lowpass</code>, <code>arithmetic_mean</code>, <code>median_filter</code></td></tr><tr><th>How</th><td>Swap one stage, keep everything else fixed, run on the dev set.</td></tr><tr><th>Expected output</th><td>&Delta; metric and time for each ablation.</td></tr><tr><th>Test</th><td>The matched-&sigma; outputs differ only slightly (report the PSNR between them).</td></tr><tr><th>Evidence</th><td>CSV, figure, log rows.</td></tr><tr><th>Done when</th><td>Both explained in the report.</td></tr></table>
+<p class="task-title">T3.9 &middot; Optional extra: Wiener or inverse filtering <span class="tag">optional</span></p>
+<table class="card"><tr><th>What</th><td>Restore blurred images with a known blur model.</td></tr><tr><th>Why</th><td>The spec recommends it and says it counts as an ablation (AB7).</td></tr><tr><th>File</th><td><code>src/restoration.py</code></td></tr><tr><th>Functions</th><td><code>wiener_filter(img, H, K)</code></td></tr><tr><th>How</th><td>Blur dev images with a known Gaussian H, then restore with <code>F&#770; = H*/(|H|&sup2;+K)&middot;G</code>.</td></tr><tr><th>Expected output</th><td>PSNR gain over the blurred input.</td></tr><tr><th>Test</th><td>K &rarr; 0 approaches the inverse filter. Compare with <code>skimage.restoration.wiener</code>.</td></tr><tr><th>Evidence</th><td>CSV row AB7.</td></tr><tr><th>Done when</th><td>Only after T3.1&ndash;T3.8 are done.</td></tr></table>
+<p class="task-title">T3.10 &middot; Bonus 4: lossless compression <span class="tag">W13</span></p>
+<table class="card"><tr><th>What</th><td>RLE (for binary masks) and Huffman coding (for gray images), with decoders.</td></tr><tr><th>Why</th><td>Bonus 4. It also demonstrates coding redundancy from the course.</td></tr><tr><th>File</th><td><code>bonus/compression/codec.py</code>, <code>bonus/compression/results.csv</code></td></tr><tr><th>Functions</th><td><code>rle_encode</code>, <code>rle_decode</code>, <code>huffman_encode</code>, <code>huffman_decode</code></td></tr><tr><th>How</th><td>RLE stores (value, run) pairs in row-major order. Huffman builds the tree with <code>heapq</code> and packs the bits. Store the shape in a header.</td></tr><tr><th>Expected output</th><td>Compression ratio and encode/decode times for at least 10 final outputs.</td></tr><tr><th>Test</th><td><code>np.array_equal(decode(encode(x)), x)</code> on masks, gray images, all-0 and single-pixel inputs.</td></tr><tr><th>Evidence</th><td>Results CSV, tracker row, README.</td></tr><tr><th>Done when</th><td>Reviewed by MEM1, and limitations documented (RLE expands noisy images).</td></tr></table>
+<p class="task-title">T3.11 &middot; Tests, speed, report section, slide <span class="tag">W13</span></p>
+<table class="card"><tr><th>What</th><td>Full tests, speed-up of the order-statistic filters, report Section III-C, slide 7.</td></tr><tr><th>Why</th><td>Bonus 2 and Bonus 5 evidence. Report and presentation duties.</td></tr><tr><th>File</th><td><code>tests/</code>, <code>bonus/optimization/</code>, <code>report/</code></td></tr><tr><th>Functions</th><td>All of the module's functions</td></tr><tr><th>How</th><td>Profile the median filter (sorting vs <code>np.partition</code>). Write about 0.75 page.</td></tr><tr><th>Expected output</th><td>Speedup row, report text, slide.</td></tr><tr><th>Test</th><td><code>pytest tests/test_restoration.py tests/test_frequency.py</code> passes.</td></tr><tr><th>Evidence</th><td>Timing CSV, report PR.</td></tr><tr><th>Done when</th><td>Reviewed by MEM2 and MEM1.</td></tr></table>
+<h2>6.D Commands</h2>
+<p class='small'>Planned and not yet run. Environment setup and the full git workflow are in Section 13.</p>
+<pre>git checkout -b feature/mem3-restoration-frequency
+pytest tests/test_restoration.py tests/test_frequency.py -q
+python -m src.evaluate --config experiments/configs/res_psnr.yaml --split dev
+git add src/restoration.py src/frequency.py tests/
+git commit -m "feat(restoration): NumPy order-statistic filters matching scipy (mirror)"
+git push -u origin feature/mem3-restoration-frequency   # PR reviewer: MEM2</pre>
+<h2>6.E Experiments</h2>
+<p class='small'>All runs use dev data only, fixed seeds, the reference config with one factor changed, a row in <code>experiment_log.csv</code>, saved figures, and 2&ndash;4 sentences of interpretation.</p>
+<table><tr><th>Study</th><th>Factor and values</th><th>Held fixed</th><th>Metric</th><th>Output</th></tr><tr><td>PSNR study</td><td>Filter (9) &times; noise (&ge;2) &times; level (3)</td><td>k = 3</td><td>MSE, PSNR</td><td>Heatmap</td></tr><tr><td>D0 study</td><td>D0 = 3 values &times; 3 filter types</td><td>Butterworth n = 2</td><td>PSNR / primary</td><td>Plot + spectra</td></tr><tr><td>AB2</td><td>Spatial vs frequency smoothing</td><td>Matched &sigma;</td><td>Primary, time</td><td>Table</td></tr><tr><td>AB5</td><td>Mean vs median under S&amp;P</td><td>Same k</td><td>PSNR</td><td>Table</td></tr><tr><td>AB7 (optional)</td><td>Wiener vs none on blur</td><td>Known H</td><td>PSNR</td><td>Table</td></tr><tr><td>Bonus 4</td><td>RLE / Huffman</td><td>Final outputs</td><td>Ratio, time</td><td>CSV</td></tr></table>
+<h2>6.F Defense preparation</h2>
+<p>Noise models and their PDFs. Why the median removes impulses. Contraharmonic sign of Q. Alpha-trimmed as a blend of mean and median. DFT, centring, padding and wrap-around. Why the ideal filter rings (sinc). Butterworth order. Matched spatial vs frequency &sigma;. RLE vs Huffman and when each compresses well. Hand examples in Section 19.3. Questions and model answers: Section 19.3. Whole-pipeline questions: Section 19.6.</p>
+<h2>6.G Priorities and dependencies</h2>
+<table><tr><th>Task</th><th>Priority</th><th>Effort</th><th>Needs</th><th>Unblocks</th></tr><tr><td>T3.2 median</td><td>P0</td><td>4 h</td><td>Skeleton</td><td>Restoration baseline</td></tr><tr><td>T3.1, T3.3&ndash;T3.4</td><td>P0</td><td>8 h</td><td>MEM2's convolve2d (optional)</td><td>Analysis, Pipeline B</td></tr><tr><td>T3.5&ndash;T3.7</td><td>P1</td><td>7 h</td><td>Dataset, <code>add_noise</code></td><td>Filter choice</td></tr><tr><td>T3.8&ndash;T3.10</td><td>P1</td><td>8 h</td><td>Pipelines, final outputs</td><td>Report, bonus</td></tr><tr><td>T3.11</td><td>P2</td><td>3 h</td><td>&mdash;</td><td>Report</td></tr></table>
+<p><b>Next task after completion:</b> Support MEM1 with the robustness runs.</p>
+</section>
+
+<!-- ============================== 7 MEM4 ============================== -->
+<section class="page-break mem m4">
+<h1>7. Detailed MEM4 execution plan &mdash; Segmentation Engineer</h1>
+<h2>7.A Responsibilities</h2>
+<table><tr><th>Area</th><th>Details</th></tr><tr><td>Role</td><td>Segmentation engineer: gradient edge detectors, Laplacian and LoG, point and line masks, thresholding, edge linking and Hough.</td></tr><tr><td>Owned deliverables</td><td><code>src/segmentation.py</code>, its tests, the detector study, the threshold-method study, ablation AB3, report Section III-D, slide 8.</td></tr><tr><td>Collaboration</td><td>Provides <code>otsu_threshold</code> (simple baseline) and <code>sobel</code> (Pipeline A detection, MEM2's gradient sharpening). Uses MEM2's <code>convolve2d</code>.</td></tr><tr><td>Review</td><td>Primary reviewer of MEM5's PRs. Reviewer of Bonus 2 (CI).</td></tr></table>
+<h2>7.B File ownership</h2>
+<table><tr><th>Owns (edits freely)</th><th>Shared (coordinate first)</th><th>Must not edit without agreement</th></tr><tr><td><code>src/segmentation.py</code>, <code>tests/test_segmentation.py</code>, <code>experiments/*/seg_*</code></td><td>Uses <code>enhancement.convolve2d</code> (MEM2)</td><td>Other modules</td></tr></table>
+<h3>Functions and classes to implement</h3>
+<pre># src/segmentation.py
+roberts(img) ; prewitt(img) ; sobel(img) -> (gx, gy, magnitude)
+laplacian(img, kernel="8n") ; log_filter(img, sigma) ; zero_crossings(resp, thr)
+point_detect(img, T) ; line_detect(img, direction, T)      # 0, 45, 90, -45 deg masks
+global_threshold(img, T=None, eps=0.5)                     # iterative basic global
+otsu_threshold(img) -> int ; adaptive_threshold(img, block, C, method="mean")
+hough_lines(edges, theta_res, rho_res) ; edge_link(mag, angle, T_m, T_a)</pre>
+<h3>Genuine NumPy implementations (at least 2 required)</h3>
+<table><tr><th>#</th><th>Implementation</th><th>Compared with</th><th>Measure</th></tr><tr><td>1</td><td>Sobel magnitude</td><td><code>cv2.Sobel(ksize=3, BORDER_REFLECT_101)</code></td><td>Max abs diff on float</td></tr><tr><td>2</td><td>Otsu threshold (maximise between-class variance)</td><td><code>skimage.filters.threshold_otsu</code>, <code>cv2.THRESH_OTSU</code></td><td>Same T (&plusmn;1 from the <code>&gt;T</code> convention)</td></tr><tr><td>3</td><td>Adaptive mean threshold (integral image)</td><td><code>cv2.adaptiveThreshold</code></td><td>Pixel disagreement %</td></tr><tr><td>4</td><td>Hough line accumulator</td><td><code>skimage.transform.hough_line</code></td><td>Peak (&rho;, &theta;) match</td></tr></table>
+<h2>7.C Step-by-step tasks</h2>
+<p class="task-title">T4.1 &middot; Gradient operators: Roberts, Prewitt, Sobel <span class="tag">dataset-free &middot; P0</span></p>
+<table class="card"><tr><th>What</th><td>Three gradient operators returning gx, gy and the magnitude.</td></tr><tr><th>Why</th><td>Required detectors. Sobel is used by Pipeline A detection and by MEM2.</td></tr><tr><th>File</th><td><code>src/segmentation.py</code>, <code>tests/test_segmentation.py</code></td></tr><tr><th>Functions</th><td><code>roberts</code>, <code>prewitt</code>, <code>sobel</code></td></tr><tr><th>How</th><td>Kernels via <code>convolve2d</code> (correlation). Magnitude <code>sqrt(gx&sup2;+gy&sup2;)</code>. Also report the |gx|+|gy| approximation.</td></tr><tr><th>Expected output</th><td>float64 gradient maps.</td></tr><tr><th>Test</th><td>Hand example (Section 19.4): Gy = 760, Gx = 0. Constant image gives 0. Compare with <code>cv2.Sobel</code>.</td></tr><tr><th>Evidence</th><td>Comparison test, edge-map figure.</td></tr><tr><th>Done when</th><td>Merged by early W10.</td></tr></table>
+<p class="task-title">T4.2 &middot; Laplacian and LoG <span class="tag">dataset-free</span></p>
+<table class="card"><tr><th>What</th><td>Laplacian (4- and 8-neighbour) and Laplacian of Gaussian with zero crossings.</td></tr><tr><th>Why</th><td>Required detectors. LoG handles noise better than the plain Laplacian.</td></tr><tr><th>File</th><td><code>src/segmentation.py</code></td></tr><tr><th>Functions</th><td><code>laplacian</code>, <code>log_filter</code>, <code>zero_crossings</code></td></tr><tr><th>How</th><td>Gaussian &sigma; first, then the Laplacian (or a sampled LoG kernel of size &asymp; 6&sigma;). A zero crossing is a sign change between opposite neighbours with |difference| &gt; threshold.</td></tr><tr><th>Expected output</th><td>Thin edge map.</td></tr><tr><th>Test</th><td>vs <code>scipy.ndimage.gaussian_laplace</code>. A step edge gives one zero-crossing line.</td></tr><tr><th>Evidence</th><td>Figure with &sigma; = 1, 2, 3.</td></tr><tr><th>Done when</th><td>Tests green.</td></tr></table>
+<p class="task-title">T4.3 &middot; Point and line masks <span class="tag">dataset-free</span></p>
+<table class="card"><tr><th>What</th><td>Point-detection mask and 4 directional line masks.</td></tr><tr><th>Why</th><td>Listed in the spec. Cracks are thin, dark, line-like structures, so directional line masks are a natural crack detector.</td></tr><tr><th>File</th><td><code>src/segmentation.py</code></td></tr><tr><th>Functions</th><td><code>point_detect</code>, <code>line_detect</code></td></tr><tr><th>How</th><td>Laplacian-type point mask with threshold T. Line masks at 0&deg;, 45&deg;, 90&deg; and &minus;45&deg;, take the maximum response.</td></tr><tr><th>Expected output</th><td>Binary responses.</td></tr><tr><th>Test</th><td>A synthetic single bright pixel or a 1-pixel line is detected exactly.</td></tr><tr><th>Evidence</th><td>Figure on dev images.</td></tr><tr><th>Done when</th><td>Used in the final pipeline, or its absence justified.</td></tr></table>
+<p class="task-title">T4.4 &middot; Global, iterative and Otsu thresholding <span class="tag">dataset-free &middot; P0</span></p>
+<table class="card"><tr><th>What</th><td>Fixed global threshold, basic iterative global threshold, and Otsu.</td></tr><tr><th>Why</th><td>Otsu is needed by the simple baseline. Three threshold methods are a required study.</td></tr><tr><th>File</th><td><code>src/segmentation.py</code></td></tr><tr><th>Functions</th><td><code>global_threshold</code>, <code>otsu_threshold</code></td></tr><tr><th>How</th><td>Iterative: T = (m1+m2)/2 until the change is &lt; eps. Otsu: p<sub>i</sub>, &omega;(k), &mu;(k), &sigma;&sup2;<sub>B</sub> = (&mu;<sub>T</sub>&omega;&minus;&mu;)&sup2;/(&omega;(1&minus;&omega;)), argmax (average the ties).</td></tr><tr><th>Expected output</th><td>Integer threshold, bool mask.</td></tr><tr><th>Test</th><td>A bimodal 4&times;4 array with known T. Constant image. Compare with skimage.</td></tr><tr><th>Evidence</th><td>Comparison test, hand example.</td></tr><tr><th>Done when</th><td>Merged by the end of W9 for the baselines.</td></tr></table>
+<p class="task-title">T4.5 &middot; Adaptive thresholding <span class="tag">dataset-free</span></p>
+<table class="card"><tr><th>What</th><td>Local mean (and Gaussian) adaptive threshold.</td></tr><tr><th>Why</th><td>Required. It handles uneven illumination where global Otsu fails.</td></tr><tr><th>File</th><td><code>src/segmentation.py</code></td></tr><tr><th>Functions</th><td><code>adaptive_threshold(img, block, C, method)</code></td></tr><tr><th>How</th><td>Integral image gives the local mean in O(1) per pixel. Foreground where f &gt; mean &minus; C.</td></tr><tr><th>Expected output</th><td>bool mask.</td></tr><tr><th>Test</th><td>vs <code>cv2.adaptiveThreshold</code> (disagreement % reported). Even block size raises an error.</td></tr><tr><th>Evidence</th><td>Comparison, figure on an unevenly lit image.</td></tr><tr><th>Done when</th><td>Tests green.</td></tr></table>
+<p class="task-title">T4.6 &middot; Edge linking and Hough transform <span class="tag">dataset-free &middot; relevant (thin cracks)</span></p>
+<table class="card"><tr><th>What</th><td>Local edge linking (magnitude and angle similarity) and/or the Hough line accumulator.</td></tr><tr><th>Why</th><td>The spec requires them &ldquo;where the task needs them&rdquo;, and Pipeline B's detection track uses them.</td></tr><tr><th>File</th><td><code>src/segmentation.py</code></td></tr><tr><th>Functions</th><td><code>edge_link</code>, <code>hough_lines</code></td></tr><tr><th>How</th><td>Hough: for each edge pixel, &rho; = x cos&theta; + y sin&theta;, vote into the accumulator, find peaks.</td></tr><tr><th>Expected output</th><td>Linked edge map or a list of lines.</td></tr><tr><th>Test</th><td>A synthetic line gives the expected (&rho;, &theta;) peak. Compare with skimage.</td></tr><tr><th>Evidence</th><td>Figure on dev images.</td></tr><tr><th>Done when</th><td>Used, or its absence justified for our task.</td></tr></table>
+<p class="task-title">T4.7 &middot; Detector comparison (dev) <span class="tag">after baselines</span></p>
+<table class="card"><tr><th>What</th><td>Roberts, Prewitt, Sobel, Laplacian and LoG(&sigma; = 1, 2, 3), each with the same threshold, scored against GT.</td></tr><tr><th>Why</th><td>Required study: the primary metric for each detector.</td></tr><tr><th>File</th><td><code>experiments/configs/seg_detectors.yaml</code>, <code>experiments/results/seg_detectors.csv</code></td></tr><tr><th>Functions</th><td>T4.1&ndash;T4.2, <code>log_run</code></td></tr><tr><th>How</th><td>Keep the pre-processing fixed and change only the detector.</td></tr><tr><th>Expected output</th><td>Bar chart with std error bars, best and worst images.</td></tr><tr><th>Test</th><td>Logged and reproducible.</td></tr><tr><th>Evidence</th><td>CSV, figure, log rows.</td></tr><tr><th>Done when</th><td>Interpretation written.</td></tr></table>
+<p class="task-title">T4.8 &middot; Threshold-method study (one factor at a time) <span class="tag">after baselines</span></p>
+<table class="card"><tr><th>What</th><td>Global(127), iterative global, Otsu, adaptive mean and adaptive Gaussian, with fixed pre-processing.</td></tr><tr><th>Why</th><td>A required one-factor-at-a-time study (at least 3 methods).</td></tr><tr><th>File</th><td><code>experiments/results/seg_thresholds.csv</code></td></tr><tr><th>Functions</th><td>T4.4&ndash;T4.5</td></tr><tr><th>How</th><td>Change only the threshold method. Also sweep the adaptive block size and C.</td></tr><tr><th>Expected output</th><td>Bar chart plus the chosen method.</td></tr><tr><th>Test</th><td>The global(127) row reproduces the trivial baseline.</td></tr><tr><th>Evidence</th><td>CSV, figure, log rows.</td></tr><tr><th>Done when</th><td>Choice justified.</td></tr></table>
+<p class="task-title">T4.9 &middot; Ablation AB3: threshold method in the full pipeline <span class="tag">W12&ndash;W13</span></p>
+<table class="card"><tr><th>What</th><td>Swap the final pipeline's threshold for global and for Otsu.</td></tr><tr><th>Why</th><td>Required ablation (global vs Otsu vs adaptive is named in the spec).</td></tr><tr><th>File</th><td><code>experiments/configs/ab3_*.yaml</code></td></tr><tr><th>Functions</th><td><code>run()</code>, <code>evaluate()</code></td></tr><tr><th>How</th><td>One stage swapped, everything else fixed.</td></tr><tr><th>Expected output</th><td>&Delta; primary metric.</td></tr><tr><th>Test</th><td>Same split and seed.</td></tr><tr><th>Evidence</th><td>CSV, figure.</td></tr><tr><th>Done when</th><td>Explained in the report.</td></tr></table>
+<p class="task-title">T4.10 &middot; Tests, speed, report section, slide <span class="tag">W13</span></p>
+<table class="card"><tr><th>What</th><td>Full tests, speed-up of adaptive thresholding and Hough, report Section III-D, slide 8.</td></tr><tr><th>Why</th><td>Bonus 2 and Bonus 5 evidence. Report and presentation duties.</td></tr><tr><th>File</th><td><code>tests/</code>, <code>bonus/optimization/</code>, <code>report/</code></td></tr><tr><th>Functions</th><td>All of the module's functions</td></tr><tr><th>How</th><td>Vectorise the Hough voting with <code>np.add.at</code>. Write about 0.75 page.</td></tr><tr><th>Expected output</th><td>Speedup row, report text, slide.</td></tr><tr><th>Test</th><td><code>pytest tests/test_segmentation.py</code> passes.</td></tr><tr><th>Evidence</th><td>Timing CSV, report PR.</td></tr><tr><th>Done when</th><td>Reviewed by MEM5 and MEM1.</td></tr></table>
+<h2>7.D Commands</h2>
+<p class='small'>Planned and not yet run. Environment setup and the full git workflow are in Section 13.</p>
+<pre>git checkout -b feature/mem4-segmentation
+pytest tests/test_segmentation.py -q
+python -m src.evaluate --config experiments/configs/seg_thresholds.yaml --split dev
+git add src/segmentation.py tests/test_segmentation.py
+git commit -m "feat(segmentation): NumPy Otsu threshold matching skimage"
+git push -u origin feature/mem4-segmentation      # PR reviewer: MEM5</pre>
+<h2>7.E Experiments</h2>
+<p class='small'>All runs use dev data only, fixed seeds, the reference config with one factor changed, a row in <code>experiment_log.csv</code>, saved figures, and 2&ndash;4 sentences of interpretation.</p>
+<table><tr><th>Study</th><th>Factor and values</th><th>Held fixed</th><th>Metric</th><th>Output</th></tr><tr><td>Detector comparison</td><td>Roberts / Prewitt / Sobel / Lap / LoG(&sigma;)</td><td>Pre-processing, threshold</td><td>Primary metric</td><td>Bar chart</td></tr><tr><td>Threshold study</td><td>Global, iterative, Otsu, adaptive &times;2</td><td>Pre-processing</td><td>Primary metric</td><td>Bar chart</td></tr><tr><td>AB3</td><td>Threshold method in the full pipeline</td><td>All other stages</td><td>Primary metric</td><td>Table</td></tr></table>
+<h2>7.F Defense preparation</h2>
+<p>Gradient as a first derivative and the Laplacian as a second derivative. Why Sobel smooths. Why LoG is needed and how &sigma; sets the scale. Zero crossings. Otsu's criterion and when it fails. Adaptive threshold and illumination. Hough parameter space (&rho;, &theta;) and why not y = mx + b. Hand example in Section 19.4. Questions and model answers: Section 19.4. Whole-pipeline questions: Section 19.6.</p>
+<h2>7.G Priorities and dependencies</h2>
+<table><tr><th>Task</th><th>Priority</th><th>Effort</th><th>Needs</th><th>Unblocks</th></tr><tr><td>T4.4 Otsu</td><td>P0</td><td>3 h</td><td>Skeleton</td><td>Simple baseline</td></tr><tr><td>T4.1 Sobel</td><td>P0</td><td>3 h</td><td>MEM2's convolve2d</td><td>Pipeline A, MEM2</td></tr><tr><td>T4.2, T4.5</td><td>P1</td><td>5 h</td><td>&mdash;</td><td>Pipeline B</td></tr><tr><td>T4.3, T4.6</td><td>P1</td><td>5 h</td><td>&mdash;</td><td>Pipeline B (if needed)</td></tr><tr><td>T4.7&ndash;T4.10</td><td>P1</td><td>8 h</td><td>Dataset, baselines</td><td>Report</td></tr></table>
+<p><b>Next task after completion:</b> Pair with MEM5 on failure categories caused by segmentation.</p>
+</section>
+
+<!-- ============================== 8 MEM5 ============================== -->
+<section class="page-break mem m5">
+<h1>8. Detailed MEM5 execution plan &mdash; Morphology, Evaluation &amp; Demo Engineer</h1>
+<h2>8.A Responsibilities</h2>
+<table><tr><th>Area</th><th>Details</th></tr><tr><td>Role</td><td>Morphology, evaluation and demo engineer: binary morphology, measurement and decision, test-set evaluation, failure analysis, entry point, demo.</td></tr><tr><td>Owned deliverables</td><td><code>src/morphology.py</code>, <code>src/evaluate.py</code>, <code>src/run_pipeline.py</code>, <code>app/</code>, the SE studies, ablation AB4, failure analysis, the per-image measurement table, Bonus 1 (deployment), co-owner of Bonus 3, report Sections V-B and VI, slides 9&ndash;11.</td></tr><tr><td>Collaboration</td><td>Provides <code>opening</code> (simple baseline) and <code>evaluate</code> (everyone's studies). Consumes MEM4's masks and MEM1's <code>pipeline.run</code>.</td></tr><tr><td>Review</td><td>Primary reviewer of MEM1's and MEM4's PRs. Re-checks the dataset licence and counts (T1.3, T1.4).</td></tr></table>
+<h2>8.B File ownership</h2>
+<table><tr><th>Owns (edits freely)</th><th>Shared (coordinate first)</th><th>Must not edit without agreement</th></tr><tr><td><code>src/morphology.py</code>, <code>src/evaluate.py</code>, <code>src/run_pipeline.py</code>, <code>app/</code>, <code>tests/test_morphology.py</code>, <code>notebooks/02_results.ipynb</code>, <code>bonus/deployment/</code></td><td><code>run_pipeline.py</code> calls <code>pipeline.run</code> (MEM1's interface). <code>bonus/generalization/</code> with MEM1.</td><td>Other modules, <code>configs/final_pipeline.yaml</code></td></tr></table>
+<h3>Functions and classes to implement</h3>
+<pre># src/morphology.py
+structuring_element(shape, size)        # "square" | "disk" | "cross" | "line"
+erode(mask, se) ; dilate(mask, se) ; opening(mask, se) ; closing(mask, se)
+fill_holes(mask) ; remove_small_objects(mask, min_area)
+label(mask, connectivity=8) -> (labels, n)
+measure(labels) -> list[dict]           # area, bbox, centroid, perimeter, circularity
+decide(measurements, rule) -> str      # severity: minor/moderate/severe
+boundary(mask, se)                      # optional extra (AB8): A - erode(A)
+# src/evaluate.py
+evaluate(config, split="dev") -> DataFrame     # per-image metrics + time per stage
+measurement_table(config, split) -> DataFrame  # per-image count/area/bbox/decision
+worst_k(df, k=20) ; save_failure_panels(df, out_dir)
+# src/run_pipeline.py  CLI: python -m src.run_pipeline --image X --config Y --out Z</pre>
+<h3>Genuine NumPy implementations (at least 2 required)</h3>
+<table><tr><th>#</th><th>Implementation</th><th>Compared with</th><th>Measure</th></tr><tr><td>1</td><td>Erosion and dilation (window min/max over the SE footprint)</td><td><code>cv2.erode</code>, <code>cv2.dilate</code>, <code>scipy.ndimage.binary_erosion</code></td><td><code>np.array_equal</code> (border convention matched)</td></tr><tr><td>2</td><td>Hole filling by iterative conditional dilation from the border</td><td><code>scipy.ndimage.binary_fill_holes</code></td><td><code>np.array_equal</code></td></tr><tr><td>3</td><td>Connected-component labelling (two-pass with union-find)</td><td><code>cv2.connectedComponents</code>, <code>skimage.measure.label</code></td><td>Same count, same partition up to relabelling</td></tr></table>
+<h2>8.C Step-by-step tasks</h2>
+<p class="task-title">T5.1 &middot; Structuring elements, erosion, dilation <span class="tag">dataset-free &middot; P0</span></p>
+<table class="card"><tr><th>What</th><td>SE factory (square, disk, cross, line) plus NumPy erosion and dilation.</td></tr><tr><th>Why</th><td>The core of every morphology stage. The simple baseline needs the 3&times;3 opening.</td></tr><tr><th>File</th><td><code>src/morphology.py</code>, <code>tests/test_morphology.py</code></td></tr><tr><th>Functions</th><td><code>structuring_element</code>, <code>erode</code>, <code>dilate</code></td></tr><tr><th>How</th><td>Pad (1 for erosion, 0 for dilation, matching OpenCV's default border value). <code>sliding_window_view</code>, then <code>all</code> or <code>any</code> over the SE footprint.</td></tr><tr><th>Expected output</th><td>bool masks.</td></tr><tr><th>Test</th><td>Hand 5&times;5 example (Section 19.5). Duality: erode(A) = &not;dilate(&not;A). vs <code>cv2.erode</code>/<code>dilate</code>.</td></tr><tr><th>Evidence</th><td>Comparison test.</td></tr><tr><th>Done when</th><td>Merged by the end of W9 for the baselines.</td></tr></table>
+<p class="task-title">T5.2 &middot; Opening and closing <span class="tag">dataset-free</span></p>
+<table class="card"><tr><th>What</th><td>Opening = dilate(erode). Closing = erode(dilate).</td></tr><tr><th>Why</th><td>Remove specks and fill gaps. The order matters (ablation AB4).</td></tr><tr><th>File</th><td><code>src/morphology.py</code></td></tr><tr><th>Functions</th><td><code>opening</code>, <code>closing</code></td></tr><tr><th>How</th><td>Compose T5.1.</td></tr><tr><th>Expected output</th><td>bool masks.</td></tr><tr><th>Test</th><td>Idempotence (opening twice equals opening once). vs <code>cv2.morphologyEx</code>.</td></tr><tr><th>Evidence</th><td>Test.</td></tr><tr><th>Done when</th><td>Tests green.</td></tr></table>
+<p class="task-title">T5.3 &middot; Hole filling <span class="tag">dataset-free</span></p>
+<table class="card"><tr><th>What</th><td>Fill holes not connected to the image border.</td></tr><tr><th>Why</th><td>Required. It repairs holes inside objects after thresholding.</td></tr><tr><th>File</th><td><code>src/morphology.py</code></td></tr><tr><th>Functions</th><td><code>fill_holes</code></td></tr><tr><th>How</th><td>X<sub>0</sub> = border pixels of A<sup>c</sup>. X<sub>k+1</sub> = dilate(X<sub>k</sub>) &cap; A<sup>c</sup> until stable. Result = &not;X.</td></tr><tr><th>Expected output</th><td>Filled mask.</td></tr><tr><th>Test</th><td>A ring becomes a disk. vs <code>binary_fill_holes</code>. An empty mask stays empty.</td></tr><tr><th>Evidence</th><td>Test, figure.</td></tr><tr><th>Done when</th><td>Tests green.</td></tr></table>
+<p class="task-title">T5.4 &middot; Connected components and small-object removal <span class="tag">dataset-free</span></p>
+<table class="card"><tr><th>What</th><td>Two-pass labelling and area-based removal of small objects.</td></tr><tr><th>Why</th><td>Required for counting and for object selection by area or shape.</td></tr><tr><th>File</th><td><code>src/morphology.py</code></td></tr><tr><th>Functions</th><td><code>label</code>, <code>remove_small_objects</code></td></tr><tr><th>How</th><td>First pass: provisional labels plus union-find. Second pass: resolve. Count areas with <code>np.bincount</code>.</td></tr><tr><th>Expected output</th><td>int labels and n.</td></tr><tr><th>Test</th><td>4- vs 8-connectivity on a diagonal pair. vs <code>skimage.measure.label</code>.</td></tr><tr><th>Evidence</th><td>Test.</td></tr><tr><th>Done when</th><td>Tests green.</td></tr></table>
+<p class="task-title">T5.5 &middot; Measurement, decision rule, per-image measurement table <span class="tag">after dataset</span></p>
+<table class="card"><tr><th>What</th><td>Area, bounding box, centroid, perimeter and circularity per object, the final decision, and a table for every test image.</td></tr><tr><th>Why</th><td>The spec requires &ldquo;an output table for every test image&rdquo; and a final decision rule.</td></tr><tr><th>File</th><td><code>src/morphology.py</code>, <code>src/evaluate.py</code>, <code>experiments/results/measurements_test.csv</code></td></tr><tr><th>Functions</th><td><code>measure</code>, <code>decide</code>, <code>measurement_table</code></td></tr><tr><th>How</th><td>Circularity = 4&pi;A/P&sup2;. Every image has a crack, so the decision is a severity class from crack area % and skeleton length, with cut-offs from dev-set GT quantiles. GT severity uses the same rule on the GT mask, so the decision has a reference answer.</td></tr><tr><th>Expected output</th><td>One row per image: count, total area, bboxes, decision, and the GT answer.</td></tr><tr><th>Test</th><td>A synthetic square gives the known area and bbox. The decision rule is tested on boundary values.</td></tr><tr><th>Evidence</th><td>CSV, README excerpt.</td></tr><tr><th>Done when</th><td>The table exists for every test image.</td></tr></table>
+<p class="task-title">T5.6 &middot; SE size and shape studies (one factor at a time) <span class="tag">after baselines</span></p>
+<table class="card"><tr><th>What</th><td>Size 3, 5, 7 and shape square vs disk (plus cross or line if objects are thin), after a fixed segmentation.</td></tr><tr><th>Why</th><td>Two required one-factor-at-a-time studies.</td></tr><tr><th>File</th><td><code>experiments/results/mor_se.csv</code></td></tr><tr><th>Functions</th><td>T5.1&ndash;T5.2, <code>log_run</code></td></tr><tr><th>How</th><td>Change one factor at a time. Show merged and split objects.</td></tr><tr><th>Expected output</th><td>Plots of metric vs size for each shape. Before/after images.</td></tr><tr><th>Test</th><td>Logged and reproducible.</td></tr><tr><th>Evidence</th><td>CSV, figure, log rows.</td></tr><tr><th>Done when</th><td>SE choice justified.</td></tr></table>
+<p class="task-title">T5.7 &middot; Ablation AB4: morphology off, and operation order <span class="tag">W12&ndash;W13</span></p>
+<table class="card"><tr><th>What</th><td>Final pipeline without morphology, and open&rarr;close vs close&rarr;open.</td></tr><tr><th>Why</th><td>Required ablation. Both variants are named in the spec.</td></tr><tr><th>File</th><td><code>experiments/configs/ab4_*.yaml</code></td></tr><tr><th>Functions</th><td><code>run()</code>, <code>evaluate()</code></td></tr><tr><th>How</th><td>Change one thing at a time.</td></tr><tr><th>Expected output</th><td>&Delta; primary metric.</td></tr><tr><th>Test</th><td>Same split and seed.</td></tr><tr><th>Evidence</th><td>CSV, figure.</td></tr><tr><th>Done when</th><td>Explained.</td></tr></table>
+<p class="task-title">T5.8 &middot; Evaluation module <span class="tag">W11</span></p>
+<table class="card"><tr><th>What</th><td><code>evaluate()</code> for any config on dev or test: per-image metric, time per stage, mean, std, best and worst.</td></tr><tr><th>Why</th><td>Every study and the final test evaluation depend on it.</td></tr><tr><th>File</th><td><code>src/evaluate.py</code></td></tr><tr><th>Functions</th><td><code>evaluate</code>, <code>worst_k</code></td></tr><tr><th>How</th><td>Loop over the split list, call <code>pipeline.run</code>, the metrics and <code>log_run</code>. Refuse <code>split="test"</code> unless the <code>results-frozen</code> tag exists.</td></tr><tr><th>Expected output</th><td>DataFrame plus a CSV.</td></tr><tr><th>Test</th><td>On 3 synthetic images with a known IoU. The test-split guard is tested.</td></tr><tr><th>Evidence</th><td>Test run.</td></tr><tr><th>Done when</th><td>Used by MEM1 for the baselines.</td></tr></table>
+<p class="task-title">T5.9 &middot; Failure analysis (every pipeline) <span class="tag">W13</span></p>
+<table class="card"><tr><th>What</th><td>Inspect at least 20 of the worst test images, group them into categories, show every intermediate stage, name the responsible stage, propose one fix and test it on dev.</td></tr><tr><th>Why</th><td>10% criterion. The spec rewards honest failure analysis.</td></tr><tr><th>File</th><td><code>notebooks/02_results.ipynb</code>, <code>experiments/figures/fail_*</code></td></tr><tr><th>Functions</th><td><code>worst_k</code>, <code>save_failure_panels</code></td></tr><tr><th>How</th><td>Categories: uneven illumination, low contrast, touching objects, heavy noise, unusual scale, blur, holes.</td></tr><tr><th>Expected output</th><td>Category table with counts, example panels, the fix and its dev result.</td></tr><tr><th>Test</th><td>A second member re-labels 5 failures blind and checks they agree.</td></tr><tr><th>Evidence</th><td>Panels, table.</td></tr><tr><th>Done when</th><td>Written into report Section V-B.</td></tr></table>
+<p class="task-title">T5.10 &middot; Entry point and timing <span class="tag">W12</span></p>
+<table class="card"><tr><th>What</th><td><code>run_pipeline.py</code>: raw image file in, output image plus measurement or decision out, with time per stage.</td></tr><tr><th>Why</th><td>Required single entry point and timing report.</td></tr><tr><th>File</th><td><code>src/run_pipeline.py</code></td></tr><tr><th>Functions</th><td><code>main(argv)</code>, <code>process(path, config)</code></td></tr><tr><th>How</th><td>argparse, then <code>load_image</code>, <code>pipeline.run</code>, <code>measure</code>/<code>decide</code>. Save the overlay and JSON.</td></tr><tr><th>Expected output</th><td>Output PNG and JSON with the measurement and timings.</td></tr><tr><th>Test</th><td>CLI test on a fixture image. A bad path gives a clear error.</td></tr><tr><th>Evidence</th><td>Example output in the README.</td></tr><tr><th>Done when</th><td>Works on Colab.</td></tr></table>
+<p class="task-title">T5.11 &middot; Demo application <span class="tag">W12&ndash;W13</span></p>
+<table class="card"><tr><th>What</th><td>Gradio or Streamlit app: upload, original image, every stage, final mask and overlay, measurement, time.</td></tr><tr><th>Why</th><td>Required demo. It must run on unseen images and show a failure case.</td></tr><tr><th>File</th><td><code>app/app.py</code>, <code>app/requirements.txt</code></td></tr><tr><th>Functions</th><td>Calls <code>process()</code> only. No learned models.</td></tr><tr><th>How</th><td>Validate the file type and size. Catch exceptions and show a friendly message. Include one known failure image as an example.</td></tr><tr><th>Expected output</th><td>A working local demo.</td></tr><tr><th>Test</th><td>Upload a non-image, a huge image and a grayscale PNG.</td></tr><tr><th>Evidence</th><td>Screenshots, a backup recording for Canvas.</td></tr><tr><th>Done when</th><td>Reviewed by MEM1.</td></tr></table>
+<p class="task-title">T5.12 &middot; Bonus 1: public deployment <span class="tag">W13</span></p>
+<table class="card"><tr><th>What</th><td>Deploy the demo on Hugging Face Spaces (Gradio, free CPU), proposed. Streamlit Community Cloud is the fallback.</td></tr><tr><th>Why</th><td>Bonus 1.</td></tr><tr><th>File</th><td><code>bonus/deployment/README.md</code>, README (URL)</td></tr><tr><th>Functions</th><td>&mdash;</td></tr><tr><th>How</th><td>Pin the app's dependencies. Make the dataset-free sample images part of the app.</td></tr><tr><th>Expected output</th><td>Public URL.</td></tr><tr><th>Test</th><td>Open it from a phone on another network.</td></tr><tr><th>Evidence</th><td>Screenshot from the second device, tracker row.</td></tr><tr><th>Done when</th><td>URL in the README, reviewed by MEM1.</td></tr></table>
+<p class="task-title">T5.13 &middot; Optional extra: boundary extraction <span class="tag">optional</span></p>
+<table class="card"><tr><th>What</th><td>Boundary = A &minus; erode(A), used for overlays and perimeter.</td></tr><tr><th>Why</th><td>The spec recommends it and says it counts as an ablation (AB8).</td></tr><tr><th>File</th><td><code>src/morphology.py</code></td></tr><tr><th>Functions</th><td><code>boundary(mask, se)</code></td></tr><tr><th>How</th><td>Compose erosion with set difference.</td></tr><tr><th>Expected output</th><td>One-pixel-thick contours.</td></tr><tr><th>Test</th><td>A square's boundary has 4(n&minus;1) pixels.</td></tr><tr><th>Evidence</th><td>Test, demo overlay.</td></tr><tr><th>Done when</th><td>Only after the core tasks are done.</td></tr></table>
+<p class="task-title">T5.14 &middot; Tests, report sections, slides <span class="tag">W13</span></p>
+<table class="card"><tr><th>What</th><td>Full tests, report Sections V-B and VI, slides 9&ndash;11.</td></tr><tr><th>Why</th><td>Bonus 2 evidence. Report and presentation duties.</td></tr><tr><th>File</th><td><code>tests/</code>, <code>report/</code></td></tr><tr><th>Functions</th><td>All of the module's functions</td></tr><tr><th>How</th><td>Write about 1.5 pages.</td></tr><tr><th>Expected output</th><td>Report text, slides.</td></tr><tr><th>Test</th><td><code>pytest tests/test_morphology.py</code> passes.</td></tr><tr><th>Evidence</th><td>Report PR.</td></tr><tr><th>Done when</th><td>Reviewed by MEM4 and MEM1.</td></tr></table>
+<h2>8.D Commands</h2>
+<p class='small'>Planned and not yet run. Environment setup and the full git workflow are in Section 13.</p>
+<pre>git checkout -b feature/mem5-morphology-demo
+pytest tests/test_morphology.py -q
+python -m src.evaluate --config configs/pipeline_c.yaml --split dev          # planned
+python -m src.run_pipeline --image samples/x.png --config configs/final_pipeline.yaml --out out/
+python app/app.py                                        # local demo (Gradio), planned
+git add src/morphology.py tests/test_morphology.py
+git commit -m "feat(morphology): NumPy erosion/dilation matching cv2 border convention"
+git push -u origin feature/mem5-morphology-demo   # PR reviewer: MEM4</pre>
+<h2>8.E Experiments</h2>
+<p class='small'>All runs use dev data only, fixed seeds, the reference config with one factor changed, a row in <code>experiment_log.csv</code>, saved figures, and 2&ndash;4 sentences of interpretation.</p>
+<table><tr><th>Study</th><th>Factor and values</th><th>Held fixed</th><th>Metric</th><th>Output</th></tr><tr><td>SE size</td><td>3, 5, 7</td><td>Shape, segmentation</td><td>Primary metric</td><td>Plot</td></tr><tr><td>SE shape</td><td>Square, disk (+cross/line)</td><td>Size</td><td>Primary metric</td><td>Plot</td></tr><tr><td>AB4</td><td>Morphology off; open&rarr;close vs close&rarr;open</td><td>All other stages</td><td>Primary metric</td><td>Table</td></tr><tr><td>Test evaluation</td><td>Final, trivial, simple</td><td>Frozen config</td><td>Per-image metric</td><td>CSV</td></tr><tr><td>Failure analysis</td><td>&ge;20 worst, by category</td><td>&mdash;</td><td>Primary metric</td><td>Panels</td></tr><tr><td>AB8 (optional)</td><td>Boundary extraction</td><td>&mdash;</td><td>Visual / perimeter</td><td>Figure</td></tr></table>
+<h2>8.F Defense preparation</h2>
+<p>Erosion and dilation as min/max and as set operations. Duality. Opening vs closing and why the order matters. SE shape and size choice. Hole-filling algorithm. Two-pass labelling. 4- vs 8-connectivity. Circularity. How the decision rule was set on dev. How test-set discipline is enforced in <code>evaluate.py</code>. Failure categories. Hand example in Section 19.5. Questions and model answers: Section 19.5. Whole-pipeline questions: Section 19.6.</p>
+<h2>8.G Priorities and dependencies</h2>
+<table><tr><th>Task</th><th>Priority</th><th>Effort</th><th>Needs</th><th>Unblocks</th></tr><tr><td>T5.1&ndash;T5.2</td><td>P0</td><td>4 h</td><td>Skeleton</td><td>Simple baseline</td></tr><tr><td>T5.3&ndash;T5.4</td><td>P0</td><td>5 h</td><td>&mdash;</td><td>Pipeline C</td></tr><tr><td>T5.8 evaluate</td><td>P0</td><td>4 h</td><td>Metrics, pipeline.run</td><td>All studies</td></tr><tr><td>T5.5&ndash;T5.7, T5.10</td><td>P1</td><td>8 h</td><td>Dataset, pipelines</td><td>Results</td></tr><tr><td>T5.9, T5.11&ndash;T5.12</td><td>P1</td><td>8 h</td><td>Frozen results</td><td>Demo, report</td></tr></table>
+<p><b>Next task after completion:</b> Run the generalization study with MEM1 (Bonus 3).</p>
+</section>
+
+<!-- ============================== 9 & 10 ============================== -->
+<section class="page-break">
+<h1>9. Team responsibility matrix</h1>
+<p class="small">R = responsible (does it), A = accountable (signs off), C = consulted, I = informed.</p>
+<table>
+  <tr><th>Deliverable</th><th>MEM1</th><th>MEM2</th><th>MEM3</th><th>MEM4</th><th>MEM5</th></tr>
+  <tr><td>Problem formulation, dataset</td><td>R/A</td><td>C</td><td>C</td><td>C</td><td>C (licence check)</td></tr>
+  <tr><td>Image analysis notebook</td><td>R/A</td><td>R (histograms)</td><td>R (spectra)</td><td>C</td><td>I</td></tr>
+  <tr><td>Loader, split, degradation</td><td>R/A</td><td>I</td><td>C</td><td>I</td><td>I</td></tr>
+  <tr><td>Metrics</td><td>R/A</td><td>I</td><td>I</td><td>I</td><td>C</td></tr>
+  <tr><td>Baselines</td><td>R/A</td><td>I</td><td>C</td><td>C</td><td>C</td></tr>
+  <tr><td>Enhancement</td><td>A (integr.)</td><td>R</td><td>C (review)</td><td>I</td><td>I</td></tr>
+  <tr><td>Restoration &amp; frequency</td><td>A</td><td>C (review)</td><td>R</td><td>I</td><td>I</td></tr>
+  <tr><td>Segmentation</td><td>A</td><td>I</td><td>I</td><td>R</td><td>C (review)</td></tr>
+  <tr><td>Morphology &amp; measurement</td><td>A</td><td>I</td><td>I</td><td>C (review)</td><td>R</td></tr>
+  <tr><td>Pipelines A/B/C</td><td>R/A</td><td>C</td><td>C</td><td>C</td><td>C</td></tr>
+  <tr><td>Ablations (&ge;4)</td><td>A</td><td>R (enh.)</td><td>R (spatial vs freq)</td><td>R (thresh.)</td><td>R (morph.)</td></tr>
+  <tr><td>Robustness 3&times;3</td><td>R/A</td><td>I</td><td>C</td><td>I</td><td>C</td></tr>
+  <tr><td>Test evaluation, failure analysis</td><td>A</td><td>C</td><td>C</td><td>C</td><td>R</td></tr>
+  <tr><td>Demo &amp; deployment</td><td>C (review)</td><td>I</td><td>I</td><td>I</td><td>R/A</td></tr>
+  <tr><td>CI</td><td>R/A</td><td>R (own tests)</td><td>R</td><td>R</td><td>R</td></tr>
+  <tr><td>Compression</td><td>C (review)</td><td>I</td><td>R/A</td><td>I</td><td>I</td></tr>
+  <tr><td>Generalization</td><td>R/A</td><td>I</td><td>I</td><td>I</td><td>R</td></tr>
+  <tr><td>Speed optimization</td><td>A (coord.)</td><td>R</td><td>R</td><td>R</td><td>R</td></tr>
+  <tr><td>Report</td><td>A (editor)</td><td>R (own sec.)</td><td>R</td><td>R</td><td>R</td></tr>
+  <tr><td>Slides &amp; presentation</td><td>A</td><td>R</td><td>R</td><td>R</td><td>R</td></tr>
+</table>
+
+<h1>10. File ownership matrix</h1>
+<table>
+  <tr><th>Path</th><th>Owner</th><th>Reviewer</th><th>Notes</th></tr>
+  <tr><td><code>README.md, requirements.txt, .gitignore</code></td><td>MEM1</td><td>MEM5</td><td>Others propose changes through PR comments</td></tr>
+  <tr><td><code>configs/pipeline_a|b|c.yaml, final_pipeline.yaml</code></td><td>MEM1</td><td>Stage owners</td><td>Final config frozen at Checkpoint 4</td></tr>
+  <tr><td><code>data/README.md, data/download_dataset.py, data/split.json</code></td><td>MEM1</td><td>MEM5</td><td><code>data/raw/</code> is git-ignored</td></tr>
+  <tr><td><code>src/data.py, src/metrics.py, src/pipeline.py, src/__init__.py</code></td><td>MEM1</td><td>MEM5</td><td>Interface changes are announced to the whole team</td></tr>
+  <tr><td><code>src/enhancement.py</code></td><td>MEM2</td><td>MEM3</td><td><code>convolve2d</code> is shared: its signature is frozen after merge</td></tr>
+  <tr><td><code>src/restoration.py, src/frequency.py</code></td><td>MEM3</td><td>MEM2</td><td></td></tr>
+  <tr><td><code>src/segmentation.py</code></td><td>MEM4</td><td>MEM5</td><td></td></tr>
+  <tr><td><code>src/morphology.py, src/evaluate.py, src/run_pipeline.py</code></td><td>MEM5</td><td>MEM4 / MEM1</td><td></td></tr>
+  <tr><td><code>tests/test_&lt;module&gt;.py</code></td><td>Module owner</td><td>Module reviewer</td><td><code>tests/conftest.py</code> owned by MEM1</td></tr>
+  <tr><td><code>experiments/experiment_log.csv</code></td><td>MEM1 (schema)</td><td>&mdash;</td><td>Append only, through <code>log_run</code>. Never edit by hand.</td></tr>
+  <tr><td><code>experiments/configs, results, figures</code></td><td>Each author</td><td>&mdash;</td><td>File prefix = member study (<code>enh_</code>, <code>res_</code>, <code>seg_</code>, <code>mor_</code>, <code>base_</code>)</td></tr>
+  <tr><td><code>notebooks/01_image_analysis.ipynb</code></td><td>MEM1</td><td>MEM2</td><td>Imports from <code>src/</code> only</td></tr>
+  <tr><td><code>notebooks/02_results.ipynb</code></td><td>MEM5</td><td>MEM1</td><td>Reads the CSVs. Does not recompute results.</td></tr>
+  <tr><td><code>app/</code>, <code>bonus/deployment/</code></td><td>MEM5</td><td>MEM1</td><td></td></tr>
+  <tr><td><code>bonus/compression/</code></td><td>MEM3</td><td>MEM1</td><td></td></tr>
+  <tr><td><code>bonus/ci/</code>, <code>.github/workflows/</code>, <code>bonus/optimization/</code></td><td>MEM1</td><td>MEM4</td><td></td></tr>
+  <tr><td><code>bonus/generalization/</code></td><td>MEM1 + MEM5</td><td>MEM2</td><td></td></tr>
+  <tr><td><code>bonus/bonus_results.csv</code></td><td>MEM1</td><td>&mdash;</td><td>Each bonus owner updates their own row through a PR</td></tr>
+  <tr><td><code>report/</code></td><td>MEM1 (editor)</td><td>All</td><td>One section file per member to avoid merge conflicts</td></tr>
+  <tr><td><code>docs/execution/</code></td><td>MEM1</td><td>&mdash;</td><td>Source of this PDF</td></tr>
+</table>
+</section>
+
+<!-- ============================== 11 & 12 ============================== -->
+<section class="page-break">
+<h1>11. Dependencies and integration workflow</h1>
+<pre>
+ data.load_image, metrics ----------+------------------------------+
+ (MEM1, W9-10)                      |                              |
+        |                           v                              v
+        |               enhancement.convolve2d (MEM2) --&gt; segmentation.sobel/LoG (MEM4)
+        |                           |                              |
+ data.add_noise -&gt; restoration.median (MEM3) --&gt; baseline_simple(restoration)
+        |                                                          |
+ segmentation.otsu (MEM4) + morphology.opening (MEM5) --&gt; baseline_simple(segmentation)
+        |                                                          |
+        +-----------------&gt; pipeline.run + configs (MEM1) &lt;---------+
+                                     |
+                       evaluate.py / run_pipeline.py / app (MEM5)
+</pre>
+<h2>11.1 Integration rules</h2>
+<ol>
+  <li>Interfaces are frozen at Checkpoint 2. After that, a signature change needs an issue, a ping
+      to every consumer, and a PR that updates all callers.</li>
+  <li>Integration checkpoint every <b>Sunday and Wednesday</b> (proposed): MEM1 merges reviewed
+      PRs, runs every pipeline config on 5 dev images, and posts the result in the team chat.</li>
+  <li>Until a NumPy version is merged, the pipeline may call the library equivalent through the
+      same registry name. This is swapped when the PR lands, and the swap is logged.</li>
+  <li>Only one person edits <code>pipeline.py</code> and <code>configs/</code> (MEM1). Others ask
+      for stage registrations in their PR description.</li>
+</ol>
+<h2>11.2 Git workflow</h2>
+<ol>
+  <li><code>main</code> is protected: changes only through PRs, &ge;1 approving review from a
+      different member, CI must pass.</li>
+  <li>One feature branch per member (<code>feature/mem1-data-baselines</code>,
+      <code>feature/mem2-enhancement</code>, <code>feature/mem3-restoration-frequency</code>,
+      <code>feature/mem4-segmentation</code>, <code>feature/mem5-morphology-demo</code>). Short-lived
+      sub-branches are fine.</li>
+  <li>Small PRs (&le;400 changed lines), merged at least twice a week. Rebase on <code>main</code>
+      before asking for review.</li>
+  <li>Commit message format: <code>type(scope): summary</code>, for example
+      <code>feat(enhancement): add NumPy histogram equalization</code>.</li>
+  <li>Each member commits from their own GitHub account. Nobody commits on behalf of anyone else.</li>
+</ol>
+
+<h1>12. Milestones and timeline</h1>
+<table>
+  <tr><th>Week</th><th>Milestone (spec checkpoint)</th><th>MEM1</th><th>MEM2</th><th>MEM3</th><th>MEM4</th><th>MEM5</th></tr>
+  <tr><td>9</td><td><b>CP1 Topic settled</b></td><td>Dataset validation, problem statement, skeleton, metrics</td><td>convolve2d, point transforms</td><td>Order-statistic filters</td><td>Sobel, Otsu</td><td>Erosion, dilation</td></tr>
+  <tr><td>10</td><td><b>CP2 Baselines ready</b></td><td>Loader, split, degradation, analysis, both baselines, CI</td><td>Hist-eq, histograms of dev images</td><td>DFT and filters, spectra</td><td>Adaptive threshold, LoG</td><td>Fill, label, measure</td></tr>
+  <tr><td>11</td><td>Stages in progress</td><td>Pipeline A + registry, A vs baselines</td><td>Enhancement comparison</td><td>PSNR study</td><td>Detector study</td><td>SE studies, evaluate.py</td></tr>
+  <tr><td>12</td><td><b>CP3 Stages working</b></td><td>Pipelines B, C; integration</td><td>Kernel-size study</td><td>D0 study, spatial vs frequency</td><td>Threshold study, Hough</td><td>run_pipeline, demo v1</td></tr>
+  <tr><td>13</td><td><b>CP4 Results frozen</b></td><td>Final selection, robustness, test eval, generalization</td><td>Ablation, report section</td><td>Compression bonus, report</td><td>Ablation, report</td><td>Failure analysis, deployment</td></tr>
+  <tr><td>14</td><td><b>Final discussion</b></td><td>Report edit, v1.0 tag</td><td colspan="4">Slides, rehearsal &times;2, mock defense</td></tr>
+</table>
+<h2>12.1 Risk register</h2>
+<table>
+  <tr><th>Risk</th><th>Likelihood</th><th>Impact</th><th>Mitigation / contingency</th></tr>
+  <tr><td>Dataset licence unclear or GT incomplete</td><td>Med</td><td>High</td><td>Validate before any coding. Keep one fallback dataset (from the spec's suggestions).</td></tr>
+  <tr><td>Test set accidentally used for tuning</td><td>Med</td><td>High</td><td><code>evaluate.py</code> refuses <code>--split test</code> unless a <code>results-frozen</code> tag exists</td></tr>
+  <tr><td>Near-duplicate photos in both dev and test</td><td>High</td><td>High</td><td>Group split by ID blocks (T1.10)</td></tr>
+  <tr><td>Generous GT masks cap IoU</td><td>High</td><td>Med</td><td>Expected. Measure it, explain it in the failure analysis, report Dice too</td></tr>
+  <tr><td>Pipeline too slow for 10 min on Colab</td><td>Med</td><td>High</td><td>Measure time per image in W10. Vectorise with <code>sliding_window_view</code>. Downscale if the resolution study allows it.</td></tr>
+  <tr><td>Python version mismatch local vs Colab</td><td>Med</td><td>Med</td><td>Pin versions that have wheels for both. CI tests Colab's Python version.</td></tr>
+  <tr><td>Merge conflicts on shared files</td><td>High</td><td>Med</td><td>Single owner per file. Separate report section files.</td></tr>
+  <tr><td>A member falls behind or is absent</td><td>Med</td><td>High</td><td>Twice-weekly checkpoints. MEM1 re-plans after 3 days of slip. Pair programming, but the owner still writes their own code.</td></tr>
+  <tr><td>Complex pipeline doesn't beat the baseline</td><td>Med</td><td>Low</td><td>Report it honestly as a finding and explain why (the spec rewards this)</td></tr>
+  <tr><td>Free hosting is down during review</td><td>Low</td><td>Med</td><td>A recorded walkthrough on Canvas plus a local CLI fallback</td></tr>
+</table>
+</section>
+
+<!-- ============================== 13 ============================== -->
+<section class="page-break">
+<h1>13. Commands (planned, not yet verified)</h1>
+<div class="draft"><b>Verification status:</b> none of these commands has been run against the
+project, because the repository does not exist yet. Standard tool syntax is used (git, pip,
+pytest, venv). Module paths such as <code>src/run_pipeline.py</code> follow the planned
+structure. MEM1 runs each command after creating the skeleton and marks it verified in v0.2.
+Shell: Windows PowerShell locally, bash on Colab.</div>
+
+<h2>13.1 Environment (local, Windows PowerShell)</h2>
+<pre>
+git clone https://github.com/&lt;org&gt;/&lt;repo&gt;.git      # URL TBD
+cd &lt;repo&gt;
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+pytest -q
+</pre>
+<h2>13.2 Environment (Google Colab)</h2>
+<pre>
+!python --version
+!git clone https://github.com/&lt;org&gt;/&lt;repo&gt;.git
+%cd &lt;repo&gt;
+!pip install -q -r requirements.txt
+!python data/download_dataset.py --out data/raw         # RAR support on Colab: verify
+!pytest -q
+</pre>
+<h2>13.3 Running (planned CLI)</h2>
+<pre>
+python data/download_dataset.py --out data/raw
+python -m src.pipeline --config configs/pipeline_a.yaml --split dev
+python -m src.evaluate --config configs/final_pipeline.yaml --split dev
+python -m src.run_pipeline --image path/to/img.png --config configs/final_pipeline.yaml --out out/
+python -m src.evaluate --config configs/final_pipeline.yaml --split test   # ONCE, after freeze
+</pre>
+<h2>13.4 Git workflow for every member</h2>
+<pre>
+git checkout main
+git pull
+git checkout -b feature/mem2-enhancement          # use your own branch name
+# ... edit, then run the tests ...
+pytest tests/test_enhancement.py -q
+git add src/enhancement.py tests/test_enhancement.py
+git commit -m "feat(enhancement): add NumPy histogram equalization with tests"
+git push -u origin feature/mem2-enhancement
+# Open a PR on GitHub: base main &lt;- your branch; request your reviewer (Section 2.1)
+# After review comments:
+git add -A ; git commit -m "fix(enhancement): address review - clip before uint8 cast"
+git push
+# Keep the branch current:
+git fetch origin ; git rebase origin/main ; git push --force-with-lease
+</pre>
+<p>If the GitHub CLI is installed (<code>winget install GitHub.cli</code>, then
+<code>gh auth login</code>): <code>gh pr create --base main --fill --reviewer &lt;user&gt;</code>.</p>
+<h2>13.5 Release</h2>
+<pre>
+git tag -a results-frozen -m "Final config frozen (dev-selected)"   # before the test eval
+git tag -a v1.0 -m "CSE281 final submission"
+git push origin --tags
+</pre>
+
+<!-- ============================== 14 ============================== -->
+<h1>14. Required experiments and evidence</h1>
+<table>
+  <tr><th>#</th><th>Study</th><th>Owner</th><th>Factor and values</th><th>Data</th><th>Metric</th><th>Evidence</th></tr>
+  <tr><td>E1</td><td>Resolution / gray levels</td><td>MEM1</td><td>&times;1/2/4/8; 256&hellip;2 levels</td><td>dev subset</td><td>Primary</td><td>fig + CSV</td></tr>
+  <tr><td>E2</td><td>Baselines</td><td>MEM1</td><td>trivial, simple</td><td>dev</td><td>Primary</td><td>CSV</td></tr>
+  <tr><td>E3</td><td>A vs baselines</td><td>MEM1</td><td>&mdash;</td><td>dev</td><td>Primary</td><td>table, box plot</td></tr>
+  <tr><td>E4</td><td>Enhancement comparison</td><td>MEM2</td><td>10 methods</td><td>dev</td><td>Primary + histograms</td><td>fig grid</td></tr>
+  <tr><td>E5</td><td><b>Kernel size</b> (OFAT)</td><td>MEM2</td><td>k = 3, 5, 7</td><td>dev</td><td>Primary</td><td>plot</td></tr>
+  <tr><td>E6</td><td>Restoration PSNR</td><td>MEM3</td><td>&ge;2 noise &times; 3 levels &times; 9 filters</td><td>dev (clean + degraded)</td><td>MSE, PSNR</td><td>heatmap</td></tr>
+  <tr><td>E7</td><td><b>Cutoff D0</b> (OFAT)</td><td>MEM3</td><td>3 values &times; ideal/BW/Gauss</td><td>dev</td><td>PSNR / primary</td><td>spectra fig</td></tr>
+  <tr><td>E8</td><td>Detector comparison</td><td>MEM4</td><td>Roberts, Prewitt, Sobel, Lap, LoG</td><td>dev</td><td>Primary</td><td>bar chart</td></tr>
+  <tr><td>E9</td><td><b>Threshold method</b> (OFAT)</td><td>MEM4</td><td>global, Otsu, adaptive (&ge;3)</td><td>dev</td><td>Primary</td><td>bar chart</td></tr>
+  <tr><td>E10</td><td><b>SE size</b> (OFAT)</td><td>MEM5</td><td>3, 5, 7</td><td>dev</td><td>Primary</td><td>plot</td></tr>
+  <tr><td>E11</td><td><b>SE shape</b> (OFAT)</td><td>MEM5</td><td>square, disk (+cross/line)</td><td>dev</td><td>Primary</td><td>plot</td></tr>
+  <tr><td>AB1</td><td>Ablation: with vs without enhancement</td><td>MEM2</td><td>remove stage</td><td>dev</td><td>Primary</td><td>table</td></tr>
+  <tr><td>AB2</td><td>Ablation: spatial vs frequency smoothing</td><td>MEM3</td><td>swap stage</td><td>dev</td><td>Primary/PSNR</td><td>table</td></tr>
+  <tr><td>AB3</td><td>Ablation: global vs Otsu vs adaptive in the full pipeline</td><td>MEM4</td><td>swap stage</td><td>dev</td><td>Primary</td><td>table</td></tr>
+  <tr><td>AB4</td><td>Ablation: with vs without morphology; open&rarr;close vs close&rarr;open</td><td>MEM5</td><td>remove or reorder</td><td>dev</td><td>Primary</td><td>table</td></tr>
+  <tr><td>AB5</td><td>Ablation: mean vs median under S&amp;P (optional 5th)</td><td>MEM3</td><td>swap</td><td>dev</td><td>PSNR</td><td>table</td></tr>
+  <tr><td>E12</td><td>Robustness 3 levels &times; 3 seeds</td><td>MEM1</td><td>&sigma; or p &times; seeds 0, 1, 2</td><td>dev &rarr; test</td><td>mean &plusmn; std</td><td>table</td></tr>
+  <tr><td>E13</td><td>Test evaluation (once)</td><td>MEM5 + MEM1</td><td>final, trivial, simple</td><td><b>test</b></td><td>per-image, mean, std, best, worst</td><td>CSV + figs</td></tr>
+  <tr><td>E14</td><td>Failure analysis (&ge;20 worst)</td><td>MEM5</td><td>categories + fix</td><td>test</td><td>Primary</td><td>panels</td></tr>
+  <tr><td>E15</td><td>Timing per image and per stage</td><td>MEM5 + MEM1</td><td>&mdash;</td><td>test</td><td>seconds</td><td>table</td></tr>
+  <tr><td>E16</td><td>Per-image measurement output table</td><td>MEM5</td><td>count, area, bbox, decision vs GT</td><td>test</td><td>Measurement error</td><td>CSV (one row per image)</td></tr>
+  <tr><td>E17</td><td>Smoothing-filter selection per noise type</td><td>MEM2 (+ MEM3)</td><td>mean / Gaussian / median &times; 4 noise &times; 3 levels</td><td>dev</td><td>PSNR + primary</td><td>heatmap</td></tr>
+  <tr><td>AB6</td><td>Optional: histogram matching vs equalization</td><td>MEM2</td><td>swap</td><td>dev</td><td>Primary</td><td>table</td></tr>
+  <tr><td>AB7</td><td>Optional: Wiener filter on blurred images</td><td>MEM3</td><td>add stage</td><td>dev</td><td>PSNR</td><td>table</td></tr>
+  <tr><td>AB8</td><td>Optional: boundary extraction</td><td>MEM5</td><td>add stage</td><td>dev</td><td>Visual / perimeter</td><td>figure</td></tr>
+</table>
+<p class="small">AB6&ndash;AB8 are the spec's &ldquo;strongly recommended additions&rdquo;. They
+count as ablations, and are attempted only after the required work is done.</p>
+<p class="small">Every study: fixed reference configuration, one factor changed, a row in
+<code>experiment_log.csv</code>, figures saved in <code>experiments/figures/</code>, and 2&ndash;4
+sentences of interpretation that say <i>why</i>, not only <i>which</i>. Show intermediate images
+and point out over-smoothing, lost detail and merged objects.</p>
+</section>
+
+<!-- ============================== 15 & 16 ============================== -->
+<section class="page-break">
+<h1>15. Testing and verification checklists</h1>
+<h2>15.1 Definition of done (every task)</h2>
+<table>
+  <tr><th class="check">&#9744;</th><td>Implementation exists, with docstrings and lines of &le;95 characters</td></tr>
+  <tr><th class="check">&#9744;</th><td>It runs without warnings</td></tr>
+  <tr><th class="check">&#9744;</th><td>Unit tests (hand example, library comparison, edge cases) pass locally and in CI</td></tr>
+  <tr><th class="check">&#9744;</th><td>Output verified visually on 3 dev images</td></tr>
+  <tr><th class="check">&#9744;</th><td>Evidence saved (CSV row, figure)</td></tr>
+  <tr><th class="check">&#9744;</th><td>The owner can explain every line without notes</td></tr>
+  <tr><th class="check">&#9744;</th><td>PR reviewed and approved by a different member</td></tr>
+</table>
+<h2>15.2 Required unit-test types per NumPy implementation</h2>
+<ul>
+  <li><b>Hand-worked example:</b> a 3&times;3 or 5&times;5 array with the expected values written in the test.</li>
+  <li><b>Library equivalence:</b> on a random seeded 64&times;64 uint8 image,
+      <code>np.array_equal</code> or <code>max|diff| &le; tol</code>, with the tolerance justified.</li>
+  <li><b>Edge cases:</b> constant image, all-0 and all-255 images, 1&times;1 or tiny images,
+      non-square images, empty mask, wrong dtype or shape raises an error.</li>
+  <li><b>Properties:</b> dtype and range preserved, determinism with a seed, idempotence where it
+      applies (opening, hist-eq on an equalized image is approximately idempotent).</li>
+</ul>
+<h2>15.3 Final delivery checklist</h2>
+<table>
+  <tr><th class="check">&#9744;</th><td>All mandatory requirements in Section 1.3 are covered</td></tr>
+  <tr><th class="check">&#9744;</th><td>All 5 members have meaningful commits from their own accounts</td></tr>
+  <tr><th class="check">&#9744;</th><td>Each member has &ge;2 NumPy implementations with comparison and a hand example</td></tr>
+  <tr><th class="check">&#9744;</th><td>Each member has &ge;1 logged experiment</td></tr>
+  <tr><th class="check">&#9744;</th><td>Pipelines A, B and C run end to end. Both baselines are evaluated.</td></tr>
+  <tr><th class="check">&#9744;</th><td>All OFAT studies and &ge;4 ablations are complete. 3 levels &times; 3 seeds robustness is done.</td></tr>
+  <tr><th class="check">&#9744;</th><td>Test-set evaluation is done once, after the <code>results-frozen</code> tag</td></tr>
+  <tr><th class="check">&#9744;</th><td>Failure analysis covers &ge;20 images with categories and one fix</td></tr>
+  <tr><th class="check">&#9744;</th><td>Test set runs in &lt;10 min on Colab CPU (timed, screenshot saved)</td></tr>
+  <tr><th class="check">&#9744;</th><td>A fresh clone plus the README commands reproduce the final test metrics</td></tr>
+  <tr><th class="check">&#9744;</th><td>The demo works on unseen images and shows a failure case</td></tr>
+  <tr><th class="check">&#9744;</th><td>Report numbers match the CSVs. AI assistance is disclosed.</td></tr>
+  <tr><th class="check">&#9744;</th><td>Report PDF and slides are in <code>report/</code>. Final commit tagged <code>v1.0</code>.</td></tr>
+  <tr><th class="check">&#9744;</th><td>Every bonus is evidenced or explicitly reported as incomplete</td></tr>
+</table>
+
+<h1>16. Bonus-task ownership and tracking</h1>
+<p>The bonus is worth up to 5% <b>at the instructor's discretion</b>. All five are team goals.
+None is guaranteed to be awarded.</p>
+<table>
+  <tr><th>Bonus</th><th>Owner</th><th>Reviewer</th><th>Evidence required</th><th>Target week</th></tr>
+  <tr><td>B1 Public demo</td><td>MEM5</td><td>MEM1</td><td>Public URL in README; upload, stages, result and measurement shown; invalid-file handling; screenshot from a second device</td><td>W13</td></tr>
+  <tr><td>B2 Unit tests + CI</td><td>MEM1 (all write tests)</td><td>MEM4</td><td>pytest suite; GitHub Actions on push and PR; branch protection requiring CI; README "run tests" section</td><td>W10 start, ongoing</td></tr>
+  <tr><td>B3 Second dataset</td><td>MEM1 + MEM5</td><td>MEM2</td><td>Licence and GT checked; frozen pipeline run with no tuning; comparison table; generalization discussion</td><td>W13</td></tr>
+  <tr><td>B4 Lossless compression</td><td>MEM3</td><td>MEM1</td><td>RLE and/or Huffman encode and decode; <code>np.array_equal</code>; sizes, ratio, timings on several outputs</td><td>W13</td></tr>
+  <tr><td>B5 Speed optimization</td><td>MEM1 (all optimize)</td><td>MEM3</td><td>Profile (<code>cProfile</code>); bottlenecks; before and after time per image; speedup = T<sub>orig</sub>/T<sub>opt</sub>; identical outputs</td><td>W13</td></tr>
+</table>
+<h2>16.1 Tracker: <code>bonus/bonus_results.csv</code> (schema)</h2>
+<pre>
+bonus_id,objective,owner,reviewer,status,evidence_path,tests_or_measurements,documentation,completion_date
+B1,Public deployed demo,MEM5,MEM1,not_started,,,,
+B2,Unit tests and CI,MEM1,MEM4,not_started,,,,
+B3,Second dataset generalization,MEM1+MEM5,MEM2,not_started,,,,
+B4,Lossless compression,MEM3,MEM1,not_started,,,,
+B5,Speed optimization,MEM1,MEM3,not_started,,,,
+</pre>
+<p class="small">Status values: <code>not_started | in_progress | in_review | done | incomplete</code>.
+<code>done</code> requires a non-empty <code>evidence_path</code>.</p>
+</section>
+
+<!-- ============================== 17 & 18 ============================== -->
+<section class="page-break">
+<h1>17. Report responsibilities</h1>
+<p>Spec format: 8&ndash;10 pages, IEEE conference format (or an equivalent white paper), excluding
+references and appendix. Every figure and table is numbered, captioned and discussed, and every
+number can be reproduced from the repository. A separate draft skeleton is in
+<code>report/report_draft.pdf</code>.</p>
+<table>
+  <tr><th>Spec section</th><th>Lead writer</th><th>Contributors</th><th>Target length</th></tr>
+  <tr><td>1 Abstract</td><td>MEM1</td><td>&mdash;</td><td>150&ndash;200 words</td></tr>
+  <tr><td>2 Introduction and problem statement</td><td>MEM1</td><td>&mdash;</td><td>0.5 p</td></tr>
+  <tr><td>3 Dataset and image analysis</td><td>MEM1</td><td>MEM2 (histograms), MEM3 (spectra)</td><td>1.25 p</td></tr>
+  <tr><td>4 Methodology: data prep, baselines</td><td>MEM1</td><td>&mdash;</td><td>0.5 p</td></tr>
+  <tr><td>4 Methodology: enhancement</td><td>MEM2</td><td>&mdash;</td><td>0.75 p</td></tr>
+  <tr><td>4 Methodology: restoration and frequency</td><td>MEM3</td><td>&mdash;</td><td>0.75 p</td></tr>
+  <tr><td>4 Methodology: segmentation</td><td>MEM4</td><td>&mdash;</td><td>0.75 p</td></tr>
+  <tr><td>4 Methodology: morphology and measurement; Pipelines A/B/C diagrams</td><td>MEM5 / MEM1</td><td>&mdash;</td><td>1 p</td></tr>
+  <tr><td>5 Experiments: setup, OFAT, ablations</td><td>Each owner writes their own study</td><td>MEM1 edits</td><td>1.5 p</td></tr>
+  <tr><td>6 Results and failure analysis</td><td>MEM5</td><td>MEM1 (final table, robustness)</td><td>1.5 p</td></tr>
+  <tr><td>7 Deployment: runnable pipeline and demo (+ bonus)</td><td>MEM5</td><td>MEM3 (compression), MEM1 (CI, speed)</td><td>0.5 p</td></tr>
+  <tr><td>8 Limitations, ethics, future work</td><td>MEM1</td><td>All</td><td>0.4 p</td></tr>
+  <tr><td>9 Contribution table; AI-assistance disclosure</td><td>MEM1</td><td>All verify their own row</td><td>0.25 p</td></tr>
+  <tr><td>10 References</td><td>MEM1</td><td>All add the sources they used</td><td>excluded</td></tr>
+</table>
+
+<h1>18. Presentation responsibilities</h1>
+<p>10-minute pitch. <b>Every member speaks.</b> Then 10 minutes of individual questions. The demo is
+reviewed on Canvas, so keep a recorded run as a backup. A draft slide skeleton is in
+<code>report/presentation_draft.pdf</code>.</p>
+<table>
+  <tr><th>Slot</th><th>Speaker</th><th>Content</th><th>Time</th></tr>
+  <tr><td>1</td><td>MEM1</td><td>Problem, user, cost of errors, metric; dataset and its difficulties</td><td>1:30</td></tr>
+  <tr><td>2</td><td>MEM1</td><td>Image analysis findings, baselines, three pipelines overview</td><td>1:00</td></tr>
+  <tr><td>3</td><td>MEM2</td><td>Enhancement: histograms, which defect each method fixes, kernel study</td><td>1:30</td></tr>
+  <tr><td>4</td><td>MEM3</td><td>Restoration PSNR study, spectra, D0 and ringing, spatial vs frequency</td><td>1:30</td></tr>
+  <tr><td>5</td><td>MEM4</td><td>Detectors and threshold methods vs ground truth</td><td>1:30</td></tr>
+  <tr><td>6</td><td>MEM5</td><td>Morphology studies, test results, failure categories, live demo incl. a failure case</td><td>2:00</td></tr>
+  <tr><td>7</td><td>MEM1</td><td>Final results table, robustness, lessons learned, bonus summary</td><td>0:45</td></tr>
+  <tr><td></td><td></td><td><b>Buffer</b></td><td>0:15</td></tr>
+</table>
+</section>
+
+<!-- ============================== 19 ============================== -->
+<section class="page-break">
+<h1>19. Individual defense preparation</h1>
+<p>Rules: answer from understanding, not memorised text. Every member must also be able to explain
+the whole pipeline: what goes into and out of each stage, and why the stage exists. Mock defenses
+happen in W13 and W14. Each member questions another member (rotation:
+1&rarr;2&rarr;3&rarr;4&rarr;5&rarr;1).</p>
+
+<h2 class="m1">19.1 MEM1 &mdash; data, metrics, baselines, architecture</h2>
+<h4>Hand-worked example (must match the code output)</h4>
+<pre>
+a = [[10,20],[30,40]]   b = [[12,20],[30,36]]
+diff = [[-2,0],[0,4]] -> squares 4,0,0,16 -> MSE = 20/4 = 5.0
+PSNR = 10 log10(255^2 / 5) = 10 log10(13005) = 41.14 dB
+
+pred = [[1,1,0],[1,0,0],[0,0,0]]  gt = [[1,0,0],[1,1,0],[0,0,0]]
+|pred AND gt| = 2,  |pred OR gt| = 4  ->  IoU = 0.5
+</pre>
+<dl class="qa">
+  <dt>Q: Why compute MSE in float and not on uint8 arrays?</dt>
+  <dd>uint8 subtraction wraps modulo 256: 10 &minus; 12 gives 254, not &minus;2. That would make the
+      MSE wrong. We cast to float64 first.</dd>
+  <dt>Q: Why is 255&sup2; in the PSNR formula, and what happens when MSE = 0?</dt>
+  <dd>255 is the maximum possible pixel value for 8-bit images, so PSNR measures the error relative
+      to the peak signal power. When MSE = 0 the images are identical and PSNR is infinite. We
+      return <code>inf</code> and handle it in averages.</dd>
+  <dt>Q: Why IoU rather than pixel accuracy?</dt>
+  <dd>When the foreground is small, predicting all background scores high accuracy while finding
+      nothing. IoU ignores true negatives and penalises both missed and spurious foreground.
+      Here cracks are about 1.4% of the pixels, so an empty mask scores about 98.6% accuracy but
+      IoU 0. A missed crack (unrepaired damage) and a false crack (wasted inspection) both lower IoU.</dd>
+  <dt>Q: How did you make sure the test set was not used for tuning?</dt>
+  <dd>The split is fixed with a seed and committed. All studies read only the dev list. The final
+      config was tagged <code>results-frozen</code> before <code>evaluate --split test</code> ran,
+      and that run happened once (visible in git and in the log).</dd>
+  <dt>Q: Why both a trivial and a simple baseline?</dt>
+  <dd>The trivial baseline shows how hard the task is with no processing at all. The simple
+      baseline is a reasonable minimum effort. A complex pipeline is only worth its complexity if it
+      beats the simple baseline, and where it doesn't, we explain why.</dd>
+  <dt>Q: Why report mean &plusmn; std over three seeds?</dt>
+  <dd>Noise is random, so a single run could be lucky. The std shows how sensitive the pipeline is
+      to the particular noise sample.</dd>
+</dl>
+
+<h2 class="m2">19.2 MEM2 &mdash; enhancement</h2>
+<pre>
+Histogram equalization, 3-bit (L=8), 3x3 image [[0,0,1],[1,1,2],[2,3,7]]
+counts: r0=2 r1=3 r2=2 r3=1 r7=1   CDF: 2/9, 5/9, 7/9, 8/9, ..., 9/9
+s = round(7*CDF): 0->2, 1->4, 2->5, 3->6, 7->7
+
+Mean 3x3 on [[1,2,3],[4,5,6],[7,8,9]] centre -> 45/9 = 5
+Log: s = (255/ln 256) ln(1+r); r=15 -> 255*ln16/ln256 = 127.5
+Output size: (N - F + 2P)/S + 1 = (5 - 3 + 2)/1 + 1 = 5
+</pre>
+<dl class="qa">
+  <dt>Q: Why does histogram equalization sometimes make segmentation worse?</dt>
+  <dd>It spreads intensities using the global CDF, so it also amplifies background texture and
+      noise, and it can merge the foreground and background distributions. Gains in visible
+      contrast don't guarantee separability.</dd>
+  <dt>Q: Gaussian or mean filter, and why?</dt>
+  <dd>Gaussian weights fall off smoothly, so it blurs edges less and has no ringing in the
+      frequency domain (its transform is also Gaussian). The mean filter's box has a sinc-shaped
+      response with side lobes.</dd>
+  <dt>Q: How does Laplacian sharpening work, and what is its risk?</dt>
+  <dd>g = f &minus; &nabla;&sup2;f (with the centre-negative kernel) adds back second-derivative
+      detail at edges. It also amplifies noise, so it should come after smoothing.</dd>
+  <dt>Q: How does your gradient sharpening work, and why not just add the gradient?</dt>
+  <dd>We use the Gonzalez &amp; Woods &ldquo;combining spatial enhancement methods&rdquo; scheme.
+      The Sobel magnitude is smoothed with a 5&times;5 mean, normalized to [0,1] and used as a
+      mask: g = f + M<sub>s</sub>&middot;(f<sub>lap</sub> &minus; f). The Laplacian detail is
+      added only where edges are strong, so noise in flat regions, where the gradient is small,
+      is not amplified. Adding |&nabla;f| directly would only brighten edges without restoring
+      their profile.</dd>
+</dl>
+
+<h2 class="m3">19.3 MEM3 &mdash; restoration and frequency</h2>
+<pre>
+3x3 window [[10,12,11],[13,255,12],[11,10,0]]  sorted: 0,10,10,11,11,12,12,13,255
+median=11  mean=334/9=37.1  max=255  min=0  midpoint=(0+255)/2=127.5
+alpha-trimmed d=2: drop 0 and 255 -> 79/7 = 11.29
+Butterworth LP at D=D0: 1/(1+1^(2n)) = 0.5 ;  Gaussian LP at D=D0: e^-0.5 = 0.607
+</pre>
+<dl class="qa">
+  <dt>Q: Why is the median better than the mean for salt-and-pepper noise?</dt>
+  <dd>Impulses are extreme outliers. The mean includes them (37.1 above), but the median ignores
+      them as long as fewer than half the window is corrupted (11 above).</dd>
+  <dt>Q: Why does the ideal low-pass filter ring?</dt>
+  <dd>Its sharp cutoff in frequency corresponds to a sinc in space. Convolving with a sinc
+      produces oscillations near edges. Butterworth (low order) and Gaussian roll off smoothly and
+      reduce or remove the ringing.</dd>
+  <dt>Q: Why multiply by (&minus;1)<sup>x+y</sup>, and why pad?</dt>
+  <dd>The multiplication shifts F(u,v) by (M/2, N/2), which puts DC at the centre for display and
+      for filter design. The DFT assumes periodicity, so padding to 2M&times;2N prevents wrap-around
+      artefacts from circular convolution.</dd>
+</dl>
+
+<h2 class="m4">19.4 MEM4 &mdash; segmentation</h2>
+<pre>
+Patch [[10,10,10],[10,10,10],[200,200,200]], correlation with Sobel:
+Gx = [[-1,0,1],[-2,0,2],[-1,0,1]] -> 0
+Gy = [[-1,-2,-1],[0,0,0],[1,2,1]] -> -(10+20+10) + (200+400+200) = 760
+|grad| = sqrt(0^2 + 760^2) = 760   (horizontal edge)
+</pre>
+<dl class="qa">
+  <dt>Q: What does Otsu maximise, and when does it fail?</dt>
+  <dd>The between-class variance &sigma;&sup2;<sub>B</sub>, which is the same as minimising the
+      within-class variance. It assumes a bimodal histogram. It fails when the object is a tiny
+      fraction of the pixels or when uneven illumination shifts the modes. That is why adaptive
+      thresholding exists.</dd>
+  <dt>Q: Why apply LoG rather than the plain Laplacian?</dt>
+  <dd>The Laplacian is a second derivative and very sensitive to noise. Gaussian smoothing first,
+      with &sigma; setting the scale, suppresses noise. Edges are located at zero crossings.</dd>
+  <dt>Q: Sobel vs Prewitt?</dt>
+  <dd>Sobel weights the centre row or column by 2, which gives slight smoothing and better noise
+      tolerance. Prewitt weights them equally.</dd>
+</dl>
+
+<h2 class="m5">19.5 MEM5 &mdash; morphology and evaluation</h2>
+<pre>
+A (5x5):            Erosion with 3x3 square (outside = 1):
+0 0 0 0 0           0 0 0 0 0
+0 1 1 1 0           0 0 0 0 0
+0 1 1 1 0    -&gt;     0 0 1 0 0      only the centre's whole 3x3 neighbourhood is 1
+0 1 1 1 0           0 0 0 0 0
+0 0 0 0 0           0 0 0 0 0
+Dilating that result with the same SE restores the 3x3 block -&gt; opening(A) = A.
+</pre>
+<dl class="qa">
+  <dt>Q: Opening vs closing: which removes what?</dt>
+  <dd>Opening (erode then dilate) removes foreground specks smaller than the SE and breaks thin
+      bridges. Closing (dilate then erode) fills small holes and gaps and joins broken parts. The
+      order matters, which is why it is one of our ablations.</dd>
+  <dt>Q: How did you choose the SE shape and size?</dt>
+  <dd>From the dev-set study (3/5/7, square vs disk), with the primary metric before and after.
+      A disk is isotropic and suits round objects. A line or cross suits thin structures.
+      <span class="tbd">TBD</span>: the actual result.</dd>
+  <dt>Q: How does your hole filling work?</dt>
+  <dd>It reconstructs the background from the image border by repeated dilation constrained to the
+      complement. Any background not reachable from the border is a hole and is set to
+      foreground.</dd>
+</dl>
+
+<h2>19.6 Whole-pipeline questions (everyone)</h2>
+<ul>
+  <li>Walk through Pipeline C stage by stage: input and output dtype and range, and why each stage exists.</li>
+  <li>Which stage causes the most common failure, and what fix did you propose?</li>
+  <li>What would happen if enhancement ran after thresholding?</li>
+  <li>How do you know your NumPy version is correct? (Library comparison plus the hand example.)</li>
+  <li>Why is no machine learning used, and what is the limitation of a purely classical approach here?</li>
+</ul>
+</section>
+
+<!-- ============================== 20 ============================== -->
+<section class="page-break m1">
+<h1>20. Daily MEM1 checklist</h1>
+<p class="small">Five working days per week from Week 9 to Week 14. Calendar dates are
+<span class="tbd">TBD</span>. Move rows if the team works on different days. Every day also
+includes the standing routine below.</p>
+<h2>20.1 Standing routine (about 15 minutes, every day)</h2>
+<table>
+  <tr><th class="check">&#9744;</th><td>Pull <code>main</code> and run <code>pytest -q</code>. Check the CI status of open PRs.</td></tr>
+  <tr><th class="check">&#9744;</th><td>Review every PR that has waited more than 24 hours.</td></tr>
+  <tr><th class="check">&#9744;</th><td>Collect a one-line stand-up from each member: done, next, blocked.</td></tr>
+  <tr><th class="check">&#9744;</th><td>Confirm yesterday's experiments are in <code>experiment_log.csv</code>.</td></tr>
+  <tr><th class="check">&#9744;</th><td>Make at least one meaningful commit of your own.</td></tr>
+</table>
+<h2>20.2 Day by day</h2>
+<table><tr><th>Day</th><th>Do yourself</th><th>Request from members</th><th>Review</th><th>Test</th><th>Blockers / milestone</th></tr><tr><td><b>W9</b> Mon</td><td>Dataset validated (done 12 Nov). Share the dataset card (Section 1.2).</td><td>GitHub usernames from all members.</td><td>&mdash;</td><td>Download script runs.</td><td>Dataset access, licence questions.</td></tr><tr><td><b>W9</b> Tue</td><td>T1.4 licence, T1.5 problem statement.</td><td>MEM5: re-check the licence and counts.</td><td>Problem paragraph with the team.</td><td>Image/GT pair count.</td><td>Disagreement on the metric.</td></tr><tr><td><b>W9</b> Wed</td><td>T1.6 skeleton, push, invite, branch protection.</td><td>Everyone: clone and run pytest.</td><td>&mdash;</td><td>Fresh clone locally and on Colab.</td><td>Install failures, Python version.</td></tr><tr><td><b>W9</b> Thu</td><td>T1.7 interface review meeting. T1.8 metrics.</td><td>MEM2: convolve2d. MEM3: median. MEM4: Otsu. MEM5: erode/dilate.</td><td>Interface document.</td><td>Metric hand examples.</td><td>Signature disputes.</td></tr><tr><td><b>W9</b> Fri</td><td>Merge metrics. Plan v0.2 with the dataset filled in.</td><td>Every member: confirm they have read their plan.</td><td>First module PRs.</td><td>CI dry run.</td><td><b>Milestone CP1:</b> topic settled, repo live.</td></tr><tr><td><b>W10</b> Mon</td><td>T1.9 loader and GT pairing.</td><td>MEM2: <code>histogram</code>. MEM3: <code>centered_spectrum</code>.</td><td>MEM2's convolve2d PR.</td><td>Loader tests.</td><td>Odd file formats or bit depths.</td></tr><tr><td><b>W10</b> Tue</td><td>T1.10 split, T1.11 noise.</td><td>MEM3: confirm the noise levels.</td><td>MEM4's Otsu PR, MEM3's median PR.</td><td>Split determinism.</td><td>Group leakage in the split.</td></tr><tr><td><b>W10</b> Wed</td><td>T1.12 image analysis notebook.</td><td>MEM2 and MEM3: analysis sections.</td><td>MEM5's erosion/dilation PR.</td><td>Downsampling vs cv2.</td><td>Missing helpers.</td></tr><tr><td><b>W10</b> Thu</td><td>T1.13 baselines on dev. T1.18 CI workflow.</td><td>Everyone: tests in every PR.</td><td>CI configuration.</td><td>Baseline unit tests.</td><td>CI failing on Colab's Python version.</td></tr><tr><td><b>W10</b> Fri</td><td>Post the baseline numbers. Findings &rarr; decisions table.</td><td>Everyone: start the dev studies next week.</td><td>Analysis notebook with the team.</td><td>Full test suite.</td><td><b>Milestone CP2:</b> baselines measured, metrics tested.</td></tr><tr><td><b>W11</b> Mon</td><td>T1.14 <code>log_run</code>. T1.15 registry.</td><td>MEM5: <code>evaluate()</code>.</td><td>Open module PRs.</td><td>Logger test.</td><td>Interface mismatches.</td></tr><tr><td><b>W11</b> Tue</td><td>Pipeline A config and run.</td><td>MEM2: enhancement comparison.</td><td>MEM5's evaluate PR.</td><td>Pipeline A on 5 dev images.</td><td>dtype or range errors between stages.</td></tr><tr><td><b>W11</b> Wed</td><td>Integration checkpoint #1.</td><td>MEM3: PSNR study. MEM4: detector study.</td><td>Experiment log rows.</td><td>End-to-end test.</td><td>Slow stages (time them).</td></tr><tr><td><b>W11</b> Thu</td><td>T1.16 A vs baselines.</td><td>MEM5: SE studies.</td><td>Study scripts.</td><td>Reproducibility of one study.</td><td>&mdash;</td></tr><tr><td><b>W11</b> Fri</td><td>Weekly status and tracker update.</td><td>Every member: 1 study logged.</td><td>All open PRs.</td><td>CI green on main.</td><td>Any member more than 3 days behind &rarr; re-plan.</td></tr><tr><td><b>W12</b> Mon</td><td>Pipeline B config.</td><td>MEM2: kernel study. MEM3: D0 study.</td><td>Study results.</td><td>B on dev.</td><td>&mdash;</td></tr><tr><td><b>W12</b> Tue</td><td>Pipeline C config.</td><td>MEM4: threshold study. MEM5: run_pipeline.</td><td>MEM5's entry point.</td><td>C on dev.</td><td>Morphology parameters.</td></tr><tr><td><b>W12</b> Wed</td><td>Integration checkpoint #2. Colab timing.</td><td>Everyone: hand examples finished.</td><td>Hand examples vs code output.</td><td>Test set timing estimate &lt;10 min.</td><td>Too slow &rarr; profiling (T1.19).</td></tr><tr><td><b>W12</b> Thu</td><td>Block diagrams for A/B/C.</td><td>Everyone: ablation configs (AB1&ndash;AB4).</td><td>Ablation configs.</td><td>Determinism of A/B/C.</td><td>&mdash;</td></tr><tr><td><b>W12</b> Fri</td><td>Tracker update.</td><td>Everyone: NumPy-vs-library tables.</td><td>Library-comparison tests.</td><td>Full suite plus a Colab run.</td><td><b>Milestone CP3:</b> stages working end to end.</td></tr><tr><td><b>W13</b> Mon</td><td>T1.20 final selection on dev. Tag <code>results-frozen</code>.</td><td>Everyone: ablation results.</td><td>Selection rationale.</td><td>Config hash.</td><td>Disagreement on the final pipeline.</td></tr><tr><td><b>W13</b> Tue</td><td>Robustness 3 &times; 3. T1.21 test evaluation (once).</td><td>MEM5: test evaluation with MEM1.</td><td>Test CSV.</td><td>Fresh clone reproduces the numbers.</td><td>&mdash;</td></tr><tr><td><b>W13</b> Wed</td><td>T1.22 generalization. T1.19 speed.</td><td>MEM5: failure analysis. MEM3: compression.</td><td>Failure categories.</td><td>Speedup outputs identical.</td><td>Second dataset access.</td></tr><tr><td><b>W13</b> Thu</td><td>Report: Sections I, II, IV-A, VII, VIII.</td><td>Everyone: report sections.</td><td>Report drafts.</td><td>Numbers vs CSVs.</td><td>&mdash;</td></tr><tr><td><b>W13</b> Fri</td><td>Tracker and bonus CSV update.</td><td>MEM5: deployed URL.</td><td>Demo on a phone.</td><td>Demo with invalid files.</td><td><b>Milestone CP4:</b> results frozen, report drafted.</td></tr><tr><td><b>W14</b> Mon</td><td>Full report edit.</td><td>Everyone: slides.</td><td>Slides.</td><td>README commands on a clean machine.</td><td>&mdash;</td></tr><tr><td><b>W14</b> Tue</td><td>Rehearsal #1 (timed).</td><td>Everyone: speaking parts.</td><td>Timing.</td><td>Live demo on unseen images.</td><td>Over time &rarr; cut content.</td></tr><tr><td><b>W14</b> Wed</td><td>Mock defenses (T1.24).</td><td>Everyone: answer Section 19.</td><td>Weak answers.</td><td>&mdash;</td><td>Members who are unsure &rarr; extra session.</td></tr><tr><td><b>W14</b> Thu</td><td>Rehearsal #2. Tag <code>v1.0</code>.</td><td>Everyone: final commits merged.</td><td>Final diff.</td><td>Fresh clone, tests, test metrics.</td><td>&mdash;</td></tr><tr><td><b>W14</b> Fri</td><td>Final discussion.</td><td>&mdash;</td><td>&mdash;</td><td>Demo backup ready.</td><td><b>Submitted.</b></td></tr></table>
+</section>
+
+<!-- ============================== 21 ============================== -->
+<section>
+<h1>21. Shared progress tracker</h1>
+<p class="small">Status key: &#9744; not started &middot; &#9680; in progress &middot; &#9745; done
+(meets the Section 15.1 definition of done). Update this in v0.x of the plan, or mirror it as a
+GitHub Project board.</p>
+<table>
+  <tr><th>Item</th><th>Owner</th><th>Week</th><th>Status</th><th>Evidence</th></tr>
+  <tr><td>Spec audit</td><td>MEM1</td><td>9</td><td class="check">&#9745;</td><td>Section 1</td></tr>
+  <tr><td>Dataset validated + licence cited</td><td>MEM1</td><td>9</td><td class="check">&#9680;</td><td>Validated 12 Nov; MEM5 re-check and README citation pending</td></tr>
+  <tr><td>Problem statement + metric</td><td>MEM1</td><td>9</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>Repo skeleton + branch protection</td><td>MEM1</td><td>9</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>metrics.py + tests</td><td>MEM1</td><td>9</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>data.py (load, split, noise) + tests</td><td>MEM1</td><td>10</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>Image analysis + resolution/gray study</td><td>MEM1</td><td>10</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>Both baselines on dev</td><td>MEM1</td><td>10</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>CI workflow</td><td>MEM1</td><td>10</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>enhancement.py (2+ NumPy) + tests</td><td>MEM2</td><td>10</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>Enhancement comparison + kernel study</td><td>MEM2</td><td>11&ndash;12</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>restoration.py + frequency.py + tests</td><td>MEM3</td><td>10</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>PSNR study + D0 study + spatial/freq ablation</td><td>MEM3</td><td>11&ndash;12</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>segmentation.py + tests</td><td>MEM4</td><td>10&ndash;11</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>Detector + threshold studies</td><td>MEM4</td><td>11&ndash;12</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>morphology.py + tests</td><td>MEM5</td><td>10</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>SE size + shape studies</td><td>MEM5</td><td>11&ndash;12</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>Pipelines A / B / C end to end</td><td>MEM1</td><td>11&ndash;12</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>Four ablations</td><td>MEM2&ndash;5</td><td>12&ndash;13</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>Final selection + results-frozen tag</td><td>MEM1</td><td>13</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>Robustness 3 &times; 3</td><td>MEM1</td><td>13</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>Test evaluation (once)</td><td>MEM5 + MEM1</td><td>13</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>Failure analysis (&ge;20)</td><td>MEM5</td><td>13</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>run_pipeline.py + demo</td><td>MEM5</td><td>12&ndash;13</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>B1 Deployment</td><td>MEM5</td><td>13</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>B2 CI</td><td>MEM1</td><td>10+</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>B3 Generalization</td><td>MEM1 + MEM5</td><td>13</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>B4 Compression</td><td>MEM3</td><td>13</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>B5 Speed</td><td>MEM1 (all)</td><td>13</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>Report sections</td><td>All</td><td>13</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>Slides + 2 rehearsals</td><td>All</td><td>14</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>Mock defenses</td><td>All</td><td>13&ndash;14</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>v1.0 tag</td><td>MEM1</td><td>14</td><td class="check">&#9744;</td><td></td></tr>
+</table>
+
+<h2>Resolved in v0.2</h2>
+<p class="small">Dataset, licence and counts; track (segmentation + measurement); primary metric (IoU);
+decision rule (severity class); use of line masks, edge linking and Hough; robustness noise
+(Gaussian &sigma; 10/20/30); D0 as a fraction of image size; split strategy; proposed pipelines A/B/C.</p>
+<h2>Open items for v0.3</h2>
+<ol>
+  <li>Team approval of the problem statement, metric and pipelines (Sections 1.2, 3.3).</li>
+  <li>Working resolution L, from the resolution study (T1.12).</li>
+  <li>Calendar dates for Weeks 9&ndash;14; the Week 14 discussion date.</li>
+  <li>GitHub repository URL and member usernames; commands verified after the skeleton exists.</li>
+  <li>Second dataset for B3 (licence check of CFD / DeepCrack / Crack500).</li>
+</ol>
+</section>
+
+</body>
+</html>
