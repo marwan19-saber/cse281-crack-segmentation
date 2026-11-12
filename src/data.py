@@ -60,7 +60,7 @@ def load_ground_truth(path, size=None):
 
 
 def list_pairs(root):
-    """Return sorted (image_path, mask_path) pairs from root/rgb and root/BW, matched by stem."""
+    """Return sorted (image_path, mask_path) pairs from root/rgb and root/BW, by stem."""
     root = Path(root)
     images = {p.stem: p for p in (root / IMAGE_DIR).iterdir() if p.is_file()}
     masks = {p.stem: p for p in (root / MASK_DIR).iterdir() if p.is_file()}
