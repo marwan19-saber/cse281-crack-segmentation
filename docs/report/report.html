@@ -44,11 +44,11 @@ ol.refs li { margin-bottom: 2pt; }
 
 <h1 class="title">Classical Crack Segmentation and Measurement on Concrete Surfaces</h1>
 <div class="authors">
-  <span>MEM1<br><i>Tech Lead, Data &amp; Baselines</i></span>
-  <span>MEM2<br><i>Enhancement</i></span>
-  <span>MEM3<br><i>Restoration &amp; Frequency</i></span>
-  <span>MEM4<br><i>Segmentation</i></span>
-  <span>MEM5<br><i>Morphology, Evaluation &amp; Demo</i></span><br>
+  <span>Marwan Saber<br><i>MEM1 &middot; Tech Lead, Data &amp; Baselines</i></span>
+  <span>Hassan Hisham<br><i>MEM2 &middot; Enhancement</i></span>
+  <span>Mohamed Wageh<br><i>MEM3 &middot; Restoration &amp; Frequency</i></span>
+  <span>Saad Mohamed<br><i>MEM4 &middot; Segmentation</i></span>
+  <span>Ahmed Abdelwahed<br><i>MEM5 &middot; Morphology, Evaluation &amp; Demo</i></span><br>
   <span><i>CSE281 Digital Image Processing &middot; Faculty of Computer Science &amp; Engineering,
   Alamein International University</i></span>
 </div>
@@ -171,31 +171,31 @@ block with a 3&times;3 square leaves only its centre.</p>
 <p class="tcap">Table III &middot; NumPy implementation vs library (dev image at L&nbsp;=&nbsp;1008)</p>
 <table>
 <tr><th>Owner</th><th class="l">Operation</th><th class="l">Library</th><th>Max |diff|</th></tr>
-<tr><td>MEM1</td><td class="l">block-average downsampling, PSNR</td><td class="l">cv2.resize AREA, skimage</td><td>0, 0</td></tr>
-<tr><td>MEM2</td><td class="l">convolve2d 5&times;5</td><td class="l">cv2.filter2D</td><td>5.7e-13</td></tr>
-<tr><td>MEM2</td><td class="l">histogram equalisation; gamma</td><td class="l">cv2.equalizeHist; skimage</td><td>0; 0</td></tr>
-<tr><td>MEM2</td><td class="l">Gaussian 5&times;5</td><td class="l">cv2.GaussianBlur</td><td>1 (fixed-point)</td></tr>
-<tr><td>MEM3</td><td class="l">median 5&times;5, max 3&times;3</td><td class="l">scipy.ndimage (mirror)</td><td>0, 0</td></tr>
-<tr><td>MEM3</td><td class="l">centred spectrum ((&minus;1)<sup>x+y</sup>)</td><td class="l">np.fft.fftshift</td><td>1.3e-11</td></tr>
-<tr><td>MEM4</td><td class="l">Sobel magnitude; Otsu</td><td class="l">cv2.Sobel; skimage</td><td>0; 0</td></tr>
-<tr><td>MEM4</td><td class="l">adaptive mean 31/15</td><td class="l">cv2.adaptiveThreshold</td><td>0.048% pixels</td></tr>
-<tr><td>MEM5</td><td class="l">erosion disk 5; hole filling</td><td class="l">cv2.erode; binary_fill_holes</td><td>0; 0</td></tr>
-<tr><td>MEM5</td><td class="l">labelling (object count)</td><td class="l">skimage.measure.label</td><td>0</td></tr>
+<tr><td>Marwan Saber<br>(MEM1)</td><td class="l">block-average downsampling, PSNR</td><td class="l">cv2.resize AREA, skimage</td><td>0, 0</td></tr>
+<tr><td>Hassan Hisham<br>(MEM2)</td><td class="l">convolve2d 5&times;5</td><td class="l">cv2.filter2D</td><td>5.7e-13</td></tr>
+<tr><td>Hassan Hisham<br>(MEM2)</td><td class="l">histogram equalisation; gamma</td><td class="l">cv2.equalizeHist; skimage</td><td>0; 0</td></tr>
+<tr><td>Hassan Hisham<br>(MEM2)</td><td class="l">Gaussian 5&times;5</td><td class="l">cv2.GaussianBlur</td><td>1 (fixed-point)</td></tr>
+<tr><td>Mohamed Wageh<br>(MEM3)</td><td class="l">median 5&times;5, max 3&times;3</td><td class="l">scipy.ndimage (mirror)</td><td>0, 0</td></tr>
+<tr><td>Mohamed Wageh<br>(MEM3)</td><td class="l">centred spectrum ((&minus;1)<sup>x+y</sup>)</td><td class="l">np.fft.fftshift</td><td>1.3e-11</td></tr>
+<tr><td>Saad Mohamed<br>(MEM4)</td><td class="l">Sobel magnitude; Otsu</td><td class="l">cv2.Sobel; skimage</td><td>0; 0</td></tr>
+<tr><td>Saad Mohamed<br>(MEM4)</td><td class="l">adaptive mean 31/15</td><td class="l">cv2.adaptiveThreshold</td><td>0.048% pixels</td></tr>
+<tr><td>Ahmed Abdelwahed<br>(MEM5)</td><td class="l">erosion disk 5; hole filling</td><td class="l">cv2.erode; binary_fill_holes</td><td>0; 0</td></tr>
+<tr><td>Ahmed Abdelwahed<br>(MEM5)</td><td class="l">labelling (object count)</td><td class="l">skimage.measure.label</td><td>0</td></tr>
 </table>
 <p>The remaining differences are explained: OpenCV's 8-bit Gaussian uses fixed-point arithmetic,
 and <code>adaptiveThreshold</code> rounds the local mean to an integer before comparing.</p>
 <p class="tcap">Table IV &middot; Hand-worked examples checked by the unit tests</p>
 <table>
 <tr><th>Owner</th><th class="l">Input</th><th class="l">Operation</th><th>Result</th></tr>
-<tr><td>MEM1</td><td class="l">a=[[10,20],[30,40]], b=[[12,20],[30,36]]</td><td class="l">MSE, PSNR</td><td>5.0, 41.14 dB</td></tr>
-<tr><td>MEM1</td><td class="l">[[0,2,8,10],[4,6,12,14]]</td><td class="l">2&times;2 block average</td><td>[[3,11]]</td></tr>
-<tr><td>MEM2</td><td class="l">r = 15; r = 64</td><td class="l">log (c = 255/ln 256); gamma 0.5</td><td>128; 128</td></tr>
-<tr><td>MEM2</td><td class="l">3-bit [[0,0,1],[1,1,2],[2,3,7]]</td><td class="l">histogram equalisation</td><td>0,1,2,3,7&rarr;2,4,5,6,7</td></tr>
-<tr><td>MEM3</td><td class="l">[[10,12,11],[13,255,12],[11,10,0]]</td><td class="l">median / mean / midpoint / &alpha;-trim d=2</td><td>11 / 37 / 128 / 11</td></tr>
-<tr><td>MEM3</td><td class="l">D = D0</td><td class="l">ideal / Butterworth / Gaussian H</td><td>1 / 0.5 / 0.607</td></tr>
-<tr><td>MEM3</td><td class="l">row [0,0,0,1,1,0]</td><td class="l">run-length runs</td><td>(0,3),(1,2),(0,1)</td></tr>
-<tr><td>MEM4</td><td class="l">[[10,10,10],[10,10,10],[200,200,200]]</td><td class="l">Sobel G<sub>x</sub>, G<sub>y</sub>; Prewitt G<sub>y</sub></td><td>0, 760; 570</td></tr>
-<tr><td>MEM5</td><td class="l">3&times;3 block inside 5&times;5</td><td class="l">erosion, then opening (3&times;3 square)</td><td>centre only; block</td></tr>
+<tr><td>Marwan Saber<br>(MEM1)</td><td class="l">a=[[10,20],[30,40]], b=[[12,20],[30,36]]</td><td class="l">MSE, PSNR</td><td>5.0, 41.14 dB</td></tr>
+<tr><td>Marwan Saber<br>(MEM1)</td><td class="l">[[0,2,8,10],[4,6,12,14]]</td><td class="l">2&times;2 block average</td><td>[[3,11]]</td></tr>
+<tr><td>Hassan Hisham<br>(MEM2)</td><td class="l">r = 15; r = 64</td><td class="l">log (c = 255/ln 256); gamma 0.5</td><td>128; 128</td></tr>
+<tr><td>Hassan Hisham<br>(MEM2)</td><td class="l">3-bit [[0,0,1],[1,1,2],[2,3,7]]</td><td class="l">histogram equalisation</td><td>0,1,2,3,7&rarr;2,4,5,6,7</td></tr>
+<tr><td>Mohamed Wageh<br>(MEM3)</td><td class="l">[[10,12,11],[13,255,12],[11,10,0]]</td><td class="l">median / mean / midpoint / &alpha;-trim d=2</td><td>11 / 37 / 128 / 11</td></tr>
+<tr><td>Mohamed Wageh<br>(MEM3)</td><td class="l">D = D0</td><td class="l">ideal / Butterworth / Gaussian H</td><td>1 / 0.5 / 0.607</td></tr>
+<tr><td>Mohamed Wageh<br>(MEM3)</td><td class="l">row [0,0,0,1,1,0]</td><td class="l">run-length runs</td><td>(0,3),(1,2),(0,1)</td></tr>
+<tr><td>Saad Mohamed<br>(MEM4)</td><td class="l">[[10,10,10],[10,10,10],[200,200,200]]</td><td class="l">Sobel G<sub>x</sub>, G<sub>y</sub>; Prewitt G<sub>y</sub></td><td>0, 760; 570</td></tr>
+<tr><td>Ahmed Abdelwahed<br>(MEM5)</td><td class="l">3&times;3 block inside 5&times;5</td><td class="l">erosion, then opening (3&times;3 square)</td><td>centre only; block</td></tr>
 </table>
 <p><b>Enhancement (MEM2):</b> negative, log, gamma, contrast stretching, histogram equalisation,
 mean/Gaussian/median smoothing, Laplacian sharpening (g&nbsp;=&nbsp;f&minus;&nabla;&sup2;f) and the
@@ -444,11 +444,11 @@ morphological reconstruction to recover wide cracks from their detected edges.</
 <p class="tcap">Table VIII &middot; Contribution table</p>
 <table>
 <tr><th>Member</th><th class="l">Work package</th><th class="l">Files</th><th class="l">Experiments</th></tr>
-<tr><td>MEM1</td><td class="l">Lead, data, metrics, baselines, integration</td><td class="l">data, metrics, pipeline, studies, configs</td><td class="l">resolution, gray levels, baselines, final selection, robustness, test</td></tr>
-<tr><td>MEM2</td><td class="l">Enhancement</td><td class="l">enhancement.py</td><td class="l">enhancement methods, kernel size</td></tr>
-<tr><td>MEM3</td><td class="l">Restoration, frequency, compression</td><td class="l">restoration.py, frequency.py, bonus/compression</td><td class="l">PSNR study, D0, AB2</td></tr>
-<tr><td>MEM4</td><td class="l">Segmentation</td><td class="l">segmentation.py</td><td class="l">threshold methods, detectors, adaptive</td></tr>
-<tr><td>MEM5</td><td class="l">Morphology, evaluation, demo</td><td class="l">morphology.py, evaluate.py, run_pipeline.py, app</td><td class="l">SE size/shape, failure analysis</td></tr>
+<tr><td>Marwan Saber<br>(MEM1)</td><td class="l">Lead, data, metrics, baselines, integration</td><td class="l">data, metrics, pipeline, studies, configs</td><td class="l">resolution, gray levels, baselines, final selection, robustness, test</td></tr>
+<tr><td>Hassan Hisham<br>(MEM2)</td><td class="l">Enhancement</td><td class="l">enhancement.py</td><td class="l">enhancement methods, kernel size</td></tr>
+<tr><td>Mohamed Wageh<br>(MEM3)</td><td class="l">Restoration, frequency, compression</td><td class="l">restoration.py, frequency.py, bonus/compression</td><td class="l">PSNR study, D0, AB2</td></tr>
+<tr><td>Saad Mohamed<br>(MEM4)</td><td class="l">Segmentation</td><td class="l">segmentation.py</td><td class="l">threshold methods, detectors, adaptive</td></tr>
+<tr><td>Ahmed Abdelwahed<br>(MEM5)</td><td class="l">Morphology, evaluation, demo</td><td class="l">morphology.py, evaluate.py, run_pipeline.py, app</td><td class="l">SE size/shape, failure analysis</td></tr>
 </table>
 <p><b>Disclosure of AI assistance.</b> An AI coding assistant (Claude Code) was used to draft the
 planning documents, much of the code in every module and its tests, the experiment scripts and this
