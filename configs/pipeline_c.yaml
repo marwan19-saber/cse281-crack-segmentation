@@ -1,5 +1,6 @@
 # Pipeline C (advanced): Pipeline B, then tuned morphology (closing to bridge gaps, small-hole
 # filling) and object selection by area and shape (cracks are long and thin; stains are round).
+# Round-2 reference: best on the full dev set (study_final_selection.csv, IoU 0.6657).
 name: pipeline_c
 stages:
   - stage: gaussian
