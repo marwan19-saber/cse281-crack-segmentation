@@ -29,7 +29,8 @@ def main():
         final, _ = pipeline.run(gray, config)
         base, _ = pipeline.run(gray, trivial)
         rows.append({"image": img_path.stem, "iou_final": metrics.iou(final, gt),
-                     "iou_trivial": metrics.iou(base, gt), "dice_final": metrics.dice(final, gt),
+                     "iou_trivial": metrics.iou(base, gt),
+                     "dice_final": metrics.dice(final, gt),
                      "area_pct_gt": 100 * gt.mean(),
                      "area_pct_final": morphology.crack_measurements(final)["area_pct"]})
     with open("bonus/generalization/results.csv", "w", newline="", encoding="utf-8") as f:

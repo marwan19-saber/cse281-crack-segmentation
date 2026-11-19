@@ -36,7 +36,8 @@ def main():
                                      codec.huffman_decode)):
             blob, t_enc = _timed(enc, arr)
             back, t_dec = _timed(dec, blob)
-            png = cv2.imencode(".png", arr.astype(np.uint8) * (255 if arr.dtype == bool else 1))
+            scale = 255 if arr.dtype == bool else 1
+            png = cv2.imencode(".png", arr.astype(np.uint8) * scale)
             rows.append({
                 "image": name, "data": kind, "original_bytes": arr.size,
                 "compressed_bytes": len(blob), "ratio": round(arr.size / len(blob), 2),
