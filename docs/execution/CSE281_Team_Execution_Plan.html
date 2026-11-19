@@ -21,11 +21,11 @@
     from Week 9 to the Week 14 final discussion.</div>
   <span class="pill">v0.4 &middot; APPROVED &middot; RESULTS FROZEN &middot; 19 NOV 2026</span>
   <div class="members">
-    <div class="m1"><b>MEM1</b><i>Tech Lead + Data &amp; Baselines</i></div>
-    <div class="m2"><b>MEM2</b><i>Enhancement</i></div>
-    <div class="m3"><b>MEM3</b><i>Restoration &amp; Frequency</i></div>
-    <div class="m4"><b>MEM4</b><i>Segmentation</i></div>
-    <div class="m5"><b>MEM5</b><i>Morphology, Eval &amp; Demo</i></div>
+    <div class="m1"><b>MEM1</b><i>Marwan Saber &middot; Tech Lead + Data &amp; Baselines</i></div>
+    <div class="m2"><b>MEM2</b><i>Hassan Hisham &middot; Enhancement</i></div>
+    <div class="m3"><b>MEM3</b><i>Mohamed Wageh &middot; Restoration &amp; Frequency</i></div>
+    <div class="m4"><b>MEM4</b><i>Saad Mohamed &middot; Segmentation</i></div>
+    <div class="m5"><b>MEM5</b><i>Ahmed Abdelwahed &middot; Morphology, Eval &amp; Demo</i></div>
   </div>
   <div class="meta">
     <div><small>Date</small><span>19 November 2026</span></div>
@@ -229,11 +229,11 @@ The evidence is the commit history, the contribution table and the defense.</div
 are merged: <i>&ldquo;the Tech Lead also owns the data, the metrics and the baselines.&rdquo;</i></p>
 <table>
   <tr><th>Member</th><th>Role</th><th>Work package</th><th>Code owned</th><th>Required studies</th><th>Bonus</th></tr>
-  <tr><td><b>MEM1</b></td><td>Tech Lead + Data &amp; Baseline Engineer</td><td>Problem formulation, architecture, config, integration, reviews, final pipeline selection, data, metrics, baselines</td><td>skeleton, <code>configs/</code>, <code>src/data.py</code>, <code>src/metrics.py</code>, <code>src/pipeline.py</code>, baseline script, CI</td><td>Resolution and gray-level study. Pipeline A vs both baselines. Final pipeline at 3 noise levels &times; 3 seeds. Final results table.</td><td>CI (coord.), generalization (co-owner), speed (coord.)</td></tr>
-  <tr><td><b>MEM2</b></td><td>Enhancement Engineer</td><td>Histogram analysis, point transforms, histogram equalization, smoothing and sharpening</td><td><code>src/enhancement.py</code></td><td>Enhancement comparison. Histogram analysis. Kernel-size study.</td><td>Tests and speed for own module</td></tr>
-  <tr><td><b>MEM3</b></td><td>Restoration &amp; Frequency Engineer</td><td>Noise models (with MEM1), restoration filters, DFT and frequency filters</td><td><code>src/restoration.py</code>, <code>src/frequency.py</code></td><td>PSNR per noise type. Restoration filter comparison. Spatial vs frequency ablation. D0 study.</td><td><b>Lossless compression (owner)</b></td></tr>
-  <tr><td><b>MEM4</b></td><td>Segmentation Engineer</td><td>Edge, point and line detection, thresholding, edge linking or Hough</td><td><code>src/segmentation.py</code></td><td>Detector comparison. Threshold-method comparison.</td><td>Tests and speed for own module</td></tr>
-  <tr><td><b>MEM5</b></td><td>Morphology, Evaluation &amp; Demo Engineer</td><td>Morphology, measurement, test-set evaluation, failure analysis, demo</td><td><code>src/morphology.py</code>, <code>src/evaluate.py</code>, <code>src/run_pipeline.py</code>, <code>app/</code></td><td>SE shape and size studies. Failure analysis for every pipeline.</td><td><b>Public deployment (owner)</b>, generalization (co-owner)</td></tr>
+  <tr><td><b>MEM1</b><br>Marwan Saber</td><td>Tech Lead + Data &amp; Baseline Engineer</td><td>Problem formulation, architecture, config, integration, reviews, final pipeline selection, data, metrics, baselines</td><td>skeleton, <code>configs/</code>, <code>src/data.py</code>, <code>src/metrics.py</code>, <code>src/pipeline.py</code>, baseline script, CI</td><td>Resolution and gray-level study. Pipeline A vs both baselines. Final pipeline at 3 noise levels &times; 3 seeds. Final results table.</td><td>CI (coord.), generalization (co-owner), speed (coord.)</td></tr>
+  <tr><td><b>MEM2</b><br>Hassan Hisham</td><td>Enhancement Engineer</td><td>Histogram analysis, point transforms, histogram equalization, smoothing and sharpening</td><td><code>src/enhancement.py</code></td><td>Enhancement comparison. Histogram analysis. Kernel-size study.</td><td>Tests and speed for own module</td></tr>
+  <tr><td><b>MEM3</b><br>Mohamed Wageh</td><td>Restoration &amp; Frequency Engineer</td><td>Noise models (with MEM1), restoration filters, DFT and frequency filters</td><td><code>src/restoration.py</code>, <code>src/frequency.py</code></td><td>PSNR per noise type. Restoration filter comparison. Spatial vs frequency ablation. D0 study.</td><td><b>Lossless compression (owner)</b></td></tr>
+  <tr><td><b>MEM4</b><br>Saad Mohamed</td><td>Segmentation Engineer</td><td>Edge, point and line detection, thresholding, edge linking or Hough</td><td><code>src/segmentation.py</code></td><td>Detector comparison. Threshold-method comparison.</td><td>Tests and speed for own module</td></tr>
+  <tr><td><b>MEM5</b><br>Ahmed Abdelwahed</td><td>Morphology, Evaluation &amp; Demo Engineer</td><td>Morphology, measurement, test-set evaluation, failure analysis, demo</td><td><code>src/morphology.py</code>, <code>src/evaluate.py</code>, <code>src/run_pipeline.py</code>, <code>app/</code></td><td>SE shape and size studies. Failure analysis for every pipeline.</td><td><b>Public deployment (owner)</b>, generalization (co-owner)</td></tr>
 </table>
 
 <h2>2.1 Review pairs (every PR is reviewed by a different member)</h2>
