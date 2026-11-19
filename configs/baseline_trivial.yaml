@@ -1,0 +1,5 @@
+# Spec trivial baseline: fixed global threshold 127 on the raw gray image (cracks are dark).
+name: baseline_trivial
+stages:
+  - stage: threshold_fixed
+    t: 127

@@ -66,6 +66,77 @@ def log_run(path, *, author="", pipeline="", stage="", method="", params=None, s
 METHODS.update(baseline_trivial=baseline_trivial, baseline_simple=baseline_simple)
 
 
+# ---------------------------------------------------------------- stage registry
+# Library stand-ins: each stage calls OpenCV/scikit-image until its owner's NumPy version is
+# merged, then the registry entry is switched (and the switch logged). Owner in brackets.
+def _contrast_stretch(img, low_pct=2, high_pct=98):
+    """[MEM2 stand-in] Stretch the low_pct..high_pct percentile range to 0-255."""
+    lo, hi = np.percentile(img, (low_pct, high_pct))
+    if hi <= lo:
+        return img.copy()
+    return np.clip((img.astype(np.float64) - lo) * 255.0 / (hi - lo), 0, 255).astype(np.uint8)
+
+
+def _gaussian(img, ksize=5, sigma=0):
+    """[MEM2 stand-in] Gaussian smoothing (sigma 0 = OpenCV's rule from ksize)."""
+    return cv2.GaussianBlur(img, (ksize, ksize), sigma, borderType=cv2.BORDER_REFLECT_101)
+
+
+def _median(img, ksize=3):
+    """[MEM3 stand-in] Median filter."""
+    return cv2.medianBlur(img, ksize)
+
+
+def _threshold_fixed(img, t=127):
+    """[MEM4 stand-in] Crack = pixels darker than t."""
+    return img < t
+
+
+def _threshold_otsu(img):
+    """[MEM4 stand-in] Inverted Otsu: crack = pixels at or below Otsu's threshold."""
+    _, binary = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    return binary > 0
+
+
+def _opening(mask, size=3):
+    """[MEM5 stand-in] Opening with a size x size square structuring element."""
+    se = np.ones((size, size), np.uint8)
+    return cv2.morphologyEx(mask.astype(np.uint8), cv2.MORPH_OPEN, se) > 0
+
+
+STAGES = {
+    "contrast_stretch": _contrast_stretch, "gaussian": _gaussian, "median": _median,
+    "threshold_fixed": _threshold_fixed, "threshold_otsu": _threshold_otsu,
+    "opening": _opening,
+}
+
+
+def load_config(path):
+    """Read a pipeline config: {"name": ..., "stages": [{"stage": name, **params}, ...]}."""
+    import yaml  # local import: only config users need PyYAML
+    with open(path, encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
+
+def run(gray, config):
+    """Apply the config's stages in order to a uint8 gray image.
+
+    Returns (final bool mask, steps); each step holds stage, params, output and time_s.
+    Unknown stage names raise KeyError; misspelled parameters raise TypeError.
+    """
+    current, steps = gray, []
+    for spec in config["stages"]:
+        params = {k: v for k, v in spec.items() if k != "stage"}
+        stage = STAGES[spec["stage"]]
+        start = time.perf_counter()
+        current = stage(current, **params)
+        steps.append({"stage": spec["stage"], "params": params, "output": current,
+                      "time_s": time.perf_counter() - start})
+    if current.dtype != bool:
+        raise ValueError(f"pipeline {config['name']!r} must end in a bool mask")
+    return current, steps
+
+
 def evaluate_split(method, names, root, size=None, levels=256):
     """Run `method` on every named image and score it against its mask.
 
@@ -94,7 +165,9 @@ def evaluate_split(method, names, root, size=None, levels=256):
 def main(argv=None):
     """CLI: evaluate one method on a split, save per-image CSV, log the mean IoU."""
     p = argparse.ArgumentParser(description="Evaluate a method on the dev or test split.")
-    p.add_argument("--method", choices=sorted(METHODS), required=True)
+    which = p.add_mutually_exclusive_group(required=True)
+    which.add_argument("--method", choices=sorted(METHODS))
+    which.add_argument("--config", help="pipeline YAML in configs/")
     p.add_argument("--split", choices=["dev", "test"], default="dev")
     p.add_argument("--size", type=int, default=None, help="long side in pixels")
     p.add_argument("--levels", type=int, default=256)
@@ -108,9 +181,15 @@ def main(argv=None):
     if args.split == "test":
         raise SystemExit("Test split is locked until the final config is frozen (T1.20).")
 
+    if args.config:
+        config = load_config(args.config)
+        args.method = config["name"]
+        method = lambda gray: run(gray, config)[0]  # noqa: E731
+    else:
+        method = METHODS[args.method]
     names = data.load_split(args.split_file)[args.split]
     start = time.perf_counter()
-    rows = evaluate_split(METHODS[args.method], names, args.root, args.size, args.levels)
+    rows = evaluate_split(method, names, args.root, args.size, args.levels)
     elapsed = time.perf_counter() - start
     with open(args.out, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=list(rows[0]))
