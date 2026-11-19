@@ -1,6 +1,6 @@
 """Single entry point: raw image file in, crack mask + measurement + decision out (MEM5).
 
-    python -m src.run_pipeline --image photo.jpg --config configs/final_pipeline.yaml --out out/
+    python -m src.run_pipeline --image photo.jpg --out out/   (config: --config, default final)
 
 Writes <name>_mask.png, <name>_overlay.png (cracks in red) and <name>_result.json with the
 cracked-area %, crack length, number of objects, severity class and time per stage.

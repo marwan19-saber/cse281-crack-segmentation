@@ -1,1 +1,13 @@
 run_id,date,author,pipeline,stage,method,params_json,seed,split,n_images,time_s,metric,value,notes
+20261119-0001,2026-11-19,MEM1,baseline_trivial,resolution_study,baseline_trivial,"{""levels"": 256, ""size"": 504}",42,dev,321,32.96,iou_mean,0.4544,std=0.1998; out=experiments/results/base_res_size504.csv
+20261119-0002,2026-11-19,MEM1,baseline_trivial,resolution_study,baseline_trivial,"{""levels"": 256, ""size"": 1008}",42,dev,321,31.45,iou_mean,0.4416,std=0.1932; out=experiments/results/base_res_size1008.csv
+20261119-0003,2026-11-19,MEM1,baseline_trivial,resolution_study,baseline_trivial,"{""levels"": 256, ""size"": 2016}",42,dev,321,38.22,iou_mean,0.431,std=0.1901; out=experiments/results/base_res_size2016.csv
+20261119-0004,2026-11-19,MEM1,baseline_trivial,resolution_study,baseline_trivial,"{""levels"": 256, ""size"": 4032}",42,dev,321,78.23,iou_mean,0.4342,std=0.1929; out=experiments/results/base_res_size4032.csv
+20261119-0005,2026-11-19,MEM1,baseline_trivial,gray_level_study,baseline_trivial,"{""levels"": 64, ""size"": 1008}",42,dev,321,32.44,iou_mean,0.441,std=0.1955; out=experiments/results/base_gray_levels64.csv
+20261119-0006,2026-11-19,MEM1,baseline_trivial,gray_level_study,baseline_trivial,"{""levels"": 16, ""size"": 1008}",42,dev,321,32.72,iou_mean,0.441,std=0.1955; out=experiments/results/base_gray_levels16.csv
+20261119-0007,2026-11-19,MEM1,baseline_trivial,gray_level_study,baseline_trivial,"{""levels"": 8, ""size"": 1008}",42,dev,321,36.51,iou_mean,0.441,std=0.1955; out=experiments/results/base_gray_levels8.csv
+20261119-0008,2026-11-19,MEM1,baseline_trivial,gray_level_study,baseline_trivial,"{""levels"": 4, ""size"": 1008}",42,dev,321,33.58,iou_mean,0.441,std=0.1955; out=experiments/results/base_gray_levels4.csv
+20261119-0009,2026-11-19,MEM1,baseline_trivial,gray_level_study,baseline_trivial,"{""levels"": 2, ""size"": 1008}",42,dev,321,34.7,iou_mean,0.441,std=0.1955; out=experiments/results/base_gray_levels2.csv
+20261119-0010,2026-11-19,MEM1,baseline_simple,baseline,baseline_simple,"{""levels"": 256, ""size"": 1008}",42,dev,321,31.48,iou_mean,0.0658,std=0.1443; out=experiments/results/base_simple_dev.csv
+20261119-0011,2026-11-19,MEM1,baseline_trivial,baseline,baseline_trivial,"{""levels"": 256, ""size"": 1008}",42,dev,321,30.32,iou_mean,0.4416,std=0.1932; out=experiments/results/base_trivial_dev.csv
+20261119-0012,2026-11-19,MEM1,pipeline_a,pipeline_a,pipeline_a,"{""levels"": 256, ""size"": 1008}",42,dev,321,36.51,iou_mean,0.0346,std=0.0293; out=experiments/results/pipeA_dev.csv
