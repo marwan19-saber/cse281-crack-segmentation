@@ -3,7 +3,7 @@
 Digital Image Processing course project (Alamein International University, CSE281).
 Classical image processing only: no machine-learning models.
 
-## Problem (draft, awaiting team approval)
+## Problem (approved by the team, 19 Nov 2026)
 
 A building-inspection engineer needs to know where a concrete surface is cracked and how much.
 The pipeline takes one photo and outputs a binary crack mask, the cracked-area percentage, the
