@@ -145,7 +145,21 @@ def _select_objects(mask, min_area=30, max_circularity=0.5):
     return morphology.select_objects(mask, min_area, max_circularity)
 
 
+def _lowpass(img, d0=80.0):
+    """[MEM3] Gaussian low-pass smoothing in the frequency domain (cutoff d0 on the 2x padded
+    grid); the frequency-domain counterpart of the spatial Gaussian (ablation AB2)."""
+    shape = (2 * img.shape[0], 2 * img.shape[1])
+    return frequency.apply_filter(img, frequency.gaussian_lowpass(shape, d0))
+
+
 STAGES = {
+    "negative": lambda img: enhancement.negative(img),
+    "log": lambda img: enhancement.log_transform(img),
+    "gamma": lambda img, gamma=1.0: enhancement.gamma_transform(img, gamma),
+    "hist_equalize": lambda img: enhancement.hist_equalize(img),
+    "laplacian_sharpen": lambda img: enhancement.laplacian_sharpen(img),
+    "gradient_sharpen": lambda img: enhancement.gradient_sharpen(img),
+    "lowpass": _lowpass,
     "gaussian": _gaussian, "mean": _mean, "median": _median,
     "contrast_stretch": lambda img, low_pct=2, high_pct=98: enhancement.contrast_stretch(
         img, low_pct, high_pct),
