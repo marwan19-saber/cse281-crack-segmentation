@@ -115,6 +115,20 @@ def _threshold_adaptive_or_otsu(img, block=31, c=15):
             | segmentation.threshold_dark(img, segmentation.otsu_threshold(img)))
 
 
+def _edges_top_percent(img, operator="sobel", percent=3.0):
+    """[MEM4] Detector comparison: mark the `percent` % pixels with the strongest response
+    of one operator (gradient magnitude, |Laplacian|, or LoG / dark-line response)."""
+    if operator in ("roberts", "prewitt", "sobel"):
+        response = getattr(segmentation, operator)(img)[2]
+    elif operator == "laplacian":
+        response = np.abs(segmentation.laplacian(img))
+    elif operator == "log":
+        response = segmentation.log_filter(img, 2.0)
+    else:
+        response = segmentation.line_response(img)
+    return response >= np.percentile(response, 100 - percent)
+
+
 def _threshold_lines(img, t=60):
     """[MEM4] Crack = dark-line mask response (max over 4 directions) >= t."""
     return segmentation.line_detect(img, t)
@@ -175,6 +189,7 @@ STAGES = {
     "threshold_fixed": _threshold_fixed, "threshold_otsu": _threshold_otsu,
     "threshold_adaptive": _threshold_adaptive, "threshold_lines": _threshold_lines,
     "threshold_adaptive_or_otsu": _threshold_adaptive_or_otsu,
+    "edges_top_percent": _edges_top_percent,
     "threshold_log": _threshold_log, "link_gaps": _link_gaps, "opening": _opening,
     "closing": _closing, "fill_small_holes": _fill_small_holes,
     "select_objects": _select_objects,
