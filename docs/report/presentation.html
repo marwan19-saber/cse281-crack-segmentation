@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CSE281 — Finding and Measuring Cracks in Concrete</title>
+<style>
+@page { size: 254mm 142.875mm; margin: 0; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Segoe UI", Calibri, Arial, sans-serif; color: #141b2d; background: #fff; }
+.slide { width: 254mm; height: 142.875mm; padding: 9mm 13mm 8mm 16mm; position: relative;
+         break-after: page; overflow: hidden; display: flex; flex-direction: column; }
+.slide:last-child { break-after: auto; }
+.bar { position: absolute; left: 0; top: 0; bottom: 0; width: 5mm; background: var(--c, #0f1e3d); }
+h1 { font-family: "Bahnschrift", "Segoe UI", sans-serif; font-size: 21pt; margin: 0 0 3mm;
+     color: #0f1e3d; }
+.kicker { font-size: 9pt; letter-spacing: 1.5pt; text-transform: uppercase; color: var(--c, #2f5bea);
+          font-weight: 700; margin-bottom: 1mm; }
+ul { margin: 0; padding-left: 5mm; font-size: 12pt; line-height: 1.42; }
+li { margin-bottom: 1.2mm; }
+.row { display: flex; gap: 6mm; flex: 1; min-height: 0; margin-bottom: 7mm; align-items: center; }
+.row > * { flex: 1; min-width: 0; }
+img { max-width: 100%; max-height: 92mm; object-fit: contain; display: block; margin: 0 auto; }
+.speaker { position: absolute; left: 16mm; bottom: 4mm; font-size: 8.5pt; color: #fff;
+           background: var(--c, #0f1e3d); padding: .8mm 3mm; border-radius: 2mm; }
+.num { position: absolute; right: 13mm; bottom: 4mm; font-size: 8.5pt; color: #667085; }
+table { border-collapse: collapse; font-size: 11pt; width: 100%; }
+th, td { border-bottom: 1px solid #d5dbe3; padding: 1.5mm 2.5mm; text-align: left; }
+th { background: #eef2fb; }
+b.hi { color: #2f5bea; }
+.big { font-size: 30pt; font-weight: 700; color: #2f5bea; font-family: "Bahnschrift", sans-serif; }
+.title { justify-content: center; background: linear-gradient(155deg, #0b1630, #1d3a78); color: #fff; }
+.title h1 { color: #fff; font-size: 32pt; }
+.title .bar { background: linear-gradient(#2f5bea, #0e9384, #7a3cdb, #d9480f, #2b8a3e); }
+.m1 { --c: #2f5bea; } .m2 { --c: #0e9384; } .m3 { --c: #7a3cdb; } .m4 { --c: #d9480f; }
+.m5 { --c: #2b8a3e; }
+</style>
+</head>
+<body>
+
+<section class="slide title"><div class="bar"></div>
+  <div class="kicker" style="color:#7ea2ff">CSE281 Digital Image Processing &middot; Course project</div>
+  <h1>Finding and Measuring Cracks in Concrete</h1>
+  <ul style="list-style:none;padding:0;font-size:13pt;color:#c9d5f2">
+    <li>Classical image processing only: no learned models</li>
+    <li>MEM1 &middot; MEM2 &middot; MEM3 &middot; MEM4 &middot; MEM5 &middot; Alamein International University</li>
+  </ul>
+</section>
+
+<section class="slide m1"><div class="bar"></div><div class="kicker">The problem</div>
+  <h1>Where is the concrete cracked, and how badly?</h1>
+  <div class="row">
+    <ul>
+      <li>User: building-inspection engineer</li>
+      <li>Output: crack mask, cracked area %, length, severity class</li>
+      <li>Missed crack = safety risk &middot; false crack = wasted inspection</li>
+      <li>Cracks are only <b class="hi">1.4%</b> of pixels &rarr; empty mask = 98.6% accuracy</li>
+      <li>Primary metric: <b class="hi">IoU of the crack class</b></li>
+    </ul>
+    <img src="../../experiments/figures/analysis_typical_vs_difficult.png" alt="examples">
+  </div>
+  <div class="speaker">MEM1 &middot; 0:45</div><div class="num">2</div>
+</section>
+
+<section class="slide m1"><div class="bar"></div><div class="kicker">Data and analysis</div>
+  <h1>458 real photos, four difficulties</h1>
+  <div class="row">
+    <ul>
+      <li>Özgenel 2019, Mendeley, CC BY 4.0: 458 photos + pixel masks</li>
+      <li>Dev 321 / test 137, split by blocks of IDs (no near-duplicates across)</li>
+      <li>Shadows, low contrast, rough texture, thin branches</li>
+      <li>Crack median gray 111 vs background 183, but they overlap</li>
+      <li>Working size 1008 px; 16 gray levels still enough</li>
+    </ul>
+    <img src="../../experiments/figures/analysis_illumination.png" alt="illumination">
+  </div>
+  <div class="speaker">MEM1 &middot; 0:45</div><div class="num">3</div>
+</section>
+
+<section class="slide m1"><div class="bar"></div><div class="kicker">Approach</div>
+  <h1>Two baselines, three pipelines</h1>
+  <table>
+    <tr><th>Method</th><th>Stages</th></tr>
+    <tr><td>Trivial baseline</td><td>gray &lt; 127</td></tr>
+    <tr><td>Simple baseline</td><td>Otsu + 3&times;3 opening</td></tr>
+    <tr><td>A</td><td>Gaussian 5&times;5 &rarr; global threshold 140</td></tr>
+    <tr><td>B</td><td>Gaussian 7&times;7 &rarr; frequency-domain flattening &rarr; adaptive threshold 31/15 &rarr; gap linking</td></tr>
+    <tr><td><b>C (final)</b></td><td>B &rarr; closing (disk 3) &rarr; small-hole filling &rarr; keep long thin objects &rarr; measure</td></tr>
+  </table>
+  <div class="speaker">MEM1 &middot; 0:30</div><div class="num">4</div>
+</section>
+
+<section class="slide m2"><div class="bar"></div><div class="kicker">Enhancement (MEM2)</div>
+  <h1>Smoothing helps, equalisation hurts</h1>
+  <div class="row">
+    <img src="../../experiments/figures/fig_enhancement_images.png" alt="enhancement">
+  </div>
+  <ul style="font-size:11pt">
+    <li>Gaussian 5&ndash;7 best smoother (IoU .68); median erases thin cracks (.47 at 7&times;7)</li>
+    <li>Equalisation / stretching spread the bright background and amplify texture (.03)</li>
+  </ul>
+  <div class="speaker">MEM2 &middot; 1:30</div><div class="num">5</div>
+</section>
+
+<section class="slide m3"><div class="bar"></div><div class="kicker">Restoration and frequency (MEM3)</div>
+  <h1>The right filter depends on the noise</h1>
+  <div class="row">
+    <img src="../../experiments/figures/fig_restoration_psnr.png" alt="psnr">
+    <ul style="font-size:11pt">
+      <li>Salt &amp; pepper: <b class="hi">median</b> 15 &rarr; 36 dB</li>
+      <li>Gaussian / speckle: <b class="hi">frequency low-pass</b> best; stronger noise &rarr; lower D0</li>
+      <li>Ideal LP rings (sinc); Gaussian does not</li>
+      <li>Flattening = divide by Gaussian LP background (D0 12)</li>
+    </ul>
+  </div>
+  <div class="speaker">MEM3 &middot; 1:30</div><div class="num">6</div>
+</section>
+
+<section class="slide m4"><div class="bar"></div><div class="kicker">Segmentation (MEM4)</div>
+  <h1>Local threshold beats global and edges</h1>
+  <div class="row">
+    <img src="../../experiments/figures/fig_threshold_methods.png" alt="thresholds">
+    <ul style="font-size:11pt">
+      <li>Otsu on the raw image: IoU .07 (1.4% foreground)</li>
+      <li>Edge detectors mark crack <i>borders</i>: Sobel .29, Laplacian .20</li>
+      <li>Adaptive mean, block 31, c 15 inside C: <b class="hi">.671</b></li>
+      <li>Global Otsu instead of adaptive: &minus;0.098 (AB3)</li>
+    </ul>
+  </div>
+  <div class="speaker">MEM4 &middot; 1:30</div><div class="num">7</div>
+</section>
+
+<section class="slide m5"><div class="bar"></div><div class="kicker">Morphology (MEM5)</div>
+  <h1>Morphology adds +0.15 IoU</h1>
+  <div class="row">
+    <img src="../../experiments/figures/fig_ablations.png" alt="ablations">
+    <ul style="font-size:11pt">
+      <li>Without morphology / selection (= B): .512</li>
+      <li>Opening before closing deletes thin cracks: &minus;.025</li>
+      <li>Fill only holes &le; 30 px: keep concrete between crossing cracks</li>
+      <li>Shape test: cracks long and thin, stains round</li>
+    </ul>
+  </div>
+  <div class="speaker">MEM5 &middot; 0:45</div><div class="num">8</div>
+</section>
+
+<section class="slide m1"><div class="bar"></div><div class="kicker">Results (test set, run once)</div>
+  <h1>Final IoU <span class="big">0.670</span> on 137 unseen images</h1>
+  <div class="row">
+    <table style="font-size:12pt">
+      <tr><th>Method</th><th>Dev</th><th>Test</th></tr>
+      <tr><td>Trivial baseline</td><td>.442</td><td>.449</td></tr>
+      <tr><td>Simple baseline</td><td>.066</td><td>.066</td></tr>
+      <tr><td>Pipeline A</td><td>.458</td><td>.443</td></tr>
+      <tr><td>Pipeline B</td><td>.512</td><td>.513</td></tr>
+      <tr><td><b>Pipeline C</b></td><td><b>.666</b></td><td><b>.670</b></td></tr>
+    </table>
+    <ul style="font-size:11pt">
+      <li>Beats the fixed threshold on 131 / 137 images</li>
+      <li>Area error 0.33 points; severity correct 62.8%</li>
+      <li>Noise &sigma; 30: IoU .622 (3 seeds, spread &le; .001)</li>
+    </ul>
+  </div>
+  <div class="speaker">MEM1 &middot; 0:40</div><div class="num">9</div>
+</section>
+
+<section class="slide m5"><div class="bar"></div><div class="kicker">Failures (MEM5)</div>
+  <h1>Where it breaks, and why</h1>
+  <div class="row" style="flex-direction:column;align-items:stretch">
+    <img src="../../experiments/figures/failures/final_pipeline_079.png" alt="failure 079" style="max-height:38mm">
+    <img src="../../experiments/figures/failures/final_pipeline_249.png" alt="failure 249" style="max-height:38mm">
+  </div>
+  <ul style="font-size:10.5pt;margin-top:-5mm">
+    <li>20 worst: texture / pits 9 &middot; faint branches 6 &middot; wide cracks 4 &middot; GT width 1</li>
+    <li>Two fixes tested on dev, neither beat the final &rarr; next: texture-dependent threshold</li>
+  </ul>
+  <div class="speaker">MEM5 &middot; 0:45</div><div class="num">10</div>
+</section>
+
+<section class="slide m5"><div class="bar"></div><div class="kicker">Demo (MEM5)</div>
+  <h1>Upload a photo, see every stage</h1>
+  <div class="row">
+    <ul>
+      <li><code>python app/app.py</code> &mdash; Gradio, runs locally</li>
+      <li>Shows input, every stage, red overlay, area %, length, severity</li>
+      <li>Invalid files give a clear error</li>
+      <li>Live demo on unseen test images, including failure 249</li>
+      <li><code>python -m src.run_pipeline --image x.jpg</code> for the CLI</li>
+    </ul>
+    <img src="../../experiments/figures/fig_measurement_scatter.png" alt="measurement">
+  </div>
+  <div class="speaker">MEM5 &middot; 0:30</div><div class="num">11</div>
+</section>
+
+<section class="slide m3"><div class="bar"></div><div class="kicker">Bonus</div>
+  <h1>Faster, smaller, and tested elsewhere</h1>
+  <table style="font-size:11.5pt">
+    <tr><th>Bonus</th><th>Result</th></tr>
+    <tr><td>Speed (MEM1)</td><td>0.92 &rarr; 0.50 s/img (1.84&times;), identical masks</td></tr>
+    <tr><td>Compression (MEM3)</td><td>RLE on masks: ratio 441 (PNG 164); Huffman on gray 1.36</td></tr>
+    <tr><td>Second dataset (MEM1 + MEM5)</td><td>DeepCrack, no retuning: IoU .520 vs .346 trivial</td></tr>
+    <tr><td>Tests + CI</td><td>157 tests on every push (Python 3.12, 3.13)</td></tr>
+  </table>
+  <div class="speaker">MEM3 &middot; 0:20</div><div class="num">12</div>
+</section>
+
+<section class="slide m1"><div class="bar"></div><div class="kicker">Lessons</div>
+  <h1>What we learned</h1>
+  <ul>
+    <li>Measure before designing: Otsu and equalisation looked reasonable and failed</li>
+    <li>A stage's value depends on what follows (adaptive loses alone, wins with morphology)</li>
+    <li>Small differences are noise: two tuning rounds, combined winners did worse</li>
+    <li>Test set touched once: dev .666 vs test .670</li>
+    <li>Limits: ground-truth width, scale-dependent parameters, pixel units</li>
+  </ul>
+  <div class="speaker">MEM1 &middot; 0:20</div><div class="num">13</div>
+</section>
+
+</body>
+</html>

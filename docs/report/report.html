@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CSE281 Technical Report — Classical Crack Segmentation and Measurement</title>
+<style>
+@page { size: A4; margin: 19mm 16mm 21mm 16mm;
+  @bottom-center { content: counter(page); font-family: "Times New Roman", serif; font-size: 8pt; } }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { font-family: "Times New Roman", Times, serif; font-size: 10pt; line-height: 1.32; color: #111;
+       margin: 0; background: #fff; }
+h1.title { text-align: center; font-size: 20pt; font-weight: normal; margin: 0 0 5pt; line-height: 1.15; }
+.authors { text-align: center; font-size: 9.5pt; margin-bottom: 10pt; }
+.authors span { display: inline-block; margin: 0 8pt 3pt; }
+.cols { column-count: 2; column-gap: 6mm; text-align: justify; hyphens: auto; }
+h2 { font-size: 9.8pt; font-variant: small-caps; text-align: center; font-weight: normal;
+     margin: 8pt 0 3pt; letter-spacing: .3pt; break-after: avoid; }
+h3 { font-size: 9.6pt; font-style: italic; font-weight: normal; margin: 5pt 0 2pt; break-after: avoid; }
+p { margin: 0 0 4pt; text-indent: 9pt; }
+p.ni { text-indent: 0; }
+.abstract { font-weight: bold; font-size: 8.9pt; text-indent: 0; }
+figure { margin: 4pt 0 6pt; break-inside: avoid; text-align: center; }
+figure img { width: 100%; }
+figure.wide { column-span: all; margin: 6pt 0 8pt; }
+figure.wide img { width: 92%; }
+figcaption { font-size: 7.9pt; text-align: justify; margin-top: 2pt; }
+table { width: 100%; border-collapse: collapse; font-size: 8pt; margin: 2pt 0 4pt;
+        break-inside: avoid; }
+th, td { border-top: 1px solid #333; border-bottom: 1px solid #333; padding: 1.4pt 2.5pt;
+         text-align: center; }
+th { font-weight: bold; }
+td.l, th.l { text-align: left; }
+.tcap { font-size: 7.9pt; font-variant: small-caps; text-align: center; margin: 5pt 0 1pt;
+        text-indent: 0; break-after: avoid; }
+.eq { text-align: center; font-style: italic; margin: 2pt 0 4pt; text-indent: 0; }
+code { font-family: Consolas, monospace; font-size: 8pt; }
+ol.refs { font-size: 7.8pt; padding-left: 13pt; margin: 0; }
+ol.refs li { margin-bottom: 2pt; }
+.diagram { font-family: Consolas, monospace; font-size: 6.9pt; text-align: left; border: 1px solid #999;
+           padding: 3pt 4pt; background: #fafafa; white-space: pre; line-height: 1.25; }
+</style>
+</head>
+<body>
+
+<h1 class="title">Classical Crack Segmentation and Measurement on Concrete Surfaces</h1>
+<div class="authors">
+  <span>MEM1<br><i>Tech Lead, Data &amp; Baselines</i></span>
+  <span>MEM2<br><i>Enhancement</i></span>
+  <span>MEM3<br><i>Restoration &amp; Frequency</i></span>
+  <span>MEM4<br><i>Segmentation</i></span>
+  <span>MEM5<br><i>Morphology, Evaluation &amp; Demo</i></span><br>
+  <span><i>CSE281 Digital Image Processing &middot; Faculty of Computer Science &amp; Engineering,
+  Alamein International University</i></span>
+</div>
+
+<div class="cols">
+
+<p class="abstract"><i>Abstract</i>&mdash;We segment and measure cracks in 458 real photographs of
+concrete walls (Özgenel, Mendeley Data, CC BY 4.0) using classical image processing only. Cracks
+cover 1.4% of the pixels, are darker than the background and appear under shadows, low contrast and
+rough texture. After an image analysis on the development set we built two baselines and three
+pipelines of increasing sophistication, tuned them one factor at a time on development data only,
+and evaluated the frozen final pipeline once on a held-out test set of 137 images. The final
+pipeline (Gaussian smoothing, frequency-domain illumination flattening, adaptive local threshold,
+gap linking, closing, small-hole filling and shape-based object selection) reaches a test IoU of
+<b>0.670&nbsp;&plusmn;&nbsp;0.116</b>, against 0.449 for a fixed threshold and 0.066 for Otsu with
+opening, and beats the fixed threshold on 131 of 137 test images. It keeps an IoU of 0.622 under
+Gaussian noise of &sigma;&nbsp;=&nbsp;30 (three seeds), reaches 0.520 on a second dataset
+(DeepCrack) without retuning, and runs in 0.50&nbsp;s per image. The most frequent failure is false
+positives on rough, pitted surfaces.</p>
+
+<h2>I. Introduction and Problem Statement</h2>
+<p>A building-inspection engineer surveys concrete walls and slabs and needs to know where they are
+cracked and how much. Our pipeline takes one photograph and returns a binary crack mask, the cracked
+area as a percentage of the image, the crack length (pixels of the mask skeleton) and a severity
+class (minor / moderate / severe). A <i>missed</i> crack means structural damage may go unrepaired,
+which is a safety cost; a <i>false</i> crack (a stain, shadow edge or pore) wastes inspection time
+and lowers trust in the tool. Because cracks are only about 1.4% of the pixels, pixel accuracy is
+misleading: an empty mask would score 98.6%. We therefore use the <b>IoU of the crack class</b> as
+the primary metric: it ignores the easy background and penalises both missed and false crack
+pixels. Dice and the absolute error of the cracked-area percentage are secondary metrics.</p>
+<p>Input: RGB JPEG photographs, 8-bit, 4032&times;3024 or 3264&times;2448, converted once to
+gray uint8 and resized so that the long side is L&nbsp;=&nbsp;1008 pixels (Section II-C). Output:
+a bool mask at that size, its measurements and the severity class. No machine-learning model is
+used anywhere.</p>
+
+<h2>II. Dataset and Image Analysis</h2>
+<h3>A. Dataset and split</h3>
+<p>The Concrete Crack Segmentation Dataset [1] has 458 photographs taken in buildings of the
+Middle East Technical University, each with a binary crack mask (CC BY 4.0). The archive
+(745,914,150 bytes) was downloaded with a script that checks its SHA-256 against the published
+value. 437 images are 4032&times;3024 (either orientation) and 20 are 3264&times;2448; every mask
+has the size of its image. The masks are stored as JPEG; we binarise them at 127 (JPEG blur touches
+0.005% of pixels). Every image contains a crack. Neighbouring image IDs often show the same wall, so
+we split by blocks of ten consecutive IDs (seed 42): <b>321 development and 137 test images</b>,
+with no block shared. All tuning used the development set; a fixed random subset of 60 development
+images (the <i>tune set</i>) was used for the many tuning runs and the full development set for
+comparisons and ablations. The test split is locked in code until a git tag
+<code>results-frozen</code> exists.</p>
+
+<h3>B. Image analysis (development set)</h3>
+<p>Fig.&nbsp;1 shows a typical image and three difficult ones with their intensity histograms.
+Crack pixels have a median gray level of 111 and background pixels 183, but the distributions
+overlap: a threshold of 127 keeps 59.8% of crack pixels and 3.55% of background pixels, which on
+1.4% foreground means more false than true crack pixels on many images. The background estimated by
+a heavy blur varies by 8% (median) and up to 23% of its mean because of shadows and vignetting.
+The noise estimate (std of image minus its 3&times;3 median, away from cracks) has a median of only
+3.4 gray levels. The centred spectra concentrate energy at low frequencies; a crack adds a streak
+perpendicular to its direction.</p>
+<figure class="wide"><img src="../../experiments/figures/analysis_typical_vs_difficult.png" alt="Typical and difficult images with ground truth and histograms">
+<figcaption>Fig. 1. Typical image and three difficult development images (hard shadow 148, dark
+corners 385, low contrast 109): RGB, ground truth in red, and gray-level histograms of background
+and crack pixels; the dashed line is T&nbsp;=&nbsp;127.</figcaption></figure>
+<figure><img src="../../experiments/figures/analysis_illumination.png" alt="Estimated background and column profile"><figcaption>Fig. 2. Estimated background (Gaussian blur, &sigma; = 5% of the long side) of a typical image and of image 148, and their column profiles: a hard shadow changes the background by tens of gray levels across the image.</figcaption></figure>
+<figure><img src="../../experiments/figures/analysis_spectrum.png" alt="Centred log spectra"><figcaption>Fig. 3. Centred log-magnitude spectra log(1+|F|) of three development images: energy concentrates at low frequencies; cracks add a streak perpendicular to their direction.</figcaption></figure>
+<p class="tcap">Table I &middot; Findings and the design decisions they led to</p>
+<table>
+<tr><th class="l">Finding (dev)</th><th class="l">Decision</th></tr>
+<tr><td class="l">Cracks darker; crack/background gray levels overlap</td><td class="l">Thresholds mark pixels <i>below</i> T; a single global T is not enough</td></tr>
+<tr><td class="l">1.4% foreground; Otsu on raw images splits texture</td><td class="l">IoU metric; no global histogram threshold on raw images</td></tr>
+<tr><td class="l">Shadows and vignetting change the background</td><td class="l">Local (adaptive) threshold; frequency-domain flattening tested</td></tr>
+<tr><td class="l">Texture and pores give small dark spots</td><td class="l">Smoothing first; object selection by area and shape last</td></tr>
+<tr><td class="l">Little sensor noise (3.4 gray levels)</td><td class="l">Robustness tested with added noise</td></tr>
+<tr><td class="l">Resolution study (Table II)</td><td class="l">Working size L&nbsp;=&nbsp;1008</td></tr>
+</table>
+
+<h3>C. Resolution and gray-level study</h3>
+<p>With the trivial baseline on all 321 development images, the mean IoU is 0.434, 0.431, 0.442
+and 0.454 for long sides of 4032, 2016, 1008 and 504 pixels: downsampling averages away texture and
+the task is still possible at 504. We chose 1008 because it is within 0.013 IoU of 504 (far below
+the 0.19 standard deviation over images) while keeping four times as many pixels for one-pixel-wide
+cracks. For gray levels, the trivial threshold is invariant to power-of-two quantisation (a bin edge
+always falls at 128), so we used the final pipeline: 256, 64, 32 and 16 levels give 0.666, 0.667,
+0.667 and 0.665; 8 levels 0.600 and 4 levels 0.219. <b>Sixteen gray levels is the lowest workable
+setting.</b></p>
+
+<p class="tcap">Table II &middot; Resolution and gray-level study (all 321 dev images)</p>
+<table>
+<tr><th>Long side</th><th>IoU (trivial)</th><th>Gray levels</th><th>IoU (final)</th></tr>
+<tr><td>4032</td><td>.434 &plusmn; .193</td><td>256</td><td>.666 &plusmn; .120</td></tr>
+<tr><td>2016</td><td>.431 &plusmn; .190</td><td>64 / 32</td><td>.667 / .667</td></tr>
+<tr><td>1008</td><td>.442 &plusmn; .193</td><td>16</td><td>.665 &plusmn; .121</td></tr>
+<tr><td>504</td><td>.454 &plusmn; .200</td><td>8 / 4</td><td>.600 / .219</td></tr>
+</table>
+<figure class="wide"><img src="../../experiments/figures/analysis_resolution_gray_levels.png" alt="Resolution and gray levels"><figcaption>Fig. 4. Image 148 at four resolutions (crops, top) and at 256, 16, 4 and 2 gray levels (bottom). Thin branches survive at 1008 pixels; at 4 levels the crack merges with the shadow.</figcaption></figure>
+<h2>III. Methodology</h2>
+<h3>A. Data preparation, metrics and baselines (MEM1)</h3>
+<p>One function, <code>data.load_image</code>, reads every image (BGR to gray or RGB once,
+uint8, optional resize with area interpolation); masks are resized by area averaging and kept where
+at least half is crack. Controlled degradation adds Gaussian, salt-and-pepper, speckle or Poisson
+noise with a fixed seed. Metrics are written once and tested on hand-worked arrays:</p>
+<p class="eq">MSE = (1/MN)&Sigma;(f&minus;g)&sup2; &nbsp; PSNR = 10&nbsp;log<sub>10</sub>(255&sup2;/MSE)
+&nbsp; IoU = |A&cap;B| / |A&cup;B|</p>
+<p class="ni">e.g. a = [[10,20],[30,40]], b = [[12,20],[30,36]] gives MSE&nbsp;=&nbsp;20/4&nbsp;=&nbsp;5 and
+PSNR&nbsp;=&nbsp;41.14&nbsp;dB; two 3&times;3 masks with 2 common and 4 total pixels give IoU 0.5.
+Inputs are cast to float64 because uint8 subtraction wraps around (10&minus;12&nbsp;=&nbsp;254). The
+<i>trivial baseline</i> is a fixed threshold at 127 on the raw gray image (crack&nbsp;=&nbsp;darker);
+the <i>simple baseline</i> is Otsu (crack&nbsp;&le;&nbsp;T) followed by one 3&times;3 opening.</p>
+
+<h3>B. Stage implementations and their NumPy versions</h3>
+<p>Every member wrote at least two NumPy implementations and compared them with the library on a
+real development image (Table III). Neighbourhood operations use reflect-101 borders
+(<code>np.pad(mode="reflect")</code> = <code>cv2.BORDER_REFLECT_101</code> = SciPy
+<code>"mirror"</code>) and correlation, as <code>cv2.filter2D</code>; output size is
+(N&minus;F+2P)/S+1&nbsp;=&nbsp;N for P&nbsp;=&nbsp;(F&minus;1)/2, S&nbsp;=&nbsp;1. Each implementation has a
+hand-worked 3&times;3 or 5&times;5 test, for example: the median of the window
+[[10,12,11],[13,255,12],[11,10,0]] is 11 while its mean is 37.1 (why the median rejects impulses);
+the Sobel G<sub>y</sub> of a 10/200 step is &minus;(10+20+10)+(200+400+200)&nbsp;=&nbsp;760; histogram
+equalisation of a 3-bit 3&times;3 image maps levels 0,1,2,3,7 to 2,4,5,6,7; eroding a 3&times;3
+block with a 3&times;3 square leaves only its centre.</p>
+<p class="tcap">Table III &middot; NumPy implementation vs library (dev image at L&nbsp;=&nbsp;1008)</p>
+<table>
+<tr><th>Owner</th><th class="l">Operation</th><th class="l">Library</th><th>Max |diff|</th></tr>
+<tr><td>MEM1</td><td class="l">block-average downsampling, PSNR</td><td class="l">cv2.resize AREA, skimage</td><td>0, 0</td></tr>
+<tr><td>MEM2</td><td class="l">convolve2d 5&times;5</td><td class="l">cv2.filter2D</td><td>5.7e-13</td></tr>
+<tr><td>MEM2</td><td class="l">histogram equalisation; gamma</td><td class="l">cv2.equalizeHist; skimage</td><td>0; 0</td></tr>
+<tr><td>MEM2</td><td class="l">Gaussian 5&times;5</td><td class="l">cv2.GaussianBlur</td><td>1 (fixed-point)</td></tr>
+<tr><td>MEM3</td><td class="l">median 5&times;5, max 3&times;3</td><td class="l">scipy.ndimage (mirror)</td><td>0, 0</td></tr>
+<tr><td>MEM3</td><td class="l">centred spectrum ((&minus;1)<sup>x+y</sup>)</td><td class="l">np.fft.fftshift</td><td>1.3e-11</td></tr>
+<tr><td>MEM4</td><td class="l">Sobel magnitude; Otsu</td><td class="l">cv2.Sobel; skimage</td><td>0; 0</td></tr>
+<tr><td>MEM4</td><td class="l">adaptive mean 31/15</td><td class="l">cv2.adaptiveThreshold</td><td>0.048% pixels</td></tr>
+<tr><td>MEM5</td><td class="l">erosion disk 5; hole filling</td><td class="l">cv2.erode; binary_fill_holes</td><td>0; 0</td></tr>
+<tr><td>MEM5</td><td class="l">labelling (object count)</td><td class="l">skimage.measure.label</td><td>0</td></tr>
+</table>
+<p>The remaining differences are explained: OpenCV's 8-bit Gaussian uses fixed-point arithmetic,
+and <code>adaptiveThreshold</code> rounds the local mean to an integer before comparing.</p>
+<p class="tcap">Table IV &middot; Hand-worked examples checked by the unit tests</p>
+<table>
+<tr><th>Owner</th><th class="l">Input</th><th class="l">Operation</th><th>Result</th></tr>
+<tr><td>MEM1</td><td class="l">a=[[10,20],[30,40]], b=[[12,20],[30,36]]</td><td class="l">MSE, PSNR</td><td>5.0, 41.14 dB</td></tr>
+<tr><td>MEM1</td><td class="l">[[0,2,8,10],[4,6,12,14]]</td><td class="l">2&times;2 block average</td><td>[[3,11]]</td></tr>
+<tr><td>MEM2</td><td class="l">r = 15; r = 64</td><td class="l">log (c = 255/ln 256); gamma 0.5</td><td>128; 128</td></tr>
+<tr><td>MEM2</td><td class="l">3-bit [[0,0,1],[1,1,2],[2,3,7]]</td><td class="l">histogram equalisation</td><td>0,1,2,3,7&rarr;2,4,5,6,7</td></tr>
+<tr><td>MEM3</td><td class="l">[[10,12,11],[13,255,12],[11,10,0]]</td><td class="l">median / mean / midpoint / &alpha;-trim d=2</td><td>11 / 37 / 128 / 11</td></tr>
+<tr><td>MEM3</td><td class="l">D = D0</td><td class="l">ideal / Butterworth / Gaussian H</td><td>1 / 0.5 / 0.607</td></tr>
+<tr><td>MEM3</td><td class="l">row [0,0,0,1,1,0]</td><td class="l">run-length runs</td><td>(0,3),(1,2),(0,1)</td></tr>
+<tr><td>MEM4</td><td class="l">[[10,10,10],[10,10,10],[200,200,200]]</td><td class="l">Sobel G<sub>x</sub>, G<sub>y</sub>; Prewitt G<sub>y</sub></td><td>0, 760; 570</td></tr>
+<tr><td>MEM5</td><td class="l">3&times;3 block inside 5&times;5</td><td class="l">erosion, then opening (3&times;3 square)</td><td>centre only; block</td></tr>
+</table>
+<p><b>Enhancement (MEM2):</b> negative, log, gamma, contrast stretching, histogram equalisation,
+mean/Gaussian/median smoothing, Laplacian sharpening (g&nbsp;=&nbsp;f&minus;&nabla;&sup2;f) and the
+Gonzalez&ndash;Woods combined method [2] in which a smoothed, normalised Sobel magnitude weights the
+Laplacian detail. <b>Restoration and frequency (MEM3):</b> arithmetic, geometric, harmonic and
+contraharmonic means; median, max, min, midpoint and alpha-trimmed filters; a naive matrix DFT
+checked against <code>np.fft</code>; ideal, Butterworth (n&nbsp;=&nbsp;2) and Gaussian transfer
+functions applied on a 2&times; reflect-padded grid with (&minus;1)<sup>x+y</sup> centring.
+<b>Segmentation (MEM4):</b> Roberts, Prewitt, Sobel, Laplacian, LoG with zero crossings, point and
+dark-line masks, iterative global, Otsu
+(&sigma;<sub>B</sub>&sup2;&nbsp;=&nbsp;(&mu;<sub>T</sub>&omega;&minus;&mu;)&sup2;/(&omega;(1&minus;&omega;))) and
+adaptive thresholds via an integral image, gap linking and a Hough accumulator identical to
+scikit-image. <b>Morphology (MEM5):</b> erosion and dilation with square, disk, cross and line
+elements (outside&nbsp;=&nbsp;1 for erosion as in OpenCV), opening, closing, border-seeded hole
+filling, run-based two-pass labelling with union-find, area, bounding box, perimeter and
+circularity 4&pi;A/P&sup2;.</p>
+
+<h3>C. Pipelines A, B and C</h3>
+<figure><div class="diagram">gray uint8 0-255 (L=1008)
+A: Gaussian 5x5 [uint8] -> T=140, crack = f &lt; T [bool]
+B: Gaussian 7x7 [uint8] -> flatten: f / LP_D0=12(f) * mean(f) [uint8]
+   -> adaptive: f &lt;= mean31x31(f) - 15 [bool] -> link gaps &lt;= 3 px [bool]
+C: B -> closing disk 3 [bool] -> fill holes &lt;= 30 px [bool]
+   -> keep objects: area &gt;= 60 and 4piA/P^2 &lt;= 0.5 [bool]
+   -> measure: area %, skeleton length, severity (cut-offs 1.0 / 1.37 %)</div>
+<figcaption>Block diagrams (Section III-C) with the data type between stages. LP_D0 is a Gaussian low-pass
+in the frequency domain on the 2&times; padded grid (MEM3); C&nbsp;=&nbsp;B&nbsp;+&nbsp;morphology.</figcaption></figure>
+<p>Pipeline A is spatial enhancement plus a global threshold. Pipeline B adds illumination
+flattening (division by the low-frequency background) and a local adaptive threshold that follows
+shadows, then links gaps of up to three pixels along rows and columns. Pipeline C adds morphological
+refinement: a small closing bridges broken cracks, filling only holes up to 30 pixels avoids turning
+concrete enclosed by crossing cracks into crack, and object selection keeps long, thin components
+(cracks have low circularity; stains and pores are round). Every parameter was chosen by a study
+(Section IV); for example the adaptive offset c&nbsp;=&nbsp;15 balances missed faint cracks
+(c&nbsp;=&nbsp;10 lets texture through, c&nbsp;=&nbsp;25 drops faint branches), and the 31-pixel block is
+several crack widths wide yet smaller than a shadow edge.</p>
+
+<p class="tcap">Table IX &middot; Final stages, parameters and the evidence behind them</p>
+<table>
+<tr><th class="l">Stage</th><th class="l">Value</th><th class="l">Why (evidence)</th></tr>
+<tr><td class="l">Working size</td><td class="l">long side 1008</td><td class="l">within noise of the best size, keeps thin cracks (Table II)</td></tr>
+<tr><td class="l">Gaussian smoothing</td><td class="l">7&times;7 (OpenCV &sigma; rule)</td><td class="l">suppresses texture; median erases thin lines (Fig. 8)</td></tr>
+<tr><td class="l">Illumination flattening</td><td class="l">Gaussian LP, D0 = 12 (2&times; padded)</td><td class="l">D0 12 vs 6/24 within noise; helps shadowed images (AB6)</td></tr>
+<tr><td class="l">Threshold</td><td class="l">adaptive mean, block 31, c 15</td><td class="l">best block and c (Table V); Otsu &minus;0.098 (AB3)</td></tr>
+<tr><td class="l">Edge linking</td><td class="l">gaps &le; 3 px</td><td class="l">6 px within noise; 10 px joins texture (study)</td></tr>
+<tr><td class="l">Closing</td><td class="l">disk 3</td><td class="l">disk &ge; square; larger SE within noise (Fig. 9)</td></tr>
+<tr><td class="l">Small-hole filling</td><td class="l">&le; 30 px</td><td class="l">fills pores inside wide cracks, keeps enclosed concrete</td></tr>
+<tr><td class="l">Object selection</td><td class="l">area &ge; 60, circularity &le; 0.5</td><td class="l">area 30&ndash;60 equal, 240 drops branches; circularity 0.3/0.8 worse</td></tr>
+<tr><td class="l">Severity cut-offs</td><td class="l">1.0 % / 1.37 %</td><td class="l">tertiles of dev ground-truth cracked area</td></tr>
+</table>
+<h2>IV. Experiments</h2>
+<h3>A. Setup</h3>
+<p>All runs are logged to <code>experiments/experiment_log.csv</code> (run id, date, author,
+pipeline, stage, method, parameters, seed, split, number of images, time, metric). Studies change one
+factor of a reference configuration; tuning ran in two rounds, the second starting from the best
+configuration of the first. Python 3.13, NumPy 2.5, OpenCV 5.0; 157 unit tests run in CI on
+Python 3.12 and 3.13.</p>
+
+<h3>B. One-factor-at-a-time studies (tune set, 60 images)</h3>
+<p class="tcap">Table V &middot; Parameter studies (mean IoU)</p>
+<table>
+<tr><th class="l">Factor (owner)</th><th class="l">Values &rarr; IoU</th></tr>
+<tr><td class="l">Kernel size (MEM2)</td><td class="l">Gaussian 3/5/7: .656/.679/.671; mean 3/5/7: .671/.658/.591; median 3/5/7: .614/.574/.469; none .528</td></tr>
+<tr><td class="l">Cutoff D0 (MEM3)</td><td class="l">6: .674; 12: .671; 24: .661; no flattening .670</td></tr>
+<tr><td class="l">Threshold method (MEM4)</td><td class="l">Otsu* .489; fixed 127/115/100: .473/.421/.335; LoG .425; line masks .316; adaptive Gaussian .296; adaptive mean .258 (*after flattening, no morphology)</td></tr>
+<tr><td class="l">Adaptive block / c (MEM4)</td><td class="l">block 15/31/61: .573/.671/.664; c 10/15/20/25: .640/.671/.634/.571</td></tr>
+<tr><td class="l">SE size, shape (MEM5)</td><td class="l">disk 3/5/7: .671/.677/.680; square 3/5/7: .669/.673/.672; none .668</td></tr>
+<tr><td class="l">Detector (MEM4)</td><td class="l">Prewitt .291, Sobel .291, Roberts .284, LoG .256, lines .234, Laplacian .205</td></tr>
+</table>
+<p>Two findings shaped the design. First, the ranking of threshold methods depends on what follows:
+without morphology, Otsu on the flattened image beats the adaptive threshold (0.489 vs 0.258)
+because adaptive marks texture everywhere; inside Pipeline C, whose morphology removes that texture,
+adaptive with c&nbsp;=&nbsp;15 wins (0.671 vs 0.501). Second, edge detectors (Table V) mark both
+borders of a crack rather than its body and stay far below region thresholds; the plain Laplacian is
+worst because the second derivative amplifies noise. Median smoothing is the worst smoother here:
+it removes thin dark lines it treats as impulses. Round-2 differences were below the tune-set
+standard error (&asymp;0.014), and combining all round-2 winners scored lower on the full development
+set (0.643) than the round-2 reference (0.666), which we therefore kept.</p>
+<figure><img src="../../experiments/figures/fig_restoration_psnr.png" alt="PSNR heatmap">
+<figcaption>Fig. 5. Restoration study (MEM3): PSNR (dB) of every filter against the clean image for
+three noise models at three levels (20 dev images). Median filtering is best for salt-and-pepper
+(36&ndash;37&nbsp;dB from 15&ndash;22&nbsp;dB); frequency low-pass filters are best for Gaussian and
+speckle noise, and the best cutoff decreases as noise increases (D0 400&rarr;200&rarr;100).</figcaption></figure>
+<p class="tcap">Table X &middot; Restoration: PSNR (dB) of selected filters (k = 3)</p>
+<table>
+<tr><th class="l">Filter</th><th>Gauss 10</th><th>Gauss 30</th><th>S&amp;P .02</th><th>S&amp;P .10</th><th>Speckle .2</th></tr>
+<tr><td class="l">noisy input</td><td>28.1</td><td>18.7</td><td>22.3</td><td>15.3</td><td>17.6</td></tr>
+<tr><td class="l">arithmetic mean</td><td>33.9</td><td>27.6</td><td>30.4</td><td>24.1</td><td>26.6</td></tr>
+<tr><td class="l">median</td><td>33.2</td><td>25.9</td><td><b>37.1</b></td><td><b>36.1</b></td><td>24.8</td></tr>
+<tr><td class="l">alpha-trimmed d=2</td><td>33.9</td><td>27.3</td><td>35.8</td><td>28.3</td><td>26.3</td></tr>
+<tr><td class="l">midpoint</td><td>31.9</td><td>25.6</td><td>19.4</td><td>14.1</td><td>24.5</td></tr>
+<tr><td class="l">contraharmonic Q=+1.5</td><td>33.2</td><td>25.9</td><td>31.2</td><td>25.4</td><td>25.1</td></tr>
+<tr><td class="l">Gaussian LP, D0=200</td><td>33.8</td><td>30.3</td><td>32.0</td><td>26.9</td><td>29.5</td></tr>
+<tr><td class="l">best of all filters</td><td><b>34.3</b> (BW LP 400)</td><td><b>30.9</b> (G LP 100)</td><td>37.1 (median)</td><td>36.1 (median)</td><td><b>30.6</b> (G LP 100)</td></tr>
+</table>
+<p>Max and min filters remove only one polarity of impulse and darken or brighten the image, so
+they lose against the median on salt-and-pepper noise; the contraharmonic filter needs the sign of Q
+to match the impulse polarity (Q&nbsp;&gt;&nbsp;0 removes pepper). For Gaussian and speckle noise the
+frequency-domain low-pass filters win because their cutoff can be set wider than a 3&times;3 window;
+the spatial vs frequency comparison is completed by ablation AB2 inside the segmentation pipeline,
+where the spatial Gaussian wins by 0.017 IoU.</p>
+<figure class="wide"><img src="../../experiments/figures/fig_frequency_spectra.png" alt="Spectra before and after filtering"><figcaption>Fig. 6a. Noisy input (&sigma; = 20), its centred spectrum, the spectrum after a Gaussian low-pass (D0 = 100) and the filtered image: the high-frequency ring that carried the noise (and the finest texture) is removed; the crack, mostly mid frequencies, remains.</figcaption></figure>
+<figure class="wide"><img src="../../experiments/figures/fig_frequency_cutoffs.png" alt="Ideal, Butterworth and Gaussian low-pass at four cutoffs">
+<figcaption>Fig. 6. Ideal, Butterworth and Gaussian low-pass filters at D0 = 50, 100, 200, 400 on a
+noisy crop (&sigma;&nbsp;=&nbsp;20). Small D0 blurs; the ideal filter rings next to edges (its sinc
+impulse response), Butterworth (n&nbsp;=&nbsp;2) much less and the Gaussian not at all.</figcaption></figure>
+<figure><img src="../../experiments/figures/fig_threshold_methods.png" alt="Threshold methods"><figcaption>Fig. 7. Threshold methods (MEM4) after the same smoothing and flattening, without morphology (tune set, mean &plusmn; std IoU).</figcaption></figure>
+<figure><img src="../../experiments/figures/fig_kernel_size.png" alt="Kernel size"><figcaption>Fig. 8. Smoothing filter and kernel size inside Pipeline C (MEM2, round 2).</figcaption></figure>
+<figure><img src="../../experiments/figures/fig_se.png" alt="Structuring element"><figcaption>Fig. 9. Closing structuring element size and shape (MEM5, round 2).</figcaption></figure>
+<figure class="wide"><img src="../../experiments/figures/fig_enhancement_images.png" alt="Enhancement images and histograms"><figcaption>Fig. 10. Enhancement methods on one development image with their histograms: log and gamma 0.5 lift the dark range; stretching and equalisation spread the bright background over the whole range, which also amplifies texture.</figcaption></figure>
+<figure><img src="../../experiments/figures/fig_detectors.png" alt="Detectors"><figcaption>Fig. 9a. Edge and line detectors with the same rule (top 3% of responses) after smoothing and flattening (MEM4).</figcaption></figure>
+<figure><img src="../../experiments/figures/fig_adaptive.png" alt="Adaptive parameters"><figcaption>Fig. 9b. Adaptive threshold block size and offset c inside Pipeline C (MEM4, round 2).</figcaption></figure>
+<figure><img src="../../experiments/figures/fig_d0.png" alt="Cutoff D0"><figcaption>Fig. 9c. Illumination-flattening cutoff D0 (MEM3, round 2).</figcaption></figure>
+<figure><img src="../../experiments/figures/fig_enhancement_methods.png" alt="Enhancement methods"><figcaption>Fig. 9d. Each enhancement method in front of the same adaptive threshold, no morphology (MEM2).</figcaption></figure>
+<p>For enhancement (MEM2), each method was placed in front of the same adaptive threshold: log
+(0.478), mean 5 (0.392), median 5 (0.356), Gaussian 5 (0.322) and gamma 0.5 (0.320) help compared
+with no enhancement (0.166), whereas gamma 2.0, gradient sharpening, contrast stretching, histogram
+equalisation, Laplacian sharpening and the negative make it worse. Equalisation and stretching spread
+the bright background over the whole range and amplify texture; the negative turns cracks bright so
+a dark-crack threshold finds the background.</p>
+
+<h3>C. Ablation studies (all 321 dev images)</h3>
+<p class="tcap">Table VI &middot; Ablations of the final pipeline</p>
+<table>
+<tr><th class="l">Change</th><th>IoU</th><th>&Delta;</th></tr>
+<tr><td class="l">Final pipeline</td><td>.6657</td><td>&mdash;</td></tr>
+<tr><td class="l">AB1 no enhancement (no smoothing, no flattening)</td><td>.5100</td><td>&minus;.156</td></tr>
+<tr><td class="l">AB2 frequency low-pass instead of spatial Gaussian</td><td>.6486</td><td>&minus;.017</td></tr>
+<tr><td class="l">AB3 global Otsu instead of adaptive</td><td>.5681</td><td>&minus;.098</td></tr>
+<tr><td class="l">AB4a no morphology / selection (= Pipeline B)</td><td>.5118</td><td>&minus;.154</td></tr>
+<tr><td class="l">AB4b opening before closing</td><td>.6410</td><td>&minus;.025</td></tr>
+<tr><td class="l">AB5 no edge linking</td><td>.6620</td><td>&minus;.004</td></tr>
+<tr><td class="l">AB6 no illumination flattening</td><td>.6626</td><td>&minus;.003</td></tr>
+</table>
+<figure><img src="../../experiments/figures/fig_ablations.png" alt="Ablations"><figcaption>Fig. 11. Ablations on all 321 development images (mean &plusmn; std IoU).</figcaption></figure>
+<p>Smoothing and morphology carry most of the gain. Opening before closing deletes thin crack
+segments before they can be joined. Flattening and linking add little once the threshold is local:
+the adaptive threshold already follows the illumination, so AB6 makes the pipeline five times faster
+for &minus;0.003 IoU; we keep it because it was selected on the development set and is the stage that
+helps most on strongly shadowed images.</p>
+
+<h2>V. Results and Failure Analysis</h2>
+<h3>A. Held-out test set (137 images, evaluated once)</h3>
+<p class="tcap">Table VII &middot; IoU on the development and test sets</p>
+<table>
+<tr><th class="l">Method</th><th>Dev (321)</th><th>Test (137)</th><th>Test min / max</th></tr>
+<tr><td class="l">Trivial baseline</td><td>.442 &plusmn; .193</td><td>.449 &plusmn; .189</td><td>.017 / .843</td></tr>
+<tr><td class="l">Simple baseline</td><td>.066 &plusmn; .144</td><td>.066 &plusmn; .140</td><td>.010 / .816</td></tr>
+<tr><td class="l">Pipeline A</td><td>.458 &plusmn; .238</td><td>.443 &plusmn; .243</td><td>.009 / .878</td></tr>
+<tr><td class="l">Pipeline B</td><td>.512 &plusmn; .129</td><td>.513 &plusmn; .139</td><td>.187 / .781</td></tr>
+<tr><td class="l"><b>Pipeline C (final)</b></td><td><b>.666 &plusmn; .120</b></td><td><b>.670 &plusmn; .116</b></td><td>.330 / .881</td></tr>
+</table>
+<p>Development and test results agree within 0.004 for the final pipeline, so the tuning did not
+overfit the development data. The final pipeline beats the trivial baseline on 131 of 137 test
+images; the best test image (174) reaches 0.881 and the worst (249) 0.330. Pipeline A does not beat
+the trivial baseline on the test set (0.443 vs 0.449): a single global threshold, even after
+smoothing, cannot follow illumination. The simple baseline fails because Otsu on a histogram with
+1.4% foreground splits the background texture into two classes. Measurements on the test set: the
+cracked-area percentage has a mean absolute error of 0.33 points (ground-truth mean 1.41%), the
+skeleton length a relative error of 18.6%, and the severity class agrees with the class computed
+from the ground truth on 62.8% of images; errors concentrate in the narrow "moderate" band
+(1.0&ndash;1.37%). Under added Gaussian noise (three seeds per level) the dev IoU is 0.662, 0.650 and
+0.622 for &sigma;&nbsp;=&nbsp;10, 20, 30, with a standard deviation over seeds of at most 0.0007.</p>
+<p class="tcap">Table XI &middot; Severity class on the test set (rows: from GT, columns: predicted)</p>
+<table>
+<tr><th></th><th>minor</th><th>moderate</th><th>severe</th></tr>
+<tr><th>minor (38)</th><td>33</td><td>5</td><td>0</td></tr>
+<tr><th>moderate (39)</th><td>22</td><td>15</td><td>2</td></tr>
+<tr><th>severe (60)</th><td>1</td><td>21</td><td>38</td></tr>
+</table>
+<p>Most severity errors move one class down: the pipeline tends to under-estimate the area of
+cracks whose masks are wide, and the moderate band is only 0.37 percentage points wide. Gross errors
+(minor &harr; severe) occur on one image.</p>
+<figure><img src="../../experiments/figures/fig_pipelines_dev_test.png" alt="Dev and test IoU bars">
+<figcaption>Fig. 12. Mean IoU (&plusmn; std over images) of both baselines and the three pipelines on
+the development and test sets.</figcaption></figure>
+
+<figure><img src="../../experiments/figures/fig_test_iou_hist.png" alt="Test IoU distribution"><figcaption>Fig. 13. Distribution of per-image IoU on the test set: final pipeline vs trivial baseline.</figcaption></figure>
+<figure><img src="../../experiments/figures/fig_measurement_scatter.png" alt="Measurement scatter"><figcaption>Fig. 14. Predicted vs ground-truth cracked-area percentage on the 137 test images; the dashed line is perfect agreement. Over-estimates come from texture false positives, under-estimates from wide cracks.</figcaption></figure>
+<figure><img src="../../experiments/figures/fig_robustness.png" alt="Robustness"><figcaption>Fig. 15. Dev IoU of the final pipeline under added Gaussian noise; error bars are the std over seeds 0, 1, 2 (at most 0.0007).</figcaption></figure>
+<h3>B. Failure analysis (20 worst test images)</h3>
+<p>We inspected the 20 worst test images with every intermediate stage (Fig. 16) and grouped them by
+a written rule on their measurements, checked visually. <b>Rough texture and pits (9 images):</b>
+dark pores pass the adaptive threshold and many elongated fragments survive selection; responsible
+stages are the threshold and object selection. <b>Faint thin branches missed (6):</b> hairline
+branches are within 15 gray levels of their surroundings and are rejected by c&nbsp;=&nbsp;15 or by
+the 60-pixel area limit. <b>Wide cracks and spalling (4):</b> the adaptive threshold marks only the
+edges of damage wider than its 31-pixel block, because inside such a region the local mean is dark
+too. <b>Boundary width (1):</b> the ground truth is wider than the visible crack. We proposed and
+tested two fixes on the development set (not on the test set): adding a global Otsu mask for wide
+cracks lowered IoU to 0.602 (it also catches dark background), and a stricter object selection
+(area&nbsp;&ge;&nbsp;120, circularity&nbsp;&le;&nbsp;0.3) gave 0.661, so neither replaced the frozen
+pipeline. A more promising fix for the most common failure is a texture measure (local variance)
+computed before thresholding, to raise c only on rough surfaces.</p>
+<p class="tcap">Table XII &middot; Failure categories among the 20 worst test images</p>
+<table>
+<tr><th class="l">Category</th><th>n</th><th class="l">Responsible stage</th><th class="l">Why</th><th class="l">Proposed fix</th></tr>
+<tr><td class="l">Rough texture / pits</td><td>9</td><td class="l">adaptive threshold, selection</td><td class="l">dark pores are below the local mean; elongated fragments pass the shape test</td><td class="l">texture-dependent c (local variance)</td></tr>
+<tr><td class="l">Faint branches missed</td><td>6</td><td class="l">adaptive threshold (c), area filter</td><td class="l">hairlines within 15 gray levels; short pieces &lt; 60 px removed</td><td class="l">hysteresis: grow from strong cracks into weak pixels</td></tr>
+<tr><td class="l">Wide cracks / spalling</td><td>4</td><td class="l">adaptive threshold (block)</td><td class="l">inside a region wider than 31 px the local mean is dark too</td><td class="l">reconstruct the interior from detected edges</td></tr>
+<tr><td class="l">GT wider than crack</td><td>1</td><td class="l">ground truth</td><td class="l">annotation includes margins</td><td class="l">report Dice / tolerant IoU</td></tr>
+</table>
+<figure><img src="../../experiments/figures/failures/final_pipeline_079.png" alt="Failure panel 079">
+<img src="../../experiments/figures/failures/final_pipeline_249.png" alt="Failure panel 249">
+<figcaption>Fig. 16. Every stage on two failures: 079 (rough, shadowed texture gives many false
+fragments) and 249 (wide spalled crack: only its edges are found).</figcaption></figure>
+
+<h2>VI. Deployment and Bonus Work</h2>
+<p><code>python -m src.run_pipeline --image photo.jpg</code> applies the frozen configuration
+(<code>configs/final_pipeline.yaml</code>) and writes the mask, a red overlay and a JSON file with the
+measurements, severity and time per stage; <code>app/app.py</code> is a Gradio demo that shows every
+stage and handles invalid files. <b>Speed (Bonus 5):</b> profiling showed the FFT of the flattening
+stage and the iterative hole filling as bottlenecks; a real-input FFT (valid because the transfer
+function is symmetric) and hole filling by one background labelling reduced the time from 0.922 to
+0.502&nbsp;s per image (1.84&times;) with identical masks; vectorised object selection had already
+removed a 2.9&nbsp;s bottleneck. The 137 test images take about 1.4 minutes locally.
+<b>Compression (Bonus 4):</b> run-length coding of the final masks gives a mean ratio of 441 (PNG:
+164) and canonical Huffman coding of the gray images 1.36 (PNG: 1.93, because PNG also exploits
+neighbour correlation); every decoded output equals its input. <b>Generalization (Bonus 3):</b> the
+frozen pipeline on the 237 DeepCrack test images [3] (pavement, 544&times;384, no retuning) reaches
+IoU 0.520 against 0.346 for the trivial baseline; the drop is explained by the different scale and
+surface. <b>Tests and CI (Bonus 2):</b> 157 pytest tests, including every hand example and library
+comparison, run on every push.</p>
+
+<p class="tcap">Table XIII &middot; Bonus results</p>
+<table>
+<tr><th class="l">Bonus</th><th class="l">Measurement</th><th class="l">Result</th></tr>
+<tr><td class="l">Speed (B5)</td><td class="l">final pipeline, s/img (20 dev images)</td><td class="l">0.922 &rarr; 0.502 (1.84&times;), identical masks</td></tr>
+<tr><td class="l">Speed (B5)</td><td class="l">flattening; hole filling</td><td class="l">0.621 &rarr; 0.375; 0.185 &rarr; 0.031</td></tr>
+<tr><td class="l">Compression (B4)</td><td class="l">RLE on masks; Huffman on gray</td><td class="l">ratio 440.7; 1.36 (all exact)</td></tr>
+<tr><td class="l">Generalization (B3)</td><td class="l">DeepCrack test, 237 images</td><td class="l">IoU 0.520 (trivial 0.346)</td></tr>
+<tr><td class="l">Tests / CI (B2)</td><td class="l">pytest on push and PR</td><td class="l">157 tests, Python 3.12 and 3.13</td></tr>
+<tr><td class="l">Public demo (B1)</td><td class="l">Gradio app</td><td class="l">runs locally; public hosting pending</td></tr>
+</table>
+<h2>VII. Limitations, Ethics and Future Work</h2>
+<p>IoU is limited by the ground truth, whose masks are often wider than the visible crack and
+include blobs; one-pixel offsets on thin cracks cost much IoU. Parameters are tied to the image scale
+(block 31, area 60 at L&nbsp;=&nbsp;1008), as the DeepCrack result shows. The severity cut-offs are
+tertiles of this dataset, not engineering thresholds, and lengths are in pixels because the images
+have no physical scale. The photographs show building surfaces only and contain no personal data.
+This is a course project and not a certified inspection tool: a missed crack must never be read as
+"no damage". Future work: texture-adaptive thresholds, scale normalisation from the crack width, and
+morphological reconstruction to recover wide cracks from their detected edges.</p>
+
+<h2>VIII. Team Contributions and AI Assistance</h2>
+<p class="tcap">Table VIII &middot; Contribution table</p>
+<table>
+<tr><th>Member</th><th class="l">Work package</th><th class="l">Files</th><th class="l">Experiments</th></tr>
+<tr><td>MEM1</td><td class="l">Lead, data, metrics, baselines, integration</td><td class="l">data, metrics, pipeline, studies, configs</td><td class="l">resolution, gray levels, baselines, final selection, robustness, test</td></tr>
+<tr><td>MEM2</td><td class="l">Enhancement</td><td class="l">enhancement.py</td><td class="l">enhancement methods, kernel size</td></tr>
+<tr><td>MEM3</td><td class="l">Restoration, frequency, compression</td><td class="l">restoration.py, frequency.py, bonus/compression</td><td class="l">PSNR study, D0, AB2</td></tr>
+<tr><td>MEM4</td><td class="l">Segmentation</td><td class="l">segmentation.py</td><td class="l">threshold methods, detectors, adaptive</td></tr>
+<tr><td>MEM5</td><td class="l">Morphology, evaluation, demo</td><td class="l">morphology.py, evaluate.py, run_pipeline.py, app</td><td class="l">SE size/shape, failure analysis</td></tr>
+</table>
+<p><b>Disclosure of AI assistance.</b> An AI coding assistant (Claude Code) was used to draft the
+planning documents, much of the code in every module and its tests, the experiment scripts and this
+report. All code was committed from team accounts with the assistant named as co-author in each
+commit message, every number in this report comes from the CSV files in the repository, and each
+member has reviewed and must be able to explain their own work package and the whole pipeline.</p>
+
+<h2>References</h2>
+<ol class="refs">
+<li>Ç. F. Özgenel, "Concrete Crack Segmentation Dataset," Mendeley Data, v1, 2019,
+doi:10.17632/jwsn7tfbrp.1. CC BY 4.0.</li>
+<li>R. C. Gonzalez and R. E. Woods, <i>Digital Image Processing</i>, 4th ed. Pearson, 2018.</li>
+<li>Y. Liu, J. Yao, X. Lu, R. Xie, L. Li, "DeepCrack: A deep hierarchical feature learning
+architecture for crack segmentation," <i>Neurocomputing</i>, vol. 338, pp. 139&ndash;153, 2019.</li>
+<li>N. Otsu, "A threshold selection method from gray-level histograms," <i>IEEE Trans. Syst., Man,
+Cybern.</i>, vol. 9, no. 1, pp. 62&ndash;66, 1979.</li>
+<li>C. R. Harris et al., "Array programming with NumPy," <i>Nature</i> 585, 357&ndash;362, 2020;
+G. Bradski, "The OpenCV Library," <i>Dr. Dobb's J.</i>, 2000; S. van der Walt et al.,
+"scikit-image," <i>PeerJ</i> 2:e453, 2014; P. Virtanen et al., "SciPy 1.0," <i>Nat. Methods</i>
+17, 261&ndash;272, 2020.</li>
+</ol>
+</div>
+</body>
+</html>
