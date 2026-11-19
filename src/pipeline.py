@@ -1,8 +1,8 @@
 """Baselines, pipeline integration and experiment logging (MEM1).
 
 Cracks are darker than the concrete, so every threshold here marks pixels BELOW T as crack.
-The simple baseline uses OpenCV's Otsu and opening until the team's NumPy versions
-(MEM4 segmentation.otsu_threshold, MEM5 morphology.opening) are merged; the swap is logged.
+All stages use the team's NumPy modules (enhancement, restoration, frequency, segmentation,
+morphology); the earlier OpenCV stand-ins were replaced on the integration branch.
 """
 import argparse
 import csv
@@ -11,10 +11,10 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-import cv2
 import numpy as np
 
-from src import data, metrics
+from src import (data, enhancement, frequency, metrics, morphology, restoration,
+                 segmentation)
 
 METHODS = {}  # name -> function(gray uint8) -> bool mask; filled below
 
@@ -28,10 +28,9 @@ def baseline_trivial(gray):
 
 
 def baseline_simple(gray):
-    """Spec simple baseline: inverted Otsu threshold, then one 3x3 opening."""
-    _, binary = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-    opened = cv2.morphologyEx(binary, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
-    return opened > 0
+    """Spec simple baseline: Otsu threshold (crack = at or below T), then one 3x3 opening."""
+    binary = segmentation.threshold_dark(gray, segmentation.otsu_threshold(gray))
+    return morphology.opening(binary, morphology.structuring_element("square", 3))
 
 
 def log_run(path, *, author="", pipeline="", stage="", method="", params=None, seed="",
@@ -67,47 +66,95 @@ METHODS.update(baseline_trivial=baseline_trivial, baseline_simple=baseline_simpl
 
 
 # ---------------------------------------------------------------- stage registry
-# Library stand-ins: each stage calls OpenCV/scikit-image until its owner's NumPy version is
-# merged, then the registry entry is switched (and the switch logged). Owner in brackets.
-def _contrast_stretch(img, low_pct=2, high_pct=98):
-    """[MEM2 stand-in] Stretch the low_pct..high_pct percentile range to 0-255."""
-    lo, hi = np.percentile(img, (low_pct, high_pct))
-    if hi <= lo:
-        return img.copy()
-    return np.clip((img.astype(np.float64) - lo) * 255.0 / (hi - lo), 0, 255).astype(np.uint8)
-
-
+# Every stage takes the previous output (uint8 image or bool mask) plus keyword parameters.
+# Stages call the team's NumPy modules; owner in brackets.
 def _gaussian(img, ksize=5, sigma=0):
-    """[MEM2 stand-in] Gaussian smoothing (sigma 0 = OpenCV's rule from ksize)."""
-    return cv2.GaussianBlur(img, (ksize, ksize), sigma, borderType=cv2.BORDER_REFLECT_101)
+    """[MEM2] Gaussian smoothing."""
+    return enhancement.gaussian_filter(img, ksize, sigma)
+
+
+def _mean(img, ksize=3):
+    """[MEM2] Box smoothing."""
+    return enhancement.mean_filter(img, ksize)
 
 
 def _median(img, ksize=3):
-    """[MEM3 stand-in] Median filter."""
-    return cv2.medianBlur(img, ksize)
+    """[MEM3] Median filter."""
+    return restoration.median_filter(img, ksize)
+
+
+def _flatten_background(img, d0=6.0):
+    """[MEM3] Divide by the low-frequency background (Gaussian low-pass, cutoff d0) to remove
+    shadows and vignetting; the result is rescaled to the image's mean brightness."""
+    f = img.astype(np.float64)
+    shape = (2 * img.shape[0], 2 * img.shape[1])
+    background = frequency.apply_filter(img, frequency.gaussian_lowpass(shape, d0))
+    flat = f / np.maximum(background.astype(np.float64), 1.0) * f.mean()
+    return np.clip(np.rint(flat), 0, 255).astype(np.uint8)
 
 
 def _threshold_fixed(img, t=127):
-    """[MEM4 stand-in] Crack = pixels darker than t."""
+    """Crack = pixels darker than t (spec trivial baseline form)."""
     return img < t
 
 
 def _threshold_otsu(img):
-    """[MEM4 stand-in] Inverted Otsu: crack = pixels at or below Otsu's threshold."""
-    _, binary = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-    return binary > 0
+    """[MEM4] Crack = pixels at or below Otsu's threshold."""
+    return segmentation.threshold_dark(img, segmentation.otsu_threshold(img))
 
 
-def _opening(mask, size=3):
-    """[MEM5 stand-in] Opening with a size x size square structuring element."""
-    se = np.ones((size, size), np.uint8)
-    return cv2.morphologyEx(mask.astype(np.uint8), cv2.MORPH_OPEN, se) > 0
+def _threshold_adaptive(img, block=31, c=10, method="mean"):
+    """[MEM4] Crack = pixel <= local mean - c."""
+    return segmentation.adaptive_threshold(img, block, c, method)
+
+
+def _threshold_lines(img, t=60):
+    """[MEM4] Crack = dark-line mask response (max over 4 directions) >= t."""
+    return segmentation.line_detect(img, t)
+
+
+def _threshold_log(img, sigma=2.0, t=2.0):
+    """[MEM4] Crack = LoG response >= t (dark thin structures give a positive LoG)."""
+    return segmentation.log_filter(img, sigma) >= t
+
+
+def _link_gaps(mask, max_gap=3):
+    """[MEM4] Bridge short gaps along rows and columns."""
+    return segmentation.link_gaps(mask, max_gap)
+
+
+def _opening(mask, size=3, shape="square"):
+    """[MEM5] Opening: remove specks smaller than the structuring element."""
+    return morphology.opening(mask, morphology.structuring_element(shape, size))
+
+
+def _closing(mask, size=3, shape="disk"):
+    """[MEM5] Closing: bridge narrow gaps along cracks."""
+    return morphology.closing(mask, morphology.structuring_element(shape, size))
+
+
+def _fill_small_holes(mask, max_area=30):
+    """[MEM5] Fill holes up to max_area pixels. Large holes (background enclosed by crossing
+    cracks) are kept: filling them would turn concrete into crack."""
+    holes = morphology.fill_holes(mask) & ~mask
+    return mask | (holes & ~morphology.remove_small_objects(holes, max_area + 1))
+
+
+def _select_objects(mask, min_area=30, max_circularity=0.5):
+    """[MEM5] Keep long thin objects: drop specks and round stains."""
+    return morphology.select_objects(mask, min_area, max_circularity)
 
 
 STAGES = {
-    "contrast_stretch": _contrast_stretch, "gaussian": _gaussian, "median": _median,
+    "gaussian": _gaussian, "mean": _mean, "median": _median,
+    "contrast_stretch": lambda img, low_pct=2, high_pct=98: enhancement.contrast_stretch(
+        img, low_pct, high_pct),
+    "flatten_background": _flatten_background,
     "threshold_fixed": _threshold_fixed, "threshold_otsu": _threshold_otsu,
-    "opening": _opening,
+    "threshold_adaptive": _threshold_adaptive, "threshold_lines": _threshold_lines,
+    "threshold_log": _threshold_log, "link_gaps": _link_gaps, "opening": _opening,
+    "closing": _closing, "fill_small_holes": _fill_small_holes,
+    "select_objects": _select_objects,
 }
 
 
