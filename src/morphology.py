@@ -58,25 +58,16 @@ def closing(mask, se):
 def fill_holes(mask):
     """Fill background regions not 4-connected to the image border.
 
-    X0 = background pixels on the border; X(k+1) = dilate(X(k), cross) AND background,
-    repeated until stable; holes = background not reached. Same result as
-    scipy.ndimage.binary_fill_holes.
+    Definition: X0 = background pixels on the border; X(k+1) = dilate(X(k), cross) AND
+    background until stable; holes = background never reached (same result as
+    scipy.ndimage.binary_fill_holes). Implemented with one 4-connected labelling of the
+    background instead of repeated dilation (Bonus 5: same output, far fewer passes).
     """
     mask = np.asarray(mask, bool)
-    background = ~mask
-    reached = np.zeros_like(mask)
-    reached[[0, -1], :] = background[[0, -1], :]
-    reached[:, [0, -1]] |= background[:, [0, -1]]
-    while True:
-        grown = reached.copy()
-        grown[1:] |= reached[:-1]
-        grown[:-1] |= reached[1:]
-        grown[:, 1:] |= reached[:, :-1]
-        grown[:, :-1] |= reached[:, 1:]
-        grown &= background
-        if np.array_equal(grown, reached):
-            return ~reached
-        reached = grown
+    labels, _ = label(~mask, connectivity=4)
+    edge = np.concatenate((labels[[0, -1], :].ravel(), labels[:, [0, -1]].ravel()))
+    border = np.unique(edge)
+    return mask | (labels > 0) & ~np.isin(labels, border)
 
 
 # ---------------------------------------------------------------- connected components

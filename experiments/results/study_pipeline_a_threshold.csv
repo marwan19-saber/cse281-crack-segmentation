@@ -1,0 +1,6 @@
+study,variant,iou_mean,iou_std,dice_mean,time_per_img_s,set,n_images,noise,config
+pipeline_a_threshold,t=100,0.2991513657996822,0.1444791188927583,0.4412622752355378,0.017932655000186058,tune,60,null,"[{""stage"": ""gaussian"", ""ksize"": 5}, {""stage"": ""threshold_fixed"", ""t"": 100}]"
+pipeline_a_threshold,t=115,0.39383473751158077,0.1617314610229728,0.54469967469049,0.018173976666488064,tune,60,null,"[{""stage"": ""gaussian"", ""ksize"": 5}, {""stage"": ""threshold_fixed"", ""t"": 115}]"
+pipeline_a_threshold,t=127,0.4598587286558057,0.20458195431482964,0.5987282558270353,0.017991849999816623,tune,60,null,"[{""stage"": ""gaussian"", ""ksize"": 5}, {""stage"": ""threshold_fixed"", ""t"": 127}]"
+pipeline_a_threshold,t=140,0.4727457532254193,0.24146716423027034,0.5981376622397057,0.017881328333169223,tune,60,null,"[{""stage"": ""gaussian"", ""ksize"": 5}, {""stage"": ""threshold_fixed"", ""t"": 140}]"
+pipeline_a_threshold,t=150,0.4054215418578294,0.264593450590007,0.5214371029407069,0.01784347166637114,tune,60,null,"[{""stage"": ""gaussian"", ""ksize"": 5}, {""stage"": ""threshold_fixed"", ""t"": 150}]"

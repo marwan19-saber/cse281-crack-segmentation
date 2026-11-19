@@ -29,18 +29,62 @@ pytest
 
 ## Team
 
-| Member | Work package | Main files |
-|---|---|---|
-| MEM1 | Tech lead, data, metrics, baselines | `src/data.py`, `src/metrics.py`, `src/pipeline.py`, `configs/` |
-| MEM2 | Enhancement | `src/enhancement.py` |
-| MEM3 | Restoration and frequency | `src/restoration.py`, `src/frequency.py` |
-| MEM4 | Segmentation | `src/segmentation.py` |
-| MEM5 | Morphology, evaluation, demo | `src/morphology.py`, `src/evaluate.py`, `src/run_pipeline.py`, `app/` |
+| Member | Name | Work package | Main files |
+|---|---|---|---|
+| MEM1 | Marwan Saber | Tech lead, data, metrics, baselines | `src/data.py`, `src/metrics.py`, `src/pipeline.py`, `configs/` |
+| MEM2 | Hassan Hisham | Enhancement | `src/enhancement.py` |
+| MEM3 | Mohamed Wageh | Restoration and frequency | `src/restoration.py`, `src/frequency.py` |
+| MEM4 | Saad Mohamed | Segmentation | `src/segmentation.py` |
+| MEM5 | Ahmed Abdelwahed | Morphology, evaluation, demo | `src/morphology.py`, `src/evaluate.py`, `src/run_pipeline.py`, `app/` |
 
 ## Results
 
-Not available yet. Every number here will come from `experiments/results/`.
+Mean IoU ± std over images. Methods and parameters were chosen on the development set only; the
+test set was evaluated once, after the final configuration was tagged `results-frozen`.
 
-## Planning documents
+| Method | Dev (321 images) | Test (137 images) |
+|---|---|---|
+| Trivial baseline (gray < 127) | 0.442 ± 0.193 | 0.449 ± 0.189 |
+| Simple baseline (Otsu + 3×3 opening) | 0.066 ± 0.144 | 0.066 ± 0.140 |
+| Pipeline A (Gaussian + global threshold) | 0.458 ± 0.238 | 0.443 ± 0.243 |
+| Pipeline B (+ flattening, adaptive threshold, linking) | 0.512 ± 0.129 | 0.513 ± 0.139 |
+| **Pipeline C = final** (+ morphology, object selection) | **0.666 ± 0.120** | **0.670 ± 0.116** |
 
-`CSE281_Team_Execution_Plan.pdf` (team plan) and `report/` (drafts). Sources in `docs/execution/`.
+- Final pipeline beats the trivial baseline on 131 of 137 test images; best 0.881, worst 0.330.
+- Cracked area: mean absolute error 0.33 points; severity class agrees with GT on 62.8 %.
+- Robustness (dev, Gaussian noise, seeds 0/1/2): σ 10 → 0.662, σ 20 → 0.650, σ 30 → 0.622.
+- Speed: 0.50 s per image at 1008 px (≈ 1.4 min for the test set locally).
+- Details: `report/report.pdf`, `notebooks/02_results.ipynb`, `experiments/results/`.
+
+## Reproduce
+
+```bash
+python -m src.evaluate --config configs/final_pipeline.yaml --split dev --out dev.csv
+python -m src.studies --study ablations --set dev           # any study in src/study_defs.py
+python -m src.evaluate --config configs/final_pipeline.yaml --split test --out test.csv
+python -m src.run_pipeline --image app/examples/test_249_failure_wide_crack.jpg --out out/
+python app/app.py                                           # demo (pip install -r app/requirements.txt)
+```
+
+The test split only runs when the `results-frozen` tag exists (`git fetch --tags`).
+
+## Bonus work
+
+| Bonus | Result | Evidence |
+|---|---|---|
+| Tests + CI | 157 pytest tests on every push and PR (Python 3.12, 3.13) | `.github/workflows/tests.yml` |
+| Speed | 0.922 → 0.502 s/img (1.84×), identical masks | `bonus/optimization/` |
+| Lossless compression | RLE on masks ratio 441, Huffman on gray 1.36, exact | `bonus/compression/` |
+| Second dataset | DeepCrack test, no retuning: IoU 0.520 (trivial 0.346) | `bonus/generalization/` |
+| Public demo | Gradio app runs locally; public hosting pending | `app/` |
+
+## AI assistance
+
+An AI coding assistant (Claude Code) drafted much of the code, tests, experiment scripts and
+documents. Each commit names it as co-author; every member reviews and must be able to explain
+their own work package and the whole pipeline.
+
+## Documents
+
+`report/report.pdf` (technical report), `report/presentation.pdf` (slides),
+`CSE281_Team_Execution_Plan.pdf` (team plan). HTML sources in `docs/`.

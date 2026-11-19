@@ -1,6 +1,6 @@
 bonus_id,objective,owner,reviewer,status,evidence_path,tests_or_measurements,documentation,completion_date
-B1,Public deployed demo,MEM5,MEM1,not_started,,,,
-B2,Unit tests and CI,MEM1,MEM4,in_progress,,,,
-B3,Second dataset generalization,MEM1+MEM5,MEM2,not_started,,,,
-B4,Lossless compression,MEM3,MEM1,not_started,,,,
-B5,Speed optimization,MEM1,MEM3,not_started,,,,
+B1,Public deployed demo,MEM5,MEM1,in_progress,app/app.py,"local smoke test: overlay, 8 stage panels, invalid-file and no-file errors; public hosting not done (needs a Hugging Face account)",app/examples/README.md,
+B2,Unit tests and CI,MEM1,MEM4,done,.github/workflows/tests.yml,"157 pytest tests incl. hand examples and library comparisons; CI green on Python 3.12 and 3.13",README.md,2026-11-19
+B3,Second dataset generalization,MEM1+MEM5,MEM2,done,bonus/generalization/results.csv,"DeepCrack 237 test images, frozen config: IoU 0.520 +/- 0.201 vs trivial 0.346",bonus/generalization/README.md,2026-11-19
+B4,Lossless compression,MEM3,MEM1,done,bonus/compression/results.csv,"RLE ratio 440.7 on masks, Huffman 1.36 on gray; np.array_equal on all 20 outputs",bonus/compression/README.md,2026-11-19
+B5,Speed optimization,MEM1,MEM3,done,bonus/optimization/timings.csv,"0.922 -> 0.502 s/img (1.84x) on 20 dev images; identical masks",bonus/optimization/README.md,2026-11-19

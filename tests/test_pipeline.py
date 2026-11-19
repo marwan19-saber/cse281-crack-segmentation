@@ -124,3 +124,20 @@ def test_shipped_configs_run_end_to_end():
     for path in sorted(Path("configs").glob("*.yaml")):
         mask, _ = pipeline.run(crack_image(), pipeline.load_config(path))
         assert mask.dtype == bool and mask.shape == (30, 30), path
+
+
+def test_flatten_background_removes_a_shadow_but_keeps_the_crack():
+    img = np.full((60, 80), 200, np.uint8)
+    img[:, :40] = 110                               # half the image in shadow
+    img[30, 5:75] = img[30, 5:75] // 2              # crack: half as bright as its surroundings
+    flat = pipeline.STAGES["flatten_background"](img, d0=3.0)
+    assert abs(int(flat[10, 10]) - int(flat[10, 70])) < 40     # shadow mostly gone
+    assert flat[30, 10] < flat[10, 10] and flat[30, 70] < flat[10, 70]
+
+
+def test_fill_small_holes_keeps_large_enclosed_background():
+    mask = np.zeros((30, 30), bool)
+    mask[2:28, 2] = mask[2:28, 27] = mask[2, 2:28] = mask[27, 2:28] = True   # big loop
+    mask[10:13, 10:13] = True; mask[11, 11] = False                         # 1-px hole
+    out = pipeline.STAGES["fill_small_holes"](mask, max_area=5)
+    assert out[11, 11] and not out[20, 20]

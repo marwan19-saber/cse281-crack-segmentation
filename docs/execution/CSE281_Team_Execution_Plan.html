@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>CSE281 Team Execution Plan (v0.3)</title>
+<title>CSE281 Team Execution Plan (v0.4)</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,13 +19,13 @@
   <div class="title">Team<br>Execution Plan</div>
   <div class="sub">Five individual plans, the shared roadmap and every checklist the team needs
     from Week 9 to the Week 14 final discussion.</div>
-  <span class="pill">v0.3 &middot; APPROVED BY THE TEAM &middot; 19 NOV 2026</span>
+  <span class="pill">v0.4 &middot; APPROVED &middot; RESULTS FROZEN &middot; 19 NOV 2026</span>
   <div class="members">
-    <div class="m1"><b>MEM1</b><i>Tech Lead + Data &amp; Baselines</i></div>
-    <div class="m2"><b>MEM2</b><i>Enhancement</i></div>
-    <div class="m3"><b>MEM3</b><i>Restoration &amp; Frequency</i></div>
-    <div class="m4"><b>MEM4</b><i>Segmentation</i></div>
-    <div class="m5"><b>MEM5</b><i>Morphology, Eval &amp; Demo</i></div>
+    <div class="m1"><b>MEM1</b><i>Marwan Saber &middot; Tech Lead + Data &amp; Baselines</i></div>
+    <div class="m2"><b>MEM2</b><i>Hassan Hisham &middot; Enhancement</i></div>
+    <div class="m3"><b>MEM3</b><i>Mohamed Wageh &middot; Restoration &amp; Frequency</i></div>
+    <div class="m4"><b>MEM4</b><i>Saad Mohamed &middot; Segmentation</i></div>
+    <div class="m5"><b>MEM5</b><i>Ahmed Abdelwahed &middot; Morphology, Eval &amp; Demo</i></div>
   </div>
   <div class="meta">
     <div><small>Date</small><span>19 November 2026</span></div>
@@ -229,11 +229,11 @@ The evidence is the commit history, the contribution table and the defense.</div
 are merged: <i>&ldquo;the Tech Lead also owns the data, the metrics and the baselines.&rdquo;</i></p>
 <table>
   <tr><th>Member</th><th>Role</th><th>Work package</th><th>Code owned</th><th>Required studies</th><th>Bonus</th></tr>
-  <tr><td><b>MEM1</b></td><td>Tech Lead + Data &amp; Baseline Engineer</td><td>Problem formulation, architecture, config, integration, reviews, final pipeline selection, data, metrics, baselines</td><td>skeleton, <code>configs/</code>, <code>src/data.py</code>, <code>src/metrics.py</code>, <code>src/pipeline.py</code>, baseline script, CI</td><td>Resolution and gray-level study. Pipeline A vs both baselines. Final pipeline at 3 noise levels &times; 3 seeds. Final results table.</td><td>CI (coord.), generalization (co-owner), speed (coord.)</td></tr>
-  <tr><td><b>MEM2</b></td><td>Enhancement Engineer</td><td>Histogram analysis, point transforms, histogram equalization, smoothing and sharpening</td><td><code>src/enhancement.py</code></td><td>Enhancement comparison. Histogram analysis. Kernel-size study.</td><td>Tests and speed for own module</td></tr>
-  <tr><td><b>MEM3</b></td><td>Restoration &amp; Frequency Engineer</td><td>Noise models (with MEM1), restoration filters, DFT and frequency filters</td><td><code>src/restoration.py</code>, <code>src/frequency.py</code></td><td>PSNR per noise type. Restoration filter comparison. Spatial vs frequency ablation. D0 study.</td><td><b>Lossless compression (owner)</b></td></tr>
-  <tr><td><b>MEM4</b></td><td>Segmentation Engineer</td><td>Edge, point and line detection, thresholding, edge linking or Hough</td><td><code>src/segmentation.py</code></td><td>Detector comparison. Threshold-method comparison.</td><td>Tests and speed for own module</td></tr>
-  <tr><td><b>MEM5</b></td><td>Morphology, Evaluation &amp; Demo Engineer</td><td>Morphology, measurement, test-set evaluation, failure analysis, demo</td><td><code>src/morphology.py</code>, <code>src/evaluate.py</code>, <code>src/run_pipeline.py</code>, <code>app/</code></td><td>SE shape and size studies. Failure analysis for every pipeline.</td><td><b>Public deployment (owner)</b>, generalization (co-owner)</td></tr>
+  <tr><td><b>MEM1</b><br>Marwan Saber</td><td>Tech Lead + Data &amp; Baseline Engineer</td><td>Problem formulation, architecture, config, integration, reviews, final pipeline selection, data, metrics, baselines</td><td>skeleton, <code>configs/</code>, <code>src/data.py</code>, <code>src/metrics.py</code>, <code>src/pipeline.py</code>, baseline script, CI</td><td>Resolution and gray-level study. Pipeline A vs both baselines. Final pipeline at 3 noise levels &times; 3 seeds. Final results table.</td><td>CI (coord.), generalization (co-owner), speed (coord.)</td></tr>
+  <tr><td><b>MEM2</b><br>Hassan Hisham</td><td>Enhancement Engineer</td><td>Histogram analysis, point transforms, histogram equalization, smoothing and sharpening</td><td><code>src/enhancement.py</code></td><td>Enhancement comparison. Histogram analysis. Kernel-size study.</td><td>Tests and speed for own module</td></tr>
+  <tr><td><b>MEM3</b><br>Mohamed Wageh</td><td>Restoration &amp; Frequency Engineer</td><td>Noise models (with MEM1), restoration filters, DFT and frequency filters</td><td><code>src/restoration.py</code>, <code>src/frequency.py</code></td><td>PSNR per noise type. Restoration filter comparison. Spatial vs frequency ablation. D0 study.</td><td><b>Lossless compression (owner)</b></td></tr>
+  <tr><td><b>MEM4</b><br>Saad Mohamed</td><td>Segmentation Engineer</td><td>Edge, point and line detection, thresholding, edge linking or Hough</td><td><code>src/segmentation.py</code></td><td>Detector comparison. Threshold-method comparison.</td><td>Tests and speed for own module</td></tr>
+  <tr><td><b>MEM5</b><br>Ahmed Abdelwahed</td><td>Morphology, Evaluation &amp; Demo Engineer</td><td>Morphology, measurement, test-set evaluation, failure analysis, demo</td><td><code>src/morphology.py</code>, <code>src/evaluate.py</code>, <code>src/run_pipeline.py</code>, <code>app/</code></td><td>SE shape and size studies. Failure analysis for every pipeline.</td><td><b>Public deployment (owner)</b>, generalization (co-owner)</td></tr>
 </table>
 
 <h2>2.1 Review pairs (every PR is reviewed by a different member)</h2>
@@ -1232,38 +1232,38 @@ GitHub Project board.</p>
 <table>
   <tr><th>Item</th><th>Owner</th><th>Week</th><th>Status</th><th>Evidence</th></tr>
   <tr><td>Spec audit</td><td>MEM1</td><td>9</td><td class="check">&#9745;</td><td>Section 1</td></tr>
-  <tr><td>Dataset validated + licence cited</td><td>MEM1</td><td>9</td><td class="check">&#9680;</td><td>Validated 12 Nov; MEM5 re-check and README citation pending</td></tr>
-  <tr><td>Problem statement + metric</td><td>MEM1</td><td>9</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>Repo skeleton + branch protection</td><td>MEM1</td><td>9</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>metrics.py + tests</td><td>MEM1</td><td>9</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>data.py (load, split, noise) + tests</td><td>MEM1</td><td>10</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>Image analysis + resolution/gray study</td><td>MEM1</td><td>10</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>Both baselines on dev</td><td>MEM1</td><td>10</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>CI workflow</td><td>MEM1</td><td>10</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>enhancement.py (2+ NumPy) + tests</td><td>MEM2</td><td>10</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>Enhancement comparison + kernel study</td><td>MEM2</td><td>11&ndash;12</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>restoration.py + frequency.py + tests</td><td>MEM3</td><td>10</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>PSNR study + D0 study + spatial/freq ablation</td><td>MEM3</td><td>11&ndash;12</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>segmentation.py + tests</td><td>MEM4</td><td>10&ndash;11</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>Detector + threshold studies</td><td>MEM4</td><td>11&ndash;12</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>morphology.py + tests</td><td>MEM5</td><td>10</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>SE size + shape studies</td><td>MEM5</td><td>11&ndash;12</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>Pipelines A / B / C end to end</td><td>MEM1</td><td>11&ndash;12</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>Four ablations</td><td>MEM2&ndash;5</td><td>12&ndash;13</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>Final selection + results-frozen tag</td><td>MEM1</td><td>13</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>Robustness 3 &times; 3</td><td>MEM1</td><td>13</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>Test evaluation (once)</td><td>MEM5 + MEM1</td><td>13</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>Failure analysis (&ge;20)</td><td>MEM5</td><td>13</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>run_pipeline.py + demo</td><td>MEM5</td><td>12&ndash;13</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>B1 Deployment</td><td>MEM5</td><td>13</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>B2 CI</td><td>MEM1</td><td>10+</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>B3 Generalization</td><td>MEM1 + MEM5</td><td>13</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>B4 Compression</td><td>MEM3</td><td>13</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>B5 Speed</td><td>MEM1 (all)</td><td>13</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>Report sections</td><td>All</td><td>13</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>Slides + 2 rehearsals</td><td>All</td><td>14</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>Mock defenses</td><td>All</td><td>13&ndash;14</td><td class="check">&#9744;</td><td></td></tr>
-  <tr><td>v1.0 tag</td><td>MEM1</td><td>14</td><td class="check">&#9744;</td><td></td></tr>
+  <tr><td>Dataset validated + licence cited</td><td>MEM1</td><td>9</td><td class="check">&#9745;</td><td>data/README.md; MEM5 re-check pending</td></tr>
+  <tr><td>Problem statement + metric</td><td>MEM1</td><td>9</td><td class="check">&#9745;</td><td>README, report I</td></tr>
+  <tr><td>Repo skeleton + CI</td><td>MEM1</td><td>9</td><td class="check">&#9745;</td><td>CI green; branch protection: owner to enable</td></tr>
+  <tr><td>metrics.py + tests</td><td>MEM1</td><td>9</td><td class="check">&#9745;</td><td>tests/test_metrics.py</td></tr>
+  <tr><td>data.py (load, split, noise) + tests</td><td>MEM1</td><td>10</td><td class="check">&#9745;</td><td>data/split.json 321/137</td></tr>
+  <tr><td>Image analysis + resolution/gray study</td><td>MEM1</td><td>10</td><td class="check">&#9745;</td><td>notebooks/01</td></tr>
+  <tr><td>Both baselines on dev and test</td><td>MEM1</td><td>10</td><td class="check">&#9745;</td><td>dev .442/.066, test .449/.066</td></tr>
+  <tr><td>enhancement.py (NumPy) + tests</td><td>MEM2</td><td>10</td><td class="check">&#9680;</td><td>PR #1: MEM2 review and defense</td></tr>
+  <tr><td>Enhancement comparison + kernel study</td><td>MEM2</td><td>11-12</td><td class="check">&#9745;</td><td>study_enhancement_methods, kernel_size</td></tr>
+  <tr><td>restoration.py + frequency.py + tests</td><td>MEM3</td><td>10</td><td class="check">&#9680;</td><td>PR #2: MEM3 review and defense</td></tr>
+  <tr><td>PSNR study + D0 study + AB2</td><td>MEM3</td><td>11-12</td><td class="check">&#9745;</td><td>study_restoration_psnr, cutoff_d0</td></tr>
+  <tr><td>segmentation.py + tests</td><td>MEM4</td><td>10-11</td><td class="check">&#9680;</td><td>PR #3 (after #1)</td></tr>
+  <tr><td>Detector + threshold studies</td><td>MEM4</td><td>11-12</td><td class="check">&#9745;</td><td>study_detectors, threshold_method</td></tr>
+  <tr><td>morphology.py + evaluate + run_pipeline</td><td>MEM5</td><td>10</td><td class="check">&#9680;</td><td>PR #4: MEM5 review and defense</td></tr>
+  <tr><td>SE size + shape studies</td><td>MEM5</td><td>11-12</td><td class="check">&#9745;</td><td>study_se_size_shape</td></tr>
+  <tr><td>Pipelines A / B / C end to end</td><td>MEM1</td><td>11-12</td><td class="check">&#9745;</td><td>configs/, study_final_selection</td></tr>
+  <tr><td>Four+ ablations</td><td>MEM2-5</td><td>12-13</td><td class="check">&#9745;</td><td>study_ablations (AB1-AB6)</td></tr>
+  <tr><td>Final selection + results-frozen tag</td><td>MEM1</td><td>13</td><td class="check">&#9745;</td><td>tag results-frozen</td></tr>
+  <tr><td>Robustness 3 x 3</td><td>MEM1</td><td>13</td><td class="check">&#9745;</td><td>study_robustness</td></tr>
+  <tr><td>Test evaluation (once)</td><td>MEM5 + MEM1</td><td>13</td><td class="check">&#9745;</td><td>test_final.csv: .670 +/- .116</td></tr>
+  <tr><td>Failure analysis (20 worst)</td><td>MEM5</td><td>13</td><td class="check">&#9745;</td><td>failure_analysis.csv, figures/failures</td></tr>
+  <tr><td>run_pipeline.py + demo</td><td>MEM5</td><td>12-13</td><td class="check">&#9745;</td><td>app/app.py (local)</td></tr>
+  <tr><td>B1 Deployment</td><td>MEM5</td><td>13</td><td class="check">&#9680;</td><td>needs a Hugging Face account</td></tr>
+  <tr><td>B2 CI</td><td>MEM1</td><td>10+</td><td class="check">&#9745;</td><td>.github/workflows/tests.yml</td></tr>
+  <tr><td>B3 Generalization</td><td>MEM1 + MEM5</td><td>13</td><td class="check">&#9745;</td><td>DeepCrack .520</td></tr>
+  <tr><td>B4 Compression</td><td>MEM3</td><td>13</td><td class="check">&#9745;</td><td>RLE 441, Huffman 1.36</td></tr>
+  <tr><td>B5 Speed</td><td>MEM1 (all)</td><td>13</td><td class="check">&#9745;</td><td>1.84x, identical masks</td></tr>
+  <tr><td>Report</td><td>All</td><td>13</td><td class="check">&#9680;</td><td>report/report.pdf; each member checks own section</td></tr>
+  <tr><td>Slides + 2 rehearsals</td><td>All</td><td>14</td><td class="check">&#9680;</td><td>report/presentation.pdf; rehearsals pending</td></tr>
+  <tr><td>Mock defenses</td><td>All</td><td>13-14</td><td class="check">&#9744;</td><td>Section 19</td></tr>
+  <tr><td>Colab timing check</td><td>MEM1</td><td>13</td><td class="check">&#9744;</td><td>run on free Colab CPU</td></tr>
+  <tr><td>v1.0 tag</td><td>MEM1</td><td>14</td><td class="check">&#9744;</td><td>after PRs #1-#4 are reviewed and merged</td></tr>
 </table>
 
 <h2>Resolved in v0.2</h2>

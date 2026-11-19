@@ -1,0 +1,2 @@
+# Demo app dependencies (Hugging Face Spaces / local). Core pins live in ../requirements.txt.
+gradio==6.32.0
