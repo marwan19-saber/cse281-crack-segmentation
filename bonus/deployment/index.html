@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concrete Crack Measurement</title>
+<style>
+:root { --ink: #141b2d; --muted: #5b6676; --line: #d5dbe3; --accent: #2f5bea; --bg: #ffffff;
+        --soft: #f4f6fb; --bad: #b42318; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink: #e8ecf4; --muted: #a3adbd; --line: #2c3547; --accent: #7ea2ff; --bg: #0f1424;
+          --soft: #182035; --bad: #ff8a80; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", sans-serif; color: var(--ink);
+       background: var(--bg); line-height: 1.5; }
+main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 48px; }
+h1 { font-size: 1.6rem; margin: 0 0 4px; }
+p.lead { color: var(--muted); margin: 0 0 16px; }
+.card { background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
+@media (max-width: 720px) { .row { grid-template-columns: 1fr; } }
+label.button, button { display: inline-block; background: var(--accent); color: #fff; border: 0;
+  border-radius: 8px; padding: 9px 14px; font-size: 0.95rem; cursor: pointer; }
+button.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+button:disabled, label.disabled { opacity: .5; cursor: not-allowed; }
+input[type=file] { position: absolute; left: -9999px; }
+#status { margin-top: 10px; min-height: 1.5em; }
+#status.error { color: var(--bad); font-weight: 600; }
+img.result { width: 100%; border-radius: 8px; border: 1px solid var(--line); background: #000; }
+table { border-collapse: collapse; width: 100%; }
+td { padding: 4px 6px; border-bottom: 1px solid var(--line); }
+td:first-child { color: var(--muted); }
+.stages { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;
+          margin-top: 14px; }
+figure { margin: 0; }
+figure img { width: 100%; border-radius: 6px; border: 1px solid var(--line); background: #000; }
+figcaption { font-size: .82rem; color: var(--muted); }
+.examples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+footer { margin-top: 28px; font-size: .8rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Concrete crack segmentation and measurement</h1>
+  <p class="lead">Upload a photo of a concrete surface. A classical image-processing pipeline
+    (Gaussian smoothing, frequency-domain illumination flattening, adaptive threshold, gap linking,
+    morphology, shape-based selection) marks the cracks and reports the cracked area, length and a
+    severity class. It runs entirely in your browser with Python (Pyodide); no image is uploaded to
+    any server. Course project (CSE281), not a certified inspection tool.</p>
+
+  <div class="card">
+    <label class="button disabled" id="pick-label" for="file">Choose a photo (JPEG or PNG)</label>
+    <input type="file" id="file" accept="image/jpeg,image/png" disabled>
+    <div class="examples" id="examples" aria-label="Example photos"></div>
+    <div id="status" role="status" aria-live="polite">Loading Python and the image libraries
+      (first visit: about 20&ndash;40 s)&hellip;</div>
+  </div>
+
+  <div class="row" id="results" hidden>
+    <figure><img class="result" id="overlay" alt="Detected cracks shown in red on the photo">
+      <figcaption>Detected cracks (red)</figcaption></figure>
+    <div class="card">
+      <h2 style="font-size:1.1rem;margin-top:0">Measurement and decision</h2>
+      <table id="summary" aria-label="Measurement results"></table>
+    </div>
+  </div>
+  <h2 style="font-size:1.1rem" id="stages-title" hidden>Every processing stage, in order</h2>
+  <div class="stages" id="stages"></div>
+
+  <footer>Dataset: Ç. F. Özgenel, Concrete Crack Segmentation Dataset, Mendeley Data 2019
+    (CC BY 4.0). Example photos are test-set images never used for tuning; image 249 is a known
+    failure (wide spalled crack). Code: CSE281 team (Marwan Saber, Hassan Hisham, Mohamed Wageh,
+    Saad Mohamed, Ahmed Abdelwahed).</footer>
+</main>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.28.3/full/pyodide.js"></script>
+<script>
+const SRC = ["__init__", "data", "metrics", "enhancement", "restoration", "frequency",
+             "segmentation", "morphology", "pipeline", "run_pipeline"];
+const EXAMPLES = [["test_174_best.jpg", "Example: clear crack"],
+                  ["test_288_typical.jpg", "Example: typical"],
+                  ["test_249_failure_wide_crack.jpg", "Example: known failure"]];
+const MAX_BYTES = 25 * 1024 * 1024;
+const statusEl = document.getElementById("status");
+let py = null;
+
+function setStatus(msg, isError = false) {
+  statusEl.textContent = msg;
+  statusEl.className = isError ? "error" : "";
+}
+
+const ANALYSE = `
+import base64, json, cv2, numpy as np
+from src import pipeline, run_pipeline
+CONFIG = pipeline.load_config("configs/final_pipeline.yaml")
+
+def _png(img):
+    if img.dtype == bool:
+        img = img.astype(np.uint8) * 255
+    if img.ndim == 3:
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+    ok, buf = cv2.imencode(".png", img)
+    return base64.b64encode(buf.tobytes()).decode()
+
+def analyse(path):
+    r = run_pipeline.process(path, CONFIG)
+    m = r["measurements"]
+    return json.dumps({
+        "overlay": _png(run_pipeline.overlay(r["gray"], r["mask"])),
+        "stages": [["input (gray, long side 1008 px)", _png(r["gray"])]] +
+                  [[f"{s['stage']} ({s['time_s'] * 1000:.0f} ms)", _png(s["output"])]
+                   for s in r["steps"]],
+        "summary": {"Severity": r["severity"],
+                    "Cracked area": f"{float(m['area_pct']):.2f} % of the image",
+                    "Crack length": f"{m['length_px']} pixels (skeleton, at 1008 px)",
+                    "Crack objects": str(m["n_objects"]),
+                    "Processing time": f"{r['time_s']:.2f} s (in your browser)"}})
+`;
+
+async function start() {
+  try {
+    py = await loadPyodide();
+    await py.loadPackage(["numpy", "opencv-python", "scikit-image", "pyyaml"]);
+    py.FS.mkdirTree("/home/pyodide/src");
+    py.FS.mkdirTree("/home/pyodide/configs");
+    for (const name of SRC) {
+      const text = await (await fetch(`src/${name}.py`)).text();
+      py.FS.writeFile(`/home/pyodide/src/${name}.py`, text);
+    }
+    py.FS.writeFile("/home/pyodide/configs/final_pipeline.yaml",
+                    await (await fetch("configs/final_pipeline.yaml")).text());
+    py.runPython("import os, sys; os.chdir('/home/pyodide'); sys.path.insert(0, '/home/pyodide')");
+    py.runPython(ANALYSE);
+    document.getElementById("file").disabled = false;
+    document.getElementById("pick-label").classList.remove("disabled");
+    for (const [file, label] of EXAMPLES) {
+      const b = document.createElement("button");
+      b.className = "secondary"; b.textContent = label;
+      b.onclick = async () => run(new Uint8Array(await (await fetch(`examples/${file}`))
+                                                   .arrayBuffer()), file);
+      document.getElementById("examples").appendChild(b);
+    }
+    setStatus("Ready. Choose a photo or an example.");
+  } catch (err) {
+    setStatus("Could not start Python in this browser: " + err, true);
+  }
+}
+
+async function run(bytes, name) {
+  if (bytes.length > MAX_BYTES) { setStatus("File too large (limit 25 MB).", true); return; }
+  setStatus(`Analysing ${name}…`);
+  await new Promise(r => setTimeout(r, 30));   // let the status repaint first
+  const ext = name.toLowerCase().endsWith(".png") ? ".png" : ".jpg";
+  const path = "/tmp/upload" + ext;
+  try {
+    py.FS.writeFile(path, bytes);
+    const out = JSON.parse(py.globals.get("analyse")(path));
+    show(out);
+    setStatus(`Done: ${name}`);
+  } catch (err) {
+    const msg = String(err).includes("cannot read image")
+      ? "This file could not be read as an image. Please choose a JPEG or PNG photo."
+      : "Processing failed: " + String(err).split("\n").slice(-2).join(" ");
+    setStatus(msg, true);
+  }
+}
+
+function show(out) {
+  document.getElementById("results").hidden = false;
+  document.getElementById("stages-title").hidden = false;
+  document.getElementById("overlay").src = "data:image/png;base64," + out.overlay;
+  const table = document.getElementById("summary");
+  table.innerHTML = "";
+  for (const [k, v] of Object.entries(out.summary)) {
+    const tr = table.insertRow(); tr.insertCell().textContent = k; tr.insertCell().textContent = v;
+  }
+  const stages = document.getElementById("stages");
+  stages.innerHTML = "";
+  for (const [caption, png] of out.stages) {
+    const f = document.createElement("figure");
+    const img = document.createElement("img");
+    img.src = "data:image/png;base64," + png; img.alt = "Stage output: " + caption;
+    const c = document.createElement("figcaption"); c.textContent = caption;
+    f.append(img, c); stages.appendChild(f);
+  }
+}
+
+document.getElementById("file").addEventListener("change", async e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  if (!/^image\/(jpeg|png)$/.test(f.type)) {
+    setStatus("Please choose a JPEG or PNG image.", true); return;
+  }
+  run(new Uint8Array(await f.arrayBuffer()), f.name);
+});
+start();
+</script>
+</body>
+</html>

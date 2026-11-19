@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "space-static",
+      "runtimeExecutable": "C:/Users/marwa/PycharmProjects/CSE281_DIP/.venv/Scripts/python.exe",
+      "runtimeArgs": ["-m", "http.server", "8765", "--directory", "out/space"],
+      "port": 8765
+    }
+  ]
+}
