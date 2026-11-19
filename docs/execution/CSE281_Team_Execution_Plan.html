@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>CSE281 Team Execution Plan (Draft v0.2)</title>
+<title>CSE281 Team Execution Plan (v0.3)</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,7 +19,7 @@
   <div class="title">Team<br>Execution Plan</div>
   <div class="sub">Five individual plans, the shared roadmap and every checklist the team needs
     from Week 9 to the Week 14 final discussion.</div>
-  <span class="pill">DRAFT v0.2 &middot; DATASET SELECTED &middot; AWAITING TEAM APPROVAL</span>
+  <span class="pill">v0.3 &middot; APPROVED BY THE TEAM &middot; 19 NOV 2026</span>
   <div class="members">
     <div class="m1"><b>MEM1</b><i>Tech Lead + Data &amp; Baselines</i></div>
     <div class="m2"><b>MEM2</b><i>Enhancement</i></div>
@@ -28,9 +28,9 @@
     <div class="m5"><b>MEM5</b><i>Morphology, Eval &amp; Demo</i></div>
   </div>
   <div class="meta">
-    <div><small>Date</small><span>12 November 2026</span></div>
+    <div><small>Date</small><span>19 November 2026</span></div>
     <div><small>Source of truth</small><span>CSE281 Project Specification</span></div>
-    <div><small>Status</small><span>Dataset chosen; plan awaiting approval</span></div>
+    <div><small>Status</small><span>Approved by the team (19 Nov 2026)</span></div>
     <div style="grid-column: span 3"><small>Draft notice</small><span style="font-size:8.6pt;color:#c9d5f2">
       Dataset: Concrete Crack Segmentation (Mendeley, CC BY 4.0), downloaded and checked. Items still
       marked TBD wait on decisions not yet made. The commands are planned and have not been run,
@@ -143,7 +143,7 @@ Matplotlib. (4) The test set must run in under 10 minutes on a free Colab CPU.
 on 42 images to check the data loads correctly. Those numbers include future test images, so they are
 <b>not reported and must not influence any choice</b>. The official baselines are run on the dev set only (T1.13).</div>
 
-<h3>Problem formulation (draft for team approval)</h3>
+<h3>Problem formulation (approved 19 Nov 2026)</h3>
 <p>A building-inspection engineer surveys concrete walls and slabs and needs to know where the cracks are
 and how much of the surface is cracked. The pipeline takes one photo and outputs a binary crack mask, the
 cracked-area percentage, the crack length (pixels along the mask skeleton) and a severity class
@@ -324,7 +324,7 @@ Calendar dates are <span class="tbd">TBD</span> until MEM1 confirms the Week 14 
       are resized the same way (INTER_AREA, then &ge; 0.5). All metrics are computed at size L.</li>
 </ul>
 
-<h2>3.3 Proposed pipelines for crack segmentation (v0.2)</h2>
+<h2>3.3 Pipelines for crack segmentation (approved)</h2>
 <p class="small">Proposed for team approval. The stage parameters are fixed later by the dev-set studies.
 Every pipeline ends in the same measurement stage (area %, skeleton length, severity).</p>
 <table>
@@ -1272,7 +1272,7 @@ decision rule (severity class); use of line masks, edge linking and Hough; robus
 (Gaussian &sigma; 10/20/30); D0 as a fraction of image size; split strategy; proposed pipelines A/B/C.</p>
 <h2>Open items for v0.3</h2>
 <ol>
-  <li>Team approval of the problem statement, metric and pipelines (Sections 1.2, 3.3).</li>
+  <li><s>Team approval of the problem statement, metric and pipelines</s>: approved 19 Nov 2026.</li>
   <li>Working resolution L, from the resolution study (T1.12).</li>
   <li>Calendar dates for Weeks 9&ndash;14; the Week 14 discussion date.</li>
   <li>GitHub repository URL and member usernames; commands verified after the skeleton exists.</li>

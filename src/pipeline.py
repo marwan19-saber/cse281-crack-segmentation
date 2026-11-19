@@ -4,13 +4,19 @@ Cracks are darker than the concrete, so every threshold here marks pixels BELOW 
 The simple baseline uses OpenCV's Otsu and opening until the team's NumPy versions
 (MEM4 segmentation.otsu_threshold, MEM5 morphology.opening) are merged; the swap is logged.
 """
+import argparse
 import csv
 import json
+import time
 from datetime import datetime
 from pathlib import Path
 
 import cv2
 import numpy as np
+
+from src import data, metrics
+
+METHODS = {}  # name -> function(gray uint8) -> bool mask; filled below
 
 LOG_COLUMNS = ["run_id", "date", "author", "pipeline", "stage", "method", "params_json",
                "seed", "split", "n_images", "time_s", "metric", "value", "notes"]
@@ -55,3 +61,70 @@ def log_run(path, *, author="", pipeline="", stage="", method="", params=None, s
             writer.writeheader()
         writer.writerow(row)
     return row["run_id"]
+
+
+METHODS.update(baseline_trivial=baseline_trivial, baseline_simple=baseline_simple)
+
+
+def evaluate_split(method, names, root, size=None, levels=256):
+    """Run `method` on every named image and score it against its mask.
+
+    size:   long side in pixels for image and mask (None = full resolution)
+    levels: number of gray levels kept before the method runs (256 = unchanged)
+    Returns one dict per image: name, iou, dice, area_pct_pred, area_pct_gt, time_s.
+    """
+    paths = {img.stem: (img, gt) for img, gt in data.list_pairs(root)}
+    rows = []
+    for name in names:
+        img_path, gt_path = paths[name]
+        gray = data.load_image(img_path, size=size)
+        gt = data.load_ground_truth(gt_path, size=size)
+        if levels != 256:
+            gray = data.quantize_gray_levels(gray, levels)
+        start = time.perf_counter()
+        pred = method(gray)
+        rows.append({
+            "name": name, "iou": metrics.iou(pred, gt), "dice": metrics.dice(pred, gt),
+            "area_pct_pred": 100.0 * pred.mean(), "area_pct_gt": 100.0 * gt.mean(),
+            "time_s": time.perf_counter() - start,
+        })
+    return rows
+
+
+def main(argv=None):
+    """CLI: evaluate one method on a split, save per-image CSV, log the mean IoU."""
+    p = argparse.ArgumentParser(description="Evaluate a method on the dev or test split.")
+    p.add_argument("--method", choices=sorted(METHODS), required=True)
+    p.add_argument("--split", choices=["dev", "test"], default="dev")
+    p.add_argument("--size", type=int, default=None, help="long side in pixels")
+    p.add_argument("--levels", type=int, default=256)
+    p.add_argument("--root", default="data/raw/concrete_crack")
+    p.add_argument("--split-file", default="data/split.json")
+    p.add_argument("--out", required=True, help="per-image CSV to write")
+    p.add_argument("--log", default="experiments/experiment_log.csv")
+    p.add_argument("--author", default="MEM1")
+    p.add_argument("--stage", default="baseline")
+    args = p.parse_args(argv)
+    if args.split == "test":
+        raise SystemExit("Test split is locked until the final config is frozen (T1.20).")
+
+    names = data.load_split(args.split_file)[args.split]
+    start = time.perf_counter()
+    rows = evaluate_split(METHODS[args.method], names, args.root, args.size, args.levels)
+    elapsed = time.perf_counter() - start
+    with open(args.out, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+    ious = np.array([r["iou"] for r in rows])
+    params = {"size": args.size, "levels": args.levels}
+    log_run(args.log, author=args.author, pipeline=args.method, stage=args.stage,
+            method=args.method, params=params, seed=42, split=args.split,
+            n_images=len(rows), time_s=round(elapsed, 2), metric="iou_mean",
+            value=round(float(ious.mean()), 4), notes=f"std={ious.std():.4f}; out={args.out}")
+    print(f"{args.method} size={args.size} levels={args.levels}: IoU {ious.mean():.4f} "
+          f"+/- {ious.std():.4f} over {len(rows)} images ({elapsed:.1f} s)")
+
+
+if __name__ == "__main__":
+    main()

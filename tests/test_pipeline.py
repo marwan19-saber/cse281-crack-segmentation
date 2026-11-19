@@ -1,10 +1,46 @@
 """Tests for src/pipeline.py: baselines and the experiment logger."""
 import csv
 
+import cv2
 import numpy as np
 import pytest
 
 from src import pipeline
+
+
+@pytest.fixture
+def crack_dataset(tmp_path):
+    """Two fake photos whose dark stripe is exactly the crack in their mask."""
+    (tmp_path / "rgb").mkdir()
+    (tmp_path / "BW").mkdir()
+    img = np.full((40, 40, 3), 200, np.uint8)
+    img[10:20] = 50
+    mask = np.zeros((40, 40), np.uint8)
+    mask[10:20] = 255
+    for name in ("001", "002"):
+        cv2.imwrite(str(tmp_path / "rgb" / f"{name}.png"), img)
+        cv2.imwrite(str(tmp_path / "BW" / f"{name}.png"), mask)
+    return tmp_path
+
+
+def test_evaluate_split_scores_each_image(crack_dataset):
+    rows = pipeline.evaluate_split(pipeline.baseline_trivial, ["001", "002"], crack_dataset)
+    assert [r["name"] for r in rows] == ["001", "002"]
+    assert all(r["iou"] == 1.0 and r["dice"] == 1.0 for r in rows)
+    assert rows[0]["area_pct_gt"] == pytest.approx(25.0)
+    assert rows[0]["area_pct_pred"] == pytest.approx(25.0)
+    assert rows[0]["time_s"] >= 0
+
+
+def test_evaluate_split_applies_gray_level_reduction(crack_dataset):
+    # 2 levels map 50 -> 0 and 200 -> 255, so the dark stripe is still found exactly
+    rows = pipeline.evaluate_split(pipeline.baseline_trivial, ["001"], crack_dataset, levels=2)
+    assert rows[0]["iou"] == 1.0
+
+
+def test_evaluate_split_resizes_image_and_mask_together(crack_dataset):
+    rows = pipeline.evaluate_split(pipeline.baseline_trivial, ["001"], crack_dataset, size=20)
+    assert rows[0]["iou"] == 1.0 and rows[0]["area_pct_gt"] == pytest.approx(25.0)
 
 
 def crack_image():
