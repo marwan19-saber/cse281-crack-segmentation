@@ -87,3 +87,40 @@ def test_log_run_appends_rows_with_fixed_columns(tmp_path):
 def test_log_run_rejects_unknown_field(tmp_path):
     with pytest.raises(TypeError):
         pipeline.log_run(tmp_path / "log.csv", autor="typo")
+
+
+# ---------------------------------------------------------------- config + stage registry
+def test_run_applies_stages_in_order_and_keeps_intermediates():
+    config = {"name": "demo", "stages": [
+        {"stage": "gaussian", "ksize": 3},
+        {"stage": "threshold_fixed", "t": 127},
+        {"stage": "opening", "size": 3},
+    ]}
+    mask, steps = pipeline.run(crack_image(), config)
+    assert mask.dtype == bool and mask[15, 10] and not mask[5, 5]
+    assert [s["stage"] for s in steps] == ["gaussian", "threshold_fixed", "opening"]
+    assert steps[0]["output"].dtype == np.uint8 and steps[-1]["output"].dtype == bool
+    assert all(s["time_s"] >= 0 for s in steps)
+
+
+def test_run_rejects_unknown_stage():
+    with pytest.raises(KeyError):
+        pipeline.run(crack_image(), {"name": "x", "stages": [{"stage": "magic"}]})
+
+
+def test_run_rejects_misspelled_parameter():
+    with pytest.raises(TypeError):
+        pipeline.run(crack_image(), {"name": "x", "stages": [{"stage": "gaussian", "ksz": 3}]})
+
+
+def test_load_config_reads_yaml(tmp_path):
+    path = tmp_path / "p.yaml"
+    path.write_text("name: p\nstages:\n  - stage: threshold_otsu\n", encoding="utf-8")
+    assert pipeline.load_config(path) == {"name": "p", "stages": [{"stage": "threshold_otsu"}]}
+
+
+def test_shipped_configs_run_end_to_end():
+    from pathlib import Path
+    for path in sorted(Path("configs").glob("*.yaml")):
+        mask, _ = pipeline.run(crack_image(), pipeline.load_config(path))
+        assert mask.dtype == bool and mask.shape == (30, 30), path
