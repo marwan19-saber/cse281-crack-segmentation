@@ -64,8 +64,8 @@ def main(argv=None):
         print(f"Downloading {ARCHIVE} (746 MB) ...")
         # Mendeley answers 403 to Python's default User-Agent; send a browser-style one.
         req = urllib.request.Request(URL, headers={"User-Agent": "Mozilla/5.0"})
-        with urllib.request.urlopen(req) as resp, open(archive, "wb") as out:
-            shutil.copyfileobj(resp, out, 1 << 20)
+        with urllib.request.urlopen(req) as resp, open(archive, "wb") as dst:
+            shutil.copyfileobj(resp, dst, 1 << 20)
     if sha256(archive) != SHA256:
         sys.exit(f"Checksum mismatch for {archive}: delete it and run again.")
     print("Checksum OK.")
