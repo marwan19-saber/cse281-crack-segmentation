@@ -61,14 +61,17 @@ def log_filter(img, sigma=2.0):
 
 
 def zero_crossings(response, thr=0.0):
-    """True where opposite neighbours have different signs and differ by more than thr."""
+    """True where opposite neighbours have strictly opposite signs and differ by more than thr.
+
+    A zero next to a positive value is not a crossing (a * b must be negative).
+    """
     p = np.pad(response, 1, mode="edge")
     h, w = response.shape
     out = np.zeros((h, w), bool)
     for (dy1, dx1), (dy2, dx2) in (((0, 0), (2, 2)), ((0, 1), (2, 1)),
                                    ((0, 2), (2, 0)), ((1, 0), (1, 2))):
         a, b = p[dy1:dy1 + h, dx1:dx1 + w], p[dy2:dy2 + h, dx2:dx2 + w]
-        out |= (np.sign(a) != np.sign(b)) & (np.abs(a - b) > thr)
+        out |= (a * b < 0) & (np.abs(a - b) > thr)
     return out
 
 
