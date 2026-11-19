@@ -1,0 +1,9 @@
+label,stage,seconds_per_image,masks_identical_to_before
+before,TOTAL (per image),1.1143,
+before,gaussian,0.0408,
+before,flatten_background,0.8137,
+before,threshold_adaptive,0.0383,
+before,link_gaps,0.0167,
+before,closing,0.0057,
+before,fill_small_holes,0.1765,
+before,select_objects,0.0222,
