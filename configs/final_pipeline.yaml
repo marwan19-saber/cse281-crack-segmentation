@@ -1,0 +1,26 @@
+# FINAL PIPELINE (frozen). Selected on the development set only: Pipeline C had the best mean
+# IoU over all 321 dev images (experiments/results/study_final_selection.csv).
+# severity_cutoffs: tertiles of the ground-truth cracked-area % over the dev set at L = 1008.
+# Working size L = 1008 (long side), from the resolution study.
+name: final_pipeline
+working_size: 1008
+severity_cutoffs: [1.0, 1.37]
+stages:
+  - stage: gaussian
+    ksize: 7
+  - stage: flatten_background
+    d0: 12.0
+  - stage: threshold_adaptive
+    block: 31
+    c: 15
+    method: mean
+  - stage: link_gaps
+    max_gap: 3
+  - stage: closing
+    size: 3
+    shape: disk
+  - stage: fill_small_holes
+    max_area: 30
+  - stage: select_objects
+    min_area: 60
+    max_circularity: 0.5

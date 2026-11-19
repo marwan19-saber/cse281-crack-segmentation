@@ -3,6 +3,8 @@
 Each entry returns (author, variants); a variant is (label, config, noise_or_None).
 Reference = configs/pipeline_c.yaml unless stated. Owners follow the execution plan.
 """
+import copy
+
 from src import pipeline
 from src.studies import replace_stage, vary
 
@@ -107,13 +109,84 @@ def pipeline_a_threshold():
 def adaptive_params():
     """MEM4: classic adaptive threshold block size and offset c, on the reference."""
     ref = _ref()
-    out = [(f"block={b}", vary(ref, "threshold_adaptive", block=b), None) for b in (15, 31, 61)]
+    out = [(f"block={b}", vary(ref, "threshold_adaptive", block=b), None)
+           for b in (15, 31, 61)]
     out += [(f"c={c}", vary(ref, "threshold_adaptive", c=c), None) for c in (10, 20, 25)]
     out.append(("method=gaussian", vary(ref, "threshold_adaptive", method="gaussian"), None))
     return "MEM4", out
 
 
+def _final():
+    """The frozen final pipeline (configs/final_pipeline.yaml)."""
+    return pipeline.load_config("configs/final_pipeline.yaml")
+
+
+def ablations():
+    """AB1-AB4 (+ extras): remove or swap one stage of the final pipeline (full dev set)."""
+    f = _final()
+    smooth = next(s for s in f["stages"] if s["stage"] in ("gaussian", "mean", "median"))
+    no_morph = {**f, "stages": [s for s in f["stages"] if s["stage"] not in
+                                ("closing", "fill_small_holes", "select_objects")]}
+    morph_open_first = copy.deepcopy(f)
+    i = next(k for k, s in enumerate(morph_open_first["stages"]) if s["stage"] == "closing")
+    morph_open_first["stages"].insert(i, {"stage": "opening", "size": 3, "shape": "square"})
+    return "MEM1", [
+        ("final pipeline", f, None),
+        ("AB1 no enhancement (no smoothing, no flattening)",
+         replace_stage(replace_stage(f, smooth["stage"], None), "flatten_background", None),
+         None),
+        ("AB2 frequency low-pass instead of spatial smoothing",
+         replace_stage(f, smooth["stage"], {"stage": "lowpass", "d0": 150.0}), None),
+        ("AB3 global Otsu instead of adaptive threshold",
+         replace_stage(f, "threshold_adaptive", {"stage": "threshold_otsu"}), None),
+        ("AB4a no morphology / object selection", no_morph, None),
+        ("AB4b opening then closing (order)", morph_open_first, None),
+        ("AB5 no edge linking", replace_stage(f, "link_gaps", None), None),
+        ("AB6 no illumination flattening", replace_stage(f, "flatten_background", None), None),
+    ]
+
+
+def robustness():
+    """Final pipeline under Gaussian noise sigma 10/20/30, seeds 0/1/2 (full dev set)."""
+    f = _final()
+    return "MEM1", [("clean", f, None)] + [
+        (f"gaussian sigma={s} seed={seed}", f, ("gaussian", s, seed))
+        for s in (10, 20, 30) for seed in (0, 1, 2)]
+
+
+def gray_levels():
+    """Gray-level study on the final pipeline: quantize the input to K levels first."""
+    f = _final()
+    return "MEM1", [(f"{k} levels", {**f, "stages": [{"stage": "quantize", "levels": k}]
+                                     + f["stages"]}, None) for k in (256, 64, 32, 16, 8, 4)]
+
+
+def combine_round2():
+    """MEM1: round-2 winners combined vs the round-2 reference (interaction check)."""
+    ref = _ref()
+    old = vary(vary(vary(vary(ref, "gaussian", ksize=7), "flatten_background", d0=12.0),
+                    "link_gaps", max_gap=3), "closing", size=3)
+    return "MEM1", [("round-2 reference", old, None), ("combined winners", ref, None)]
+
+
+def final_selection():
+    """MEM1: every pipeline and both baselines on the full dev set; the best is frozen."""
+    load = pipeline.load_config
+    old_c = combine_round2()[1][0][1]
+    return "MEM1", [
+        ("trivial baseline", load("configs/baseline_trivial.yaml"), None),
+        ("simple baseline", load("configs/baseline_simple.yaml"), None),
+        ("pipeline A", load("configs/pipeline_a.yaml"), None),
+        ("pipeline B", load("configs/pipeline_b.yaml"), None),
+        ("pipeline C (round-2 reference)", {**old_c, "name": "pipeline_c_r2ref"}, None),
+        ("pipeline C (combined winners)", load("configs/pipeline_c.yaml"), None),
+    ]
+
+
 STUDIES = {
+    "final_selection": final_selection,
+    "combine_round2": combine_round2,
+    "ablations": ablations, "robustness": robustness, "gray_levels": gray_levels,
     "pipeline_a_threshold": pipeline_a_threshold,
     "threshold_method": threshold_method, "adaptive_params": adaptive_params,
     "kernel_size": kernel_size, "enhancement_methods": enhancement_methods,

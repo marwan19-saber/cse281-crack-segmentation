@@ -160,6 +160,7 @@ STAGES = {
     "laplacian_sharpen": lambda img: enhancement.laplacian_sharpen(img),
     "gradient_sharpen": lambda img: enhancement.gradient_sharpen(img),
     "lowpass": _lowpass,
+    "quantize": lambda img, levels=256: data.quantize_gray_levels(img, levels),
     "gaussian": _gaussian, "mean": _mean, "median": _median,
     "contrast_stretch": lambda img, low_pct=2, high_pct=98: enhancement.contrast_stretch(
         img, low_pct, high_pct),
