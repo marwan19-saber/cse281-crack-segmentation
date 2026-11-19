@@ -108,6 +108,13 @@ def _threshold_adaptive(img, block=31, c=10, method="mean"):
     return segmentation.adaptive_threshold(img, block, c, method)
 
 
+def _threshold_adaptive_or_otsu(img, block=31, c=15):
+    """[MEM4] Failure-analysis fix for wide cracks: adaptive mask OR Otsu mask. Inside a dark
+    region wider than the block the local mean is dark too, so adaptive alone misses it."""
+    return (segmentation.adaptive_threshold(img, block, c)
+            | segmentation.threshold_dark(img, segmentation.otsu_threshold(img)))
+
+
 def _threshold_lines(img, t=60):
     """[MEM4] Crack = dark-line mask response (max over 4 directions) >= t."""
     return segmentation.line_detect(img, t)
@@ -167,6 +174,7 @@ STAGES = {
     "flatten_background": _flatten_background,
     "threshold_fixed": _threshold_fixed, "threshold_otsu": _threshold_otsu,
     "threshold_adaptive": _threshold_adaptive, "threshold_lines": _threshold_lines,
+    "threshold_adaptive_or_otsu": _threshold_adaptive_or_otsu,
     "threshold_log": _threshold_log, "link_gaps": _link_gaps, "opening": _opening,
     "closing": _closing, "fill_small_holes": _fill_small_holes,
     "select_objects": _select_objects,

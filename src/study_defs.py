@@ -183,7 +183,22 @@ def final_selection():
     ]
 
 
+def failure_fixes():
+    """Fixes proposed by the test-set failure analysis, tested on the DEV set only (the frozen
+    final config is not changed)."""
+    f = _final()
+    wide = replace_stage(f, "threshold_adaptive",
+                         {"stage": "threshold_adaptive_or_otsu", "block": 31, "c": 15})
+    return "MEM5", [
+        ("final pipeline", f, None),
+        ("fix wide cracks: adaptive OR Otsu", wide, None),
+        ("fix texture: min_area 120, max_circularity 0.3",
+         vary(f, "select_objects", min_area=120, max_circularity=0.3), None),
+    ]
+
+
 STUDIES = {
+    "failure_fixes": failure_fixes,
     "final_selection": final_selection,
     "combine_round2": combine_round2,
     "ablations": ablations, "robustness": robustness, "gray_levels": gray_levels,
