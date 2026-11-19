@@ -197,7 +197,17 @@ def failure_fixes():
     ]
 
 
+def detectors():
+    """MEM4: edge/line detectors with the same rule (top 3 % strongest responses) after the
+    final pipeline's smoothing and flattening."""
+    front = [s for s in _final()["stages"] if s["stage"] in ("gaussian", "flatten_background")]
+    return "MEM4", [(op, {"name": "detectors", "stages": front + [
+        {"stage": "edges_top_percent", "operator": op, "percent": 3.0}]}, None)
+        for op in ("roberts", "prewitt", "sobel", "laplacian", "log", "lines")]
+
+
 STUDIES = {
+    "detectors": detectors,
     "failure_fixes": failure_fixes,
     "final_selection": final_selection,
     "combine_round2": combine_round2,

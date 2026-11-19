@@ -1,0 +1,21 @@
+image,iou,area_pct_pred,area_pct_gt,objects_pred,category
+249,0.3295,1.696,4.949,3,wide crack / spalling under-segmented
+293,0.3526,0.644,1.822,8,wide crack / spalling under-segmented
+278,0.3672,0.892,1.149,9,faint thin branches missed
+297,0.3706,0.246,0.576,9,faint thin branches missed
+074,0.3761,1.726,4.373,9,wide crack / spalling under-segmented
+079,0.4201,2.562,1.951,40,rough texture / pits -> false positives
+251,0.4513,1.575,3.337,6,wide crack / spalling under-segmented
+273,0.4538,2.531,1.687,19,rough texture / pits -> false positives
+078,0.48,2.274,1.902,36,rough texture / pits -> false positives
+051,0.4929,1.869,1.248,43,rough texture / pits -> false positives
+425,0.4937,1.104,1.184,16,rough texture / pits -> false positives
+572,0.4976,1.248,0.847,23,rough texture / pits -> false positives
+534,0.5,0.828,1.271,10,faint thin branches missed
+052,0.5019,1.264,0.855,19,rough texture / pits -> false positives
+286,0.5057,1.582,1.478,23,rough texture / pits -> false positives
+188,0.5155,1.117,1.685,17,rough texture / pits -> false positives
+281,0.5237,0.812,1.351,10,faint thin branches missed
+578,0.5307,0.707,0.77,6,boundary width mismatch with GT
+535,0.538,0.474,0.678,6,faint thin branches missed
+204,0.5391,0.891,1.256,11,faint thin branches missed
