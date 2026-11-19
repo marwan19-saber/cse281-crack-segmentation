@@ -1,0 +1,14 @@
+# Pipeline B (intermediate): noise removal, illumination flattening, local (adaptive)
+# threshold, edge linking. Reference values; tuned one factor at a time on the dev set.
+name: pipeline_b
+stages:
+  - stage: median
+    ksize: 3
+  - stage: flatten_background
+    d0: 6.0
+  - stage: threshold_adaptive
+    block: 31
+    c: 10
+    method: mean
+  - stage: link_gaps
+    max_gap: 3

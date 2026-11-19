@@ -1,0 +1,22 @@
+# Pipeline C (advanced): Pipeline B, then tuned morphology (closing to bridge gaps, small-hole
+# filling) and object selection by area and shape (cracks are long and thin; stains are round).
+name: pipeline_c
+stages:
+  - stage: median
+    ksize: 3
+  - stage: flatten_background
+    d0: 6.0
+  - stage: threshold_adaptive
+    block: 31
+    c: 10
+    method: mean
+  - stage: link_gaps
+    max_gap: 3
+  - stage: closing
+    size: 3
+    shape: disk
+  - stage: fill_small_holes
+    max_area: 30
+  - stage: select_objects
+    min_area: 60
+    max_circularity: 0.5
