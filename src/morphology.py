@@ -158,10 +158,17 @@ def measure(labels):
 
 def select_objects(mask, min_area=0, max_circularity=1.0):
     """Keep objects that are large enough and not round (cracks are long and thin)."""
-    labels, _ = label(mask)
-    keep = np.zeros(labels.max() + 1, bool)
-    for obj in measure(labels):
-        keep[obj["label"]] = obj["area"] >= min_area and obj["circularity"] <= max_circularity
+    labels, n = label(mask)
+    # All objects at once: separate components are never 4-adjacent, so each boundary pixel
+    # (object pixel not kept by a 4-neighbour erosion) belongs to exactly one object.
+    padded = np.pad(np.asarray(mask, bool), 1)
+    boundary = (padded & ~erode(padded, structuring_element("cross", 3)))[1:-1, 1:-1]
+    area = np.bincount(labels.ravel(), minlength=n + 1)
+    perimeter = np.bincount(labels[boundary], minlength=n + 1)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        circularity = np.where(perimeter > 0, 4 * np.pi * area / perimeter ** 2, np.inf)
+    keep = (area >= min_area) & (circularity <= max_circularity)
+    keep[0] = False
     return keep[labels]
 
 
