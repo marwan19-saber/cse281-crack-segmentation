@@ -1,0 +1,16 @@
+member,operation,max_abs_diff,border,numpy_s,library_s,note
+MEM1,block-average downsampling x4,0.0,n/a,0.0028,0.0003,rounding of .5 averages
+MEM1,PSNR,0.0,n/a,0.0263,0.3658,
+MEM2,convolve2d (random 5x5),5.684341886080801e-13,reflect-101,0.0204,0.0033,float64 round-off
+MEM2,histogram equalization,0.0,n/a,0.0039,0.0019,
+MEM2,Gaussian smoothing k=5,1.0,reflect-101,0.0203,0.0005,OpenCV 8-bit fixed-point arithmetic
+MEM2,gamma 0.5,0.0,n/a,0.0065,0.0017,rounding vs truncation
+MEM3,median 5x5,0.0,reflect-101 (= mirror),0.3948,0.2429,
+MEM3,max 3x3,0.0,reflect-101 (= mirror),0.0432,0.0178,
+MEM3,centred spectrum,1.2852385822270662e-11,n/a,0.0503,0.034,(-1)^(x+y) centring vs fftshift
+MEM4,Sobel magnitude,0.0,reflect-101,0.0263,0.0071,
+MEM4,Otsu threshold,0.0,n/a,0.0009,0.001,skimage foreground is > t
+MEM4,adaptive mean 31/15,1.0,replicate,0.0007,0.0006,OpenCV rounds the local mean; 0.048% of pixels differ
+MEM5,erosion disk 5,0.0,outside = 1 (OpenCV default),0.0053,0.0007,
+MEM5,hole filling,0.0,border-seeded,0.0925,0.0106,
+MEM5,labelling (object count difference),0.0,n/a,0.0072,0.0023,8-connectivity

@@ -1,13 +1,8 @@
-# Pipeline A (basic): spatial enhancement, then a global threshold.
-# Contrast stretch spreads the bright, low-contrast concrete; Gaussian smoothing suppresses
-# surface texture before thresholding. Parameters are the reference values; MEM2/MEM4 tune them
-# on the dev set (kernel-size and threshold-method studies).
+# Pipeline A (basic): spatial enhancement (Gaussian smoothing against surface texture), then a
+# global threshold (crack = darker than t). t = 140 chosen on the tune set (study_pipeline_a_threshold.csv).
 name: pipeline_a
 stages:
-  - stage: contrast_stretch
-    low_pct: 2
-    high_pct: 98
   - stage: gaussian
     ksize: 5
   - stage: threshold_fixed
-    t: 127
+    t: 140

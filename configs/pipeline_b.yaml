@@ -1,0 +1,15 @@
+# Pipeline B (intermediate): noise removal (Gaussian), illumination flattening (frequency-domain
+# Gaussian low-pass background), adaptive local threshold, edge linking.
+# = the front end of the final Pipeline C, tuned on the dev tune set (study_*_r1.csv, study_*.csv).
+name: pipeline_b
+stages:
+  - stage: gaussian
+    ksize: 7
+  - stage: flatten_background
+    d0: 12.0
+  - stage: threshold_adaptive
+    block: 31
+    c: 15
+    method: mean
+  - stage: link_gaps
+    max_gap: 3

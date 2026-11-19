@@ -70,5 +70,8 @@ def apply_filter(img, h):
     p, q = h.shape
     padded = np.pad(img.astype(np.float64), ((0, p - m), (0, q - n)), mode="reflect")
     sign = centering_sign((p, q))
-    g = np.real(np.fft.ifft2(np.fft.fft2(padded * sign) * h)) * sign
+    # Speed (Bonus 5): the input is real and h depends only on the distance from (P/2, Q/2),
+    # so h(k) = h(-k mod P) and the output is real: the half spectrum of rfft2 is enough.
+    half = np.fft.rfft2(padded * sign) * h[:, : q // 2 + 1]
+    g = np.fft.irfft2(half, s=(p, q)) * sign
     return np.clip(np.rint(g[:m, :n]), 0, 255).astype(np.uint8)
