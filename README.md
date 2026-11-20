@@ -53,7 +53,8 @@ test set was evaluated once, after the final configuration was tagged `results-f
 - Final pipeline beats the trivial baseline on 131 of 137 test images; best 0.881, worst 0.330.
 - Cracked area: mean absolute error 0.33 points; severity class agrees with GT on 62.8 %.
 - Robustness (dev, Gaussian noise, seeds 0/1/2): σ 10 → 0.662, σ 20 → 0.650, σ 30 → 0.622.
-- Speed: 0.50 s per image at 1008 px (≈ 1.4 min for the test set locally).
+- Speed: 0.50 s per image locally; **free Google Colab CPU: all 137 test images in 2.05 min (0.90 s/img), same IoU 0.6695** (`notebooks/03_colab_timing.ipynb`).
+- **Live demo:** https://marwan19-saber-crack-measurement.static.hf.space (runs the same `src/` code in the browser with Pyodide).
 - Details: `report/report.pdf`, `notebooks/02_results.ipynb`, `experiments/results/`.
 
 ## Reproduce
@@ -76,7 +77,7 @@ The test split only runs when the `results-frozen` tag exists (`git fetch --tags
 | Speed | 0.922 → 0.502 s/img (1.84×), identical masks | `bonus/optimization/` |
 | Lossless compression | RLE on masks ratio 441, Huffman on gray 1.36, exact | `bonus/compression/` |
 | Second dataset | DeepCrack test, no retuning: IoU 0.520 (trivial 0.346) | `bonus/generalization/` |
-| Public demo | Gradio app runs locally; public hosting pending | `app/` |
+| Public demo | https://marwan19-saber-crack-measurement.static.hf.space (Hugging Face Static Space, Pyodide) | `bonus/deployment/` |
 
 ## AI assistance
 

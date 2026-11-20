@@ -1,5 +1,5 @@
 bonus_id,objective,owner,reviewer,status,evidence_path,tests_or_measurements,documentation,completion_date
-B1,Public deployed demo,MEM5,MEM1,in_progress,app/app.py,"local smoke test: overlay, 8 stage panels, invalid-file and no-file errors; public hosting not done (needs a Hugging Face account)",app/examples/README.md,
+B1,Public deployed demo,MEM5,MEM1,done,https://marwan19-saber-crack-measurement.static.hf.space,"public page tested signed-out: examples 174/288/249 analysed in ~0.6-0.8 s with overlay, 8 stages, measurements; invalid-file error; no horizontal scroll at 375 px",bonus/deployment/index.html,2026-11-20
 B2,Unit tests and CI,MEM1,MEM4,done,.github/workflows/tests.yml,"157 pytest tests incl. hand examples and library comparisons; CI green on Python 3.12 and 3.13",README.md,2026-11-19
 B3,Second dataset generalization,MEM1+MEM5,MEM2,done,bonus/generalization/results.csv,"DeepCrack 237 test images, frozen config: IoU 0.520 +/- 0.201 vs trivial 0.346",bonus/generalization/README.md,2026-11-19
 B4,Lossless compression,MEM3,MEM1,done,bonus/compression/results.csv,"RLE ratio 440.7 on masks, Huffman 1.36 on gray; np.array_equal on all 20 outputs",bonus/compression/README.md,2026-11-19
