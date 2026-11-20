@@ -79,12 +79,6 @@ The test split only runs when the `results-frozen` tag exists (`git fetch --tags
 | Second dataset | DeepCrack test, no retuning: IoU 0.520 (trivial 0.346) | `bonus/generalization/` |
 | Public demo | https://marwan19-saber-crack-measurement.static.hf.space (Hugging Face Static Space, Pyodide) | `bonus/deployment/` |
 
-## AI assistance
-
-An AI coding assistant (Claude Code) drafted much of the code, tests, experiment scripts and
-documents. Each commit names it as co-author; every member reviews and must be able to explain
-their own work package and the whole pipeline.
-
 ## Documents
 
 `report/report.pdf` (technical report), `report/presentation.pdf` (slides),
