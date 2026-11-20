@@ -411,7 +411,7 @@ stage and handles invalid files. <b>Speed (Bonus 5):</b> profiling showed the FF
 stage and the iterative hole filling as bottlenecks; a real-input FFT (valid because the transfer
 function is symmetric) and hole filling by one background labelling reduced the time from 0.922 to
 0.502&nbsp;s per image (1.84&times;) with identical masks; vectorised object selection had already
-removed a 2.9&nbsp;s bottleneck. The 137 test images take about 1.4 minutes locally.
+removed a 2.9&nbsp;s bottleneck. On a free Google Colab CPU (2 vCPU, Python 3.13, pinned versions) the 137 test images take 2.05 minutes (0.90&nbsp;s per image) with the same IoU of 0.6695, well inside the 10-minute limit. The demo is public at <code>marwan19-saber-crack-measurement.static.hf.space</code>: Gradio hosting is paid on our account, so the page runs the same <code>src/</code> code in the visitor's browser with Pyodide (Python compiled to WebAssembly).
 <b>Compression (Bonus 4):</b> run-length coding of the final masks gives a mean ratio of 441 (PNG:
 164) and canonical Huffman coding of the gray images 1.36 (PNG: 1.93, because PNG also exploits
 neighbour correlation); every decoded output equals its input. <b>Generalization (Bonus 3):</b> the
@@ -428,7 +428,8 @@ comparison, run on every push.</p>
 <tr><td class="l">Compression (B4)</td><td class="l">RLE on masks; Huffman on gray</td><td class="l">ratio 440.7; 1.36 (all exact)</td></tr>
 <tr><td class="l">Generalization (B3)</td><td class="l">DeepCrack test, 237 images</td><td class="l">IoU 0.520 (trivial 0.346)</td></tr>
 <tr><td class="l">Tests / CI (B2)</td><td class="l">pytest on push and PR</td><td class="l">157 tests, Python 3.12 and 3.13</td></tr>
-<tr><td class="l">Public demo (B1)</td><td class="l">Gradio app</td><td class="l">runs locally; public hosting pending</td></tr>
+<tr><td class="l">Public demo (B1)</td><td class="l">Hugging Face Static Space (Pyodide)</td><td class="l">public; 0.6&ndash;0.8&nbsp;s per photo in the browser</td></tr>
+<tr><td class="l">Colab check</td><td class="l">137 test images, free CPU</td><td class="l">2.05 min, IoU 0.6695</td></tr>
 </table>
 <h2>VII. Limitations, Ethics and Future Work</h2>
 <p>IoU is limited by the ground truth, whose masks are often wider than the visible crack and
