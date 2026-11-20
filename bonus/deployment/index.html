@@ -3,96 +3,301 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Concrete Crack Measurement</title>
+<title>Concrete Crack Inspector</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root { --ink: #141b2d; --muted: #5b6676; --line: #d5dbe3; --accent: #2f5bea; --bg: #ffffff;
-        --soft: #f4f6fb; --bad: #b42318; }
+:root {
+  --bg: #f4f6fa; --surface: #ffffff; --ink: #121826; --muted: #5d6779; --line: #e3e7ef;
+  --accent: #2f5bea; --accent-soft: #e9efff; --accent-ink: #ffffff;
+  --minor: #1f8a4c; --minor-soft: #e5f6ec; --moderate: #b45309; --moderate-soft: #fff3e0;
+  --severe: #c2261d; --severe-soft: #fdecea; --shadow: 0 1px 2px rgba(16,24,40,.06),
+  0 8px 24px rgba(16,24,40,.06); --radius: 14px;
+}
 @media (prefers-color-scheme: dark) {
-  :root { --ink: #e8ecf4; --muted: #a3adbd; --line: #2c3547; --accent: #7ea2ff; --bg: #0f1424;
-          --soft: #182035; --bad: #ff8a80; }
+  :root {
+    --bg: #0c111d; --surface: #141b2b; --ink: #e9edf5; --muted: #98a2b6; --line: #253047;
+    --accent: #7c9bff; --accent-soft: #1d2a4d; --accent-ink: #0c111d;
+    --minor: #4ade80; --minor-soft: #12301f; --moderate: #fbbf24; --moderate-soft: #33260b;
+    --severe: #f87171; --severe-soft: #3a1515; --shadow: none;
+  }
 }
 * { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", sans-serif; color: var(--ink);
-       background: var(--bg); line-height: 1.5; }
-main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 48px; }
-h1 { font-size: 1.6rem; margin: 0 0 4px; }
-p.lead { color: var(--muted); margin: 0 0 16px; }
-.card { background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
-.row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
-@media (max-width: 720px) { .row { grid-template-columns: 1fr; } }
-label.button, button { display: inline-block; background: var(--accent); color: #fff; border: 0;
-  border-radius: 8px; padding: 9px 14px; font-size: 0.95rem; cursor: pointer; }
-button.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
-button:disabled, label.disabled { opacity: .5; cursor: not-allowed; }
-input[type=file] { position: absolute; left: -9999px; }
-#status { margin-top: 10px; min-height: 1.5em; }
-#status.error { color: var(--bad); font-weight: 600; }
-img.result { width: 100%; border-radius: 8px; border: 1px solid var(--line); background: #000; }
-table { border-collapse: collapse; width: 100%; }
-td { padding: 4px 6px; border-bottom: 1px solid var(--line); }
-td:first-child { color: var(--muted); }
-.stages { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;
-          margin-top: 14px; }
-figure { margin: 0; }
-figure img { width: 100%; border-radius: 6px; border: 1px solid var(--line); background: #000; }
-figcaption { font-size: .82rem; color: var(--muted); }
-.examples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-footer { margin-top: 28px; font-size: .8rem; color: var(--muted); }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); line-height: 1.5;
+       font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; }
+a { color: var(--accent); }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+
+/* ---------- header ---------- */
+header { background: var(--surface); border-bottom: 1px solid var(--line); }
+.bar { display: flex; align-items: center; gap: 12px; padding: 14px 0; }
+.logo { width: 36px; height: 36px; border-radius: 10px; background: var(--accent);
+        display: grid; place-items: center; flex: none; }
+.brand b { display: block; font-size: 1.05rem; letter-spacing: -.01em; }
+.brand span { font-size: .8rem; color: var(--muted); }
+.bar .spacer { flex: 1; }
+.chip { font-size: .75rem; font-weight: 500; padding: 4px 10px; border-radius: 999px;
+        background: var(--accent-soft); color: var(--accent); white-space: nowrap; }
+@media (max-width: 640px) { .bar .chip { display: none; } }
+
+.hero { padding: 28px 0 8px; }
+.hero h1 { font-size: clamp(1.5rem, 3.2vw, 2.1rem); line-height: 1.2; margin: 0 0 8px;
+           letter-spacing: -.02em; }
+.hero p { margin: 0; color: var(--muted); max-width: 760px; }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; color: var(--muted);
+        background: var(--surface); border: 1px solid var(--line); padding: 5px 10px;
+        border-radius: 999px; }
+.pill i { width: 7px; height: 7px; border-radius: 50%; background: var(--minor); }
+
+/* ---------- layout ---------- */
+.grid { display: grid; grid-template-columns: 380px 1fr; gap: 20px; margin: 20px 0; }
+@media (max-width: 920px) { .grid { grid-template-columns: 1fr; } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+        box-shadow: var(--shadow); padding: 18px; min-width: 0; }
+.card h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted);
+           margin: 0 0 12px; font-weight: 600; }
+
+/* ---------- input ---------- */
+.drop { display: block; border: 2px dashed var(--line); border-radius: 12px; padding: 26px 16px;
+        text-align: center; cursor: pointer; transition: border-color .15s, background .15s; }
+.drop:hover, .drop.over { border-color: var(--accent); background: var(--accent-soft); }
+.drop.disabled { opacity: .55; cursor: progress; }
+.drop svg { color: var(--accent); }
+.drop b { display: block; margin: 8px 0 2px; }
+.drop span { font-size: .85rem; color: var(--muted); }
+input[type=file] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.drop:focus-visible, .thumb:focus-visible, .seg button:focus-visible, .stage:focus-visible {
+  outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.examples { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+.thumb { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; padding: 0;
+         background: var(--surface); cursor: pointer; text-align: left; color: var(--ink);
+         font: inherit; transition: transform .15s, border-color .15s; }
+.thumb:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--accent); }
+.thumb:disabled { opacity: .5; cursor: progress; }
+.thumb img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.thumb span { display: block; font-size: .75rem; padding: 6px 8px; font-weight: 500; }
+.thumb small { display: block; color: var(--muted); font-weight: 400; }
+
+.progress { margin-top: 16px; }
+.track { height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.fill { height: 100%; width: 0; background: var(--accent); transition: width .4s; }
+#status { font-size: .85rem; color: var(--muted); margin-top: 8px; min-height: 1.3em; }
+#status.error { color: var(--severe); font-weight: 600; }
+#status.ok { color: var(--minor); }
+
+/* ---------- viewer ---------- */
+.viewer-head { display: flex; align-items: center; justify-content: space-between; gap: 10px;
+               flex-wrap: wrap; margin-bottom: 12px; }
+.viewer-head h2 { margin: 0; }
+.seg { display: inline-flex; background: var(--bg); border: 1px solid var(--line);
+       border-radius: 10px; padding: 3px; }
+.seg button { border: 0; background: transparent; color: var(--muted); font: inherit;
+              font-size: .85rem; font-weight: 500; padding: 6px 12px; border-radius: 7px;
+              cursor: pointer; }
+.seg button[aria-pressed=true] { background: var(--surface); color: var(--ink);
+                                  box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.stage-view { position: relative; border-radius: 12px; overflow: hidden; background: #0b0f19;
+              aspect-ratio: 4 / 3; display: grid; place-items: center; }
+.stage-view img { width: 100%; height: 100%; object-fit: contain; display: none; }
+.stage-view img.show { display: block; }
+.empty { color: #8c96aa; text-align: center; padding: 20px; font-size: .9rem; }
+.empty svg { opacity: .6; }
+.caption { font-size: .8rem; color: var(--muted); margin-top: 8px; min-height: 1.2em; }
+
+.metrics { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 14px; }
+@media (max-width: 760px) { .metrics { grid-template-columns: repeat(2, 1fr); } }
+.metric { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.metric small { display: block; font-size: .72rem; color: var(--muted); text-transform: uppercase;
+                letter-spacing: .06em; }
+.metric b { display: block; font-size: 1.25rem; margin-top: 2px; letter-spacing: -.01em; }
+.metric em { font-style: normal; font-size: .75rem; color: var(--muted); }
+.badge { display: inline-block; font-size: .9rem; font-weight: 600; padding: 2px 10px;
+         border-radius: 999px; margin-top: 4px; text-transform: capitalize; }
+.badge.minor { background: var(--minor-soft); color: var(--minor); }
+.badge.moderate { background: var(--moderate-soft); color: var(--moderate); }
+.badge.severe { background: var(--severe-soft); color: var(--severe); }
+.badge.none { background: var(--bg); color: var(--muted); }
+
+/* ---------- pipeline strip ---------- */
+section.pipeline { margin: 4px 0 20px; }
+.strip { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(150px, 1fr);
+         gap: 10px; overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x mandatory; }
+.stage { border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
+         padding: 0; cursor: pointer; text-align: left; font: inherit; color: var(--ink);
+         overflow: hidden; scroll-snap-align: start; transition: border-color .15s; }
+.stage:hover, .stage.active { border-color: var(--accent); }
+.stage img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover;
+             background: #0b0f19; }
+.stage div { padding: 8px 10px; }
+.stage b { display: block; font-size: .8rem; }
+.stage small { color: var(--muted); font-size: .72rem; }
+.num { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%;
+       background: var(--accent-soft); color: var(--accent); font-size: .68rem; font-weight: 700;
+       margin-right: 4px; }
+.hint { font-size: .8rem; color: var(--muted); margin: -4px 0 10px; }
+
+/* ---------- about ---------- */
+.about { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 28px; }
+@media (max-width: 920px) { .about { grid-template-columns: 1fr; } }
+.about h3 { font-size: .95rem; margin: 0 0 6px; }
+.about p, .about li { font-size: .85rem; color: var(--muted); margin: 0; }
+.about ol { padding-left: 18px; margin: 0; }
+.legend { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+
+footer { border-top: 1px solid var(--line); padding: 18px 0 28px; font-size: .78rem;
+         color: var(--muted); }
 </style>
 </head>
 <body>
-<main>
-  <h1>Concrete crack segmentation and measurement</h1>
-  <p class="lead">Upload a photo of a concrete surface. A classical image-processing pipeline
-    (Gaussian smoothing, frequency-domain illumination flattening, adaptive threshold, gap linking,
-    morphology, shape-based selection) marks the cracks and reports the cracked area, length and a
-    severity class. It runs entirely in your browser with Python (Pyodide); no image is uploaded to
-    any server. Course project (CSE281), not a certified inspection tool.</p>
-
-  <div class="card">
-    <label class="button disabled" id="pick-label" for="file">Choose a photo (JPEG or PNG)</label>
-    <input type="file" id="file" accept="image/jpeg,image/png" disabled>
-    <div class="examples" id="examples" aria-label="Example photos"></div>
-    <div id="status" role="status" aria-live="polite">Loading Python and the image libraries
-      (first visit: about 20&ndash;40 s)&hellip;</div>
-  </div>
-
-  <div class="row" id="results" hidden>
-    <figure><img class="result" id="overlay" alt="Detected cracks shown in red on the photo">
-      <figcaption>Detected cracks (red)</figcaption></figure>
-    <div class="card">
-      <h2 style="font-size:1.1rem;margin-top:0">Measurement and decision</h2>
-      <table id="summary" aria-label="Measurement results"></table>
+<header>
+  <div class="wrap bar">
+    <div class="logo" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"
+           stroke-linecap="round" stroke-linejoin="round"><path d="M3 4l5 6-2 4 5 3-1 3 5 0"/>
+        <path d="M14 4l2 5 5 2"/></svg>
     </div>
+    <div class="brand"><b>Concrete Crack Inspector</b><span>CSE281 Digital Image Processing</span></div>
+    <div class="spacer"></div>
+    <span class="chip">Classical image processing · no AI model</span>
   </div>
-  <h2 style="font-size:1.1rem" id="stages-title" hidden>Every processing stage, in order</h2>
-  <div class="stages" id="stages"></div>
+</header>
 
-  <footer>Dataset: Ç. F. Özgenel, Concrete Crack Segmentation Dataset, Mendeley Data 2019
-    (CC BY 4.0). Example photos are test-set images never used for tuning; image 249 is a known
-    failure (wide spalled crack). Code: CSE281 team (Marwan Saber, Hassan Hisham, Mohamed Wageh,
-    Saad Mohamed, Ahmed Abdelwahed).</footer>
+<main class="wrap">
+  <section class="hero">
+    <h1>Find and measure cracks in a concrete photo</h1>
+    <p>Upload a photo of a wall or slab. The pipeline smooths it, removes uneven lighting,
+       applies an adaptive threshold, links broken cracks and keeps long, thin shapes, then
+       reports how much of the surface is cracked.</p>
+    <div class="pills">
+      <span class="pill"><i></i>Runs in your browser</span>
+      <span class="pill"><i></i>Your photo never leaves your device</span>
+      <span class="pill"><i></i>Test-set IoU 0.67 on 137 unseen photos</span>
+    </div>
+  </section>
+
+  <div class="grid">
+    <!-- input -->
+    <section class="card" aria-labelledby="in-title">
+      <h2 id="in-title">1 · Choose a photo</h2>
+      <label class="drop disabled" id="drop" tabindex="0" for="file"
+             aria-describedby="drop-help">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+        <b>Drop a photo here or click to browse</b>
+        <span id="drop-help">JPEG or PNG, up to 25 MB</span>
+      </label>
+      <input type="file" id="file" accept="image/jpeg,image/png" disabled>
+
+      <h2 style="margin-top:18px">Or try an example</h2>
+      <div class="examples" id="examples"></div>
+
+      <div class="progress" id="progress">
+        <div class="track" aria-hidden="true"><div class="fill" id="fill"></div></div>
+        <div id="status" role="status" aria-live="polite">Starting Python in your browser…</div>
+      </div>
+    </section>
+
+    <!-- result -->
+    <section class="card" aria-labelledby="out-title">
+      <div class="viewer-head">
+        <h2 id="out-title">2 · Result</h2>
+        <div class="seg" role="group" aria-label="Choose the view">
+          <button type="button" data-view="overlay" aria-pressed="true">Overlay</button>
+          <button type="button" data-view="original" aria-pressed="false">Original</button>
+          <button type="button" data-view="mask" aria-pressed="false">Crack mask</button>
+        </div>
+      </div>
+      <div class="stage-view" id="viewer">
+        <div class="empty" id="empty">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.5" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/>
+            <path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.6"/></svg>
+          <div>Your result will appear here</div>
+        </div>
+        <img id="img-overlay" alt="Photo with detected cracks painted red">
+        <img id="img-original" alt="Uploaded photo">
+        <img id="img-mask" alt="Binary crack mask: white is crack">
+      </div>
+      <div class="caption" id="caption"></div>
+      <div class="metrics" aria-label="Measurements">
+        <div class="metric"><small>Severity</small><span class="badge none" id="m-sev">—</span></div>
+        <div class="metric"><small>Cracked area</small><b id="m-area">—</b><em>of the image</em></div>
+        <div class="metric"><small>Crack length</small><b id="m-len">—</b><em>pixels at 1008 px</em></div>
+        <div class="metric"><small>Crack pieces</small><b id="m-obj">—</b><em>separate objects</em></div>
+        <div class="metric"><small>Time</small><b id="m-time">—</b><em>in your browser</em></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="card pipeline" aria-labelledby="pipe-title" id="pipe" hidden>
+    <h2 id="pipe-title">3 · How the result was made</h2>
+    <p class="hint">Every stage of the pipeline, in order. Select one to show it above.</p>
+    <div class="strip" id="strip"></div>
+  </section>
+
+  <section class="about">
+    <div class="card">
+      <h3>The pipeline</h3>
+      <ol>
+        <li>Gaussian smoothing (7×7) against surface texture</li>
+        <li>Illumination flattening with a frequency-domain low-pass</li>
+        <li>Adaptive threshold: darker than the local mean − 15</li>
+        <li>Gap linking, closing and small-hole filling</li>
+        <li>Keep long, thin objects (stains and pores are round)</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Severity classes</h3>
+      <p>From the cracked-area percentage, with cut-offs from the development set.</p>
+      <div class="legend">
+        <span><span class="badge minor">minor</span> below 1.00 %</span>
+        <span><span class="badge moderate">moderate</span> 1.00 – 1.37 %</span>
+        <span><span class="badge severe">severe</span> 1.37 % and above</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Limits</h3>
+      <p>Rough, pitted surfaces can produce false crack pieces; very wide spalled cracks are
+         found only at their edges (see the "known failure" example). This is a course project,
+         not a certified inspection tool: a missed crack never means "no damage".</p>
+    </div>
+  </section>
 </main>
+
+<footer>
+  <div class="wrap">CSE281 · Alamein International University · Marwan Saber, Hassan Hisham,
+    Mohamed Wageh, Saad Mohamed, Ahmed Abdelwahed. Example photos: Ç. F. Özgenel, Concrete Crack
+    Segmentation Dataset, Mendeley Data 2019 (CC BY 4.0), test-set images never used for tuning.
+  </div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/pyodide/v0.28.3/full/pyodide.js"></script>
 <script>
 const SRC = ["__init__", "data", "metrics", "enhancement", "restoration", "frequency",
              "segmentation", "morphology", "pipeline", "run_pipeline"];
-const EXAMPLES = [["test_174_best.jpg", "Example: clear crack"],
-                  ["test_288_typical.jpg", "Example: typical"],
-                  ["test_249_failure_wide_crack.jpg", "Example: known failure"]];
+const EXAMPLES = [["test_174_best.jpg", "Clear crack", "best result"],
+                  ["test_288_typical.jpg", "Typical", "average case"],
+                  ["test_249_failure_wide_crack.jpg", "Wide crack", "known failure"]];
+const NAMES = {gaussian: "Gaussian smoothing", flatten_background: "Lighting flattened (FFT)",
+  threshold_adaptive: "Adaptive threshold", link_gaps: "Gaps linked", closing: "Closing",
+  fill_small_holes: "Small holes filled", select_objects: "Thin shapes kept"};
 const MAX_BYTES = 25 * 1024 * 1024;
-const statusEl = document.getElementById("status");
-let py = null;
+const $ = id => document.getElementById(id);
+let py = null, busy = false, current = null;
 
-function setStatus(msg, isError = false) {
-  statusEl.textContent = msg;
-  statusEl.className = isError ? "error" : "";
+function status(msg, kind = "", pct = null) {
+  $("status").textContent = msg;
+  $("status").className = kind;
+  if (pct !== null) $("fill").style.width = pct + "%";
 }
 
 const ANALYSE = `
 import base64, json, cv2, numpy as np
-from src import pipeline, run_pipeline
+from src import data, pipeline, run_pipeline
 CONFIG = pipeline.load_config("configs/final_pipeline.yaml")
 
 def _png(img):
@@ -100,100 +305,134 @@ def _png(img):
         img = img.astype(np.uint8) * 255
     if img.ndim == 3:
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-    ok, buf = cv2.imencode(".png", img)
-    return base64.b64encode(buf.tobytes()).decode()
+    return base64.b64encode(cv2.imencode(".png", img)[1].tobytes()).decode()
 
 def analyse(path):
     r = run_pipeline.process(path, CONFIG)
     m = r["measurements"]
     return json.dumps({
+        "original": _png(data.load_image(path, mode="rgb", size=1008)),
         "overlay": _png(run_pipeline.overlay(r["gray"], r["mask"])),
-        "stages": [["input (gray, long side 1008 px)", _png(r["gray"])]] +
-                  [[f"{s['stage']} ({s['time_s'] * 1000:.0f} ms)", _png(s["output"])]
+        "mask": _png(r["mask"]),
+        "stages": [["input", "Gray input", 0, _png(r["gray"])]] +
+                  [[s["stage"], s["stage"], s["time_s"] * 1000, _png(s["output"])]
                    for s in r["steps"]],
-        "summary": {"Severity": r["severity"],
-                    "Cracked area": f"{float(m['area_pct']):.2f} % of the image",
-                    "Crack length": f"{m['length_px']} pixels (skeleton, at 1008 px)",
-                    "Crack objects": str(m["n_objects"]),
-                    "Processing time": f"{r['time_s']:.2f} s (in your browser)"}})
+        "severity": r["severity"], "area": float(m["area_pct"]),
+        "length": int(m["length_px"]), "objects": int(m["n_objects"]), "time": r["time_s"]})
 `;
 
 async function start() {
   try {
+    status("Downloading the Python runtime…", "", 10);
     py = await loadPyodide();
+    status("Loading NumPy, OpenCV and scikit-image…", "", 45);
     await py.loadPackage(["numpy", "opencv-python", "scikit-image", "pyyaml"]);
+    status("Loading the pipeline code…", "", 85);
     py.FS.mkdirTree("/home/pyodide/src");
     py.FS.mkdirTree("/home/pyodide/configs");
     for (const name of SRC) {
-      const text = await (await fetch(`src/${name}.py`)).text();
-      py.FS.writeFile(`/home/pyodide/src/${name}.py`, text);
+      py.FS.writeFile(`/home/pyodide/src/${name}.py`, await (await fetch(`src/${name}.py`)).text());
     }
     py.FS.writeFile("/home/pyodide/configs/final_pipeline.yaml",
                     await (await fetch("configs/final_pipeline.yaml")).text());
     py.runPython("import os, sys; os.chdir('/home/pyodide'); sys.path.insert(0, '/home/pyodide')");
     py.runPython(ANALYSE);
-    document.getElementById("file").disabled = false;
-    document.getElementById("pick-label").classList.remove("disabled");
-    for (const [file, label] of EXAMPLES) {
-      const b = document.createElement("button");
-      b.className = "secondary"; b.textContent = label;
-      b.onclick = async () => run(new Uint8Array(await (await fetch(`examples/${file}`))
-                                                   .arrayBuffer()), file);
-      document.getElementById("examples").appendChild(b);
-    }
-    setStatus("Ready. Choose a photo or an example.");
+    $("file").disabled = false;
+    $("drop").classList.remove("disabled");
+    document.querySelectorAll(".thumb").forEach(b => b.disabled = false);
+    status("Ready — choose a photo or an example.", "ok", 100);
   } catch (err) {
-    setStatus("Could not start Python in this browser: " + err, true);
+    status("Python could not start in this browser: " + err, "error", 0);
   }
 }
 
 async function run(bytes, name) {
-  if (bytes.length > MAX_BYTES) { setStatus("File too large (limit 25 MB).", true); return; }
-  setStatus(`Analysing ${name}…`);
-  await new Promise(r => setTimeout(r, 30));   // let the status repaint first
-  const ext = name.toLowerCase().endsWith(".png") ? ".png" : ".jpg";
-  const path = "/tmp/upload" + ext;
+  if (!py || busy) return;
+  if (bytes.length > MAX_BYTES) { status("That file is larger than 25 MB.", "error"); return; }
+  busy = true;
+  status(`Analysing ${name}…`, "", 100);
+  await new Promise(r => setTimeout(r, 30));          // let the status repaint first
+  const path = "/tmp/upload" + (name.toLowerCase().endsWith(".png") ? ".png" : ".jpg");
   try {
     py.FS.writeFile(path, bytes);
-    const out = JSON.parse(py.globals.get("analyse")(path));
-    show(out);
-    setStatus(`Done: ${name}`);
+    show(JSON.parse(py.globals.get("analyse")(path)), name);
+    status(`Done: ${name}`, "ok");
   } catch (err) {
-    const msg = String(err).includes("cannot read image")
+    status(String(err).includes("cannot read image")
       ? "This file could not be read as an image. Please choose a JPEG or PNG photo."
-      : "Processing failed: " + String(err).split("\n").slice(-2).join(" ");
-    setStatus(msg, true);
-  }
+      : "Processing failed: " + String(err).split("\n").slice(-2).join(" "), "error");
+  } finally { busy = false; }
 }
 
-function show(out) {
-  document.getElementById("results").hidden = false;
-  document.getElementById("stages-title").hidden = false;
-  document.getElementById("overlay").src = "data:image/png;base64," + out.overlay;
-  const table = document.getElementById("summary");
-  table.innerHTML = "";
-  for (const [k, v] of Object.entries(out.summary)) {
-    const tr = table.insertRow(); tr.insertCell().textContent = k; tr.insertCell().textContent = v;
-  }
-  const stages = document.getElementById("stages");
-  stages.innerHTML = "";
-  for (const [caption, png] of out.stages) {
-    const f = document.createElement("figure");
-    const img = document.createElement("img");
-    img.src = "data:image/png;base64," + png; img.alt = "Stage output: " + caption;
-    const c = document.createElement("figcaption"); c.textContent = caption;
-    f.append(img, c); stages.appendChild(f);
-  }
+function setView(view, caption) {
+  current = view;
+  ["overlay", "original", "mask"].forEach(v => $("img-" + v).classList.toggle("show", v === view));
+  document.querySelectorAll(".seg button").forEach(b =>
+    b.setAttribute("aria-pressed", String(b.dataset.view === view)));
+  document.querySelectorAll(".stage").forEach(s => s.classList.remove("active"));
+  $("caption").textContent = caption || {overlay: "Detected cracks painted red on the photo.",
+    original: "The photo as uploaded (resized to 1008 px).",
+    mask: "Final crack mask: white = crack."}[view];
 }
 
-document.getElementById("file").addEventListener("change", async e => {
-  const f = e.target.files[0];
+function show(out, name) {
+  $("empty").hidden = true;
+  for (const v of ["overlay", "original", "mask"]) $("img-" + v).src = "data:image/png;base64," + out[v];
+  setView("overlay");
+  const sev = $("m-sev");
+  sev.textContent = out.severity; sev.className = "badge " + out.severity;
+  $("m-area").textContent = out.area.toFixed(2) + " %";
+  $("m-len").textContent = out.length.toLocaleString();
+  $("m-obj").textContent = out.objects;
+  $("m-time").textContent = out.time.toFixed(2) + " s";
+  const strip = $("strip");
+  strip.innerHTML = "";
+  out.stages.forEach(([key, label, ms, png], i) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "stage";
+    const title = NAMES[key] || label;
+    b.innerHTML = `<img alt="Stage ${i}: ${title}" src="data:image/png;base64,${png}">
+      <div><b><span class="num">${i}</span>${title}</b>
+      <small>${i === 0 ? "converted once, 1008 px" : ms.toFixed(0) + " ms"}</small></div>`;
+    b.onclick = () => {
+      $("img-original").src = "data:image/png;base64," + png;
+      setView("original", `Stage ${i}: ${title}`);
+      b.classList.add("active");
+      $("viewer").scrollIntoView({behavior: "smooth", block: "center"});
+    };
+    strip.appendChild(b);
+  });
+  $("pipe").hidden = false;
+  window.lastOut = out;
+}
+
+document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => {
+  if (!window.lastOut) return;
+  $("img-original").src = "data:image/png;base64," + window.lastOut.original;
+  setView(b.dataset.view);
+}));
+
+for (const [file, title, sub] of EXAMPLES) {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "thumb"; b.disabled = true;
+  b.innerHTML = `<img src="examples/${file}" alt="Example: ${title}" loading="lazy">
+    <span>${title}<small>${sub}</small></span>`;
+  b.onclick = async () => run(new Uint8Array(await (await fetch(`examples/${file}`)).arrayBuffer()),
+                              file);
+  $("examples").appendChild(b);
+}
+
+async function handleFile(f) {
   if (!f) return;
-  if (!/^image\/(jpeg|png)$/.test(f.type)) {
-    setStatus("Please choose a JPEG or PNG image.", true); return;
-  }
+  if (!/^image\/(jpeg|png)$/.test(f.type)) { status("Please choose a JPEG or PNG image.", "error"); return; }
   run(new Uint8Array(await f.arrayBuffer()), f.name);
-});
+}
+$("file").addEventListener("change", e => handleFile(e.target.files[0]));
+const drop = $("drop");
+drop.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("file").click(); } });
+["dragenter", "dragover"].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", e => handleFile(e.dataTransfer.files[0]));
 start();
 </script>
 </body>
