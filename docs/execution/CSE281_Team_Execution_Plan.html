@@ -528,12 +528,12 @@ histogram_match(img, ref)             # optional extra (AB6)</pre>
 <table class="card"><tr><th>What</th><td>Full test coverage of the module, a speed check of <code>convolve2d</code>, report Section III-B, slide 6.</td></tr><tr><th>Why</th><td>Bonus 2 and Bonus 5 evidence. Report and presentation duties.</td></tr><tr><th>File</th><td><code>tests/test_enhancement.py</code>, <code>bonus/optimization/</code>, <code>report/</code></td></tr><tr><th>Functions</th><td>All of the module's functions</td></tr><tr><th>How</th><td>Profile the loop vs vectorised version. Write about 0.75 page with equations and a hand example.</td></tr><tr><th>Expected output</th><td>Speedup row, report text, slide.</td></tr><tr><th>Test</th><td><code>pytest tests/test_enhancement.py</code> passes.</td></tr><tr><th>Evidence</th><td>Timing CSV, report PR.</td></tr><tr><th>Done when</th><td>Reviewed by MEM4 and MEM1.</td></tr></table>
 <h2>5.D Commands</h2>
 <p class='small'>Planned and not yet run. Environment setup and the full git workflow are in Section 13.</p>
-<pre>git checkout -b feature/mem2-enhancement
+<pre>git checkout -b feature/mem3-enhancement
 pytest tests/test_enhancement.py -q
 python -m src.evaluate --config experiments/configs/enh_compare.yaml --split dev
 git add src/enhancement.py tests/test_enhancement.py
 git commit -m "feat(enhancement): NumPy convolve2d with reflect-101 borders and tests"
-git push -u origin feature/mem2-enhancement      # then open a PR, reviewer: MEM4</pre>
+git push -u origin feature/mem3-enhancement      # then open a PR, reviewer: MEM4</pre>
 <h2>5.E Experiments</h2>
 <p class='small'>All runs use dev data only, fixed seeds, the reference config with one factor changed, a row in <code>experiment_log.csv</code>, saved figures, and 2&ndash;4 sentences of interpretation.</p>
 <table><tr><th>Study</th><th>Factor and values</th><th>Held fixed</th><th>Metric</th><th>Output</th></tr><tr><td>Enhancement comparison</td><td>Method (10 + none)</td><td>Simple baseline after it</td><td>Primary metric, histogram spread</td><td>Table + figure grid</td></tr><tr><td>Kernel size</td><td>k = 3, 5, 7</td><td>Filter type, rest of the pipeline</td><td>Primary metric</td><td>Plot</td></tr><tr><td>Smoothing selection</td><td>Mean / Gaussian / median &times; 4 noise &times; 3 levels</td><td>k from the kernel study</td><td>PSNR + primary metric</td><td>Heatmap</td></tr><tr><td>AB1</td><td>Enhancement on/off</td><td>Final pipeline</td><td>Primary metric</td><td>Table</td></tr><tr><td>AB6 (optional)</td><td>Histogram matching vs equalization</td><td>Final pipeline</td><td>Primary metric</td><td>Table</td></tr></table>
@@ -591,12 +591,12 @@ rle_encode / rle_decode ; huffman_encode / huffman_decode</pre>
 <table class="card"><tr><th>What</th><td>Full tests, speed-up of the order-statistic filters, report Section III-C, slide 7.</td></tr><tr><th>Why</th><td>Bonus 2 and Bonus 5 evidence. Report and presentation duties.</td></tr><tr><th>File</th><td><code>tests/</code>, <code>bonus/optimization/</code>, <code>report/</code></td></tr><tr><th>Functions</th><td>All of the module's functions</td></tr><tr><th>How</th><td>Profile the median filter (sorting vs <code>np.partition</code>). Write about 0.75 page.</td></tr><tr><th>Expected output</th><td>Speedup row, report text, slide.</td></tr><tr><th>Test</th><td><code>pytest tests/test_restoration.py tests/test_frequency.py</code> passes.</td></tr><tr><th>Evidence</th><td>Timing CSV, report PR.</td></tr><tr><th>Done when</th><td>Reviewed by MEM3 and MEM1.</td></tr></table>
 <h2>6.D Commands</h2>
 <p class='small'>Planned and not yet run. Environment setup and the full git workflow are in Section 13.</p>
-<pre>git checkout -b feature/mem3-restoration-frequency
+<pre>git checkout -b feature/mem4-restoration-frequency
 pytest tests/test_restoration.py tests/test_frequency.py -q
 python -m src.evaluate --config experiments/configs/res_psnr.yaml --split dev
 git add src/restoration.py src/frequency.py tests/
 git commit -m "feat(restoration): NumPy order-statistic filters matching scipy (mirror)"
-git push -u origin feature/mem3-restoration-frequency   # PR reviewer: MEM3</pre>
+git push -u origin feature/mem4-restoration-frequency   # PR reviewer: MEM3</pre>
 <h2>6.E Experiments</h2>
 <p class='small'>All runs use dev data only, fixed seeds, the reference config with one factor changed, a row in <code>experiment_log.csv</code>, saved figures, and 2&ndash;4 sentences of interpretation.</p>
 <table><tr><th>Study</th><th>Factor and values</th><th>Held fixed</th><th>Metric</th><th>Output</th></tr><tr><td>PSNR study</td><td>Filter (9) &times; noise (&ge;2) &times; level (3)</td><td>k = 3</td><td>MSE, PSNR</td><td>Heatmap</td></tr><tr><td>D0 study</td><td>D0 = 3 values &times; 3 filter types</td><td>Butterworth n = 2</td><td>PSNR / primary</td><td>Plot + spectra</td></tr><tr><td>AB2</td><td>Spatial vs frequency smoothing</td><td>Matched &sigma;</td><td>Primary, time</td><td>Table</td></tr><tr><td>AB5</td><td>Mean vs median under S&amp;P</td><td>Same k</td><td>PSNR</td><td>Table</td></tr><tr><td>AB7 (optional)</td><td>Wiener vs none on blur</td><td>Known H</td><td>PSNR</td><td>Table</td></tr><tr><td>Bonus 4</td><td>RLE / Huffman</td><td>Final outputs</td><td>Ratio, time</td><td>CSV</td></tr></table>
@@ -647,12 +647,12 @@ hough_lines(edges, theta_res, rho_res) ; edge_link(mag, angle, T_m, T_a)</pre>
 <table class="card"><tr><th>What</th><td>Full tests, speed-up of adaptive thresholding and Hough, report Section III-D, slide 8.</td></tr><tr><th>Why</th><td>Bonus 2 and Bonus 5 evidence. Report and presentation duties.</td></tr><tr><th>File</th><td><code>tests/</code>, <code>bonus/optimization/</code>, <code>report/</code></td></tr><tr><th>Functions</th><td>All of the module's functions</td></tr><tr><th>How</th><td>Vectorise the Hough voting with <code>np.add.at</code>. Write about 0.75 page.</td></tr><tr><th>Expected output</th><td>Speedup row, report text, slide.</td></tr><tr><th>Test</th><td><code>pytest tests/test_segmentation.py</code> passes.</td></tr><tr><th>Evidence</th><td>Timing CSV, report PR.</td></tr><tr><th>Done when</th><td>Reviewed by MEM6 and MEM1.</td></tr></table>
 <h2>7.D Commands</h2>
 <p class='small'>Planned and not yet run. Environment setup and the full git workflow are in Section 13.</p>
-<pre>git checkout -b feature/mem4-segmentation
+<pre>git checkout -b feature/mem5-segmentation
 pytest tests/test_segmentation.py -q
 python -m src.evaluate --config experiments/configs/seg_thresholds.yaml --split dev
 git add src/segmentation.py tests/test_segmentation.py
 git commit -m "feat(segmentation): NumPy Otsu threshold matching skimage"
-git push -u origin feature/mem4-segmentation      # PR reviewer: MEM6</pre>
+git push -u origin feature/mem5-segmentation      # PR reviewer: MEM6</pre>
 <h2>7.E Experiments</h2>
 <p class='small'>All runs use dev data only, fixed seeds, the reference config with one factor changed, a row in <code>experiment_log.csv</code>, saved figures, and 2&ndash;4 sentences of interpretation.</p>
 <table><tr><th>Study</th><th>Factor and values</th><th>Held fixed</th><th>Metric</th><th>Output</th></tr><tr><td>Detector comparison</td><td>Roberts / Prewitt / Sobel / Lap / LoG(&sigma;)</td><td>Pre-processing, threshold</td><td>Primary metric</td><td>Bar chart</td></tr><tr><td>Threshold study</td><td>Global, iterative, Otsu, adaptive &times;2</td><td>Pre-processing</td><td>Primary metric</td><td>Bar chart</td></tr><tr><td>AB3</td><td>Threshold method in the full pipeline</td><td>All other stages</td><td>Primary metric</td><td>Table</td></tr></table>
@@ -717,14 +717,14 @@ worst_k(df, k=20) ; save_failure_panels(df, out_dir)
 <table class="card"><tr><th>What</th><td>Full tests, report Sections V-B and VI, slides 9&ndash;11.</td></tr><tr><th>Why</th><td>Bonus 2 evidence. Report and presentation duties.</td></tr><tr><th>File</th><td><code>tests/</code>, <code>report/</code></td></tr><tr><th>Functions</th><td>All of the module's functions</td></tr><tr><th>How</th><td>Write about 1.5 pages.</td></tr><tr><th>Expected output</th><td>Report text, slides.</td></tr><tr><th>Test</th><td><code>pytest tests/test_morphology.py</code> passes.</td></tr><tr><th>Evidence</th><td>Report PR.</td></tr><tr><th>Done when</th><td>Reviewed by MEM5 and MEM1.</td></tr></table>
 <h2>8.D Commands</h2>
 <p class='small'>Planned and not yet run. Environment setup and the full git workflow are in Section 13.</p>
-<pre>git checkout -b feature/mem5-morphology-demo
+<pre>git checkout -b feature/mem6-morphology-demo
 pytest tests/test_morphology.py -q
 python -m src.evaluate --config configs/pipeline_c.yaml --split dev          # planned
 python -m src.run_pipeline --image samples/x.png --config configs/final_pipeline.yaml --out out/
 python app/app.py                                        # local demo (Gradio), planned
 git add src/morphology.py tests/test_morphology.py
 git commit -m "feat(morphology): NumPy erosion/dilation matching cv2 border convention"
-git push -u origin feature/mem5-morphology-demo   # PR reviewer: MEM5</pre>
+git push -u origin feature/mem6-morphology-demo   # PR reviewer: MEM5</pre>
 <h2>8.E Experiments</h2>
 <p class='small'>All runs use dev data only, fixed seeds, the reference config with one factor changed, a row in <code>experiment_log.csv</code>, saved figures, and 2&ndash;4 sentences of interpretation.</p>
 <table><tr><th>Study</th><th>Factor and values</th><th>Held fixed</th><th>Metric</th><th>Output</th></tr><tr><td>SE size</td><td>3, 5, 7</td><td>Shape, segmentation</td><td>Primary metric</td><td>Plot</td></tr><tr><td>SE shape</td><td>Square, disk (+cross/line)</td><td>Size</td><td>Primary metric</td><td>Plot</td></tr><tr><td>AB4</td><td>Morphology off; open&rarr;close vs close&rarr;open</td><td>All other stages</td><td>Primary metric</td><td>Table</td></tr><tr><td>Test evaluation</td><td>Final, trivial, simple</td><td>Frozen config</td><td>Per-image metric</td><td>CSV</td></tr><tr><td>Failure analysis</td><td>&ge;20 worst, by category</td><td>&mdash;</td><td>Primary metric</td><td>Panels</td></tr><tr><td>AB8 (optional)</td><td>Boundary extraction</td><td>&mdash;</td><td>Visual / perimeter</td><td>Figure</td></tr></table>
@@ -822,8 +822,8 @@ git push -u origin feature/mem5-morphology-demo   # PR reviewer: MEM5</pre>
   <li><code>main</code> is protected: changes only through PRs, &ge;1 approving review from a
       different member, CI must pass.</li>
   <li>One feature branch per member (<code>feature/mem1-data-baselines</code>,
-      <code>feature/mem2-enhancement</code>, <code>feature/mem3-restoration-frequency</code>,
-      <code>feature/mem4-segmentation</code>, <code>feature/mem5-morphology-demo</code>). Short-lived
+      <code>feature/mem3-enhancement</code>, <code>feature/mem4-restoration-frequency</code>,
+      <code>feature/mem5-segmentation</code>, <code>feature/mem6-morphology-demo</code>). Short-lived
       sub-branches are fine.</li>
   <li>Small PRs (&le;400 changed lines), merged at least twice a week. Rebase on <code>main</code>
       before asking for review.</li>
@@ -898,12 +898,12 @@ python -m src.evaluate --config configs/final_pipeline.yaml --split test   # ONC
 <pre>
 git checkout main
 git pull
-git checkout -b feature/mem2-enhancement          # use your own branch name
+git checkout -b feature/mem3-enhancement          # use your own branch name
 # ... edit, then run the tests ...
 pytest tests/test_enhancement.py -q
 git add src/enhancement.py tests/test_enhancement.py
 git commit -m "feat(enhancement): add NumPy histogram equalization with tests"
-git push -u origin feature/mem2-enhancement
+git push -u origin feature/mem3-enhancement
 # Open a PR on GitHub: base main &lt;- your branch; request your reviewer (Section 2.1)
 # After review comments:
 git add -A ; git commit -m "fix(enhancement): address review - clip before uint8 cast"
