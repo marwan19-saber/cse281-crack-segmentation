@@ -82,5 +82,5 @@ The test split only runs when the `results-frozen` tag exists (`git fetch --tags
 
 ## Documents
 
-`report/report.pdf` (technical report), `report/presentation.pdf` (slides),
+`report/report.pdf` (technical report), `report/presentation.pptx` (slides, PowerPoint),
 `CSE281_Team_Execution_Plan.pdf` (team plan). HTML sources in `docs/`.
