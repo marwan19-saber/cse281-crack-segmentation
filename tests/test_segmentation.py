@@ -1,4 +1,4 @@
-"""Tests for src/segmentation.py (MEM4): hand examples, library comparisons, edge cases."""
+"""Tests for src/segmentation.py (MEM5): hand examples, library comparisons, edge cases."""
 import cv2
 import numpy as np
 import pytest

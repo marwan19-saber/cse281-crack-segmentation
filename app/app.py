@@ -1,5 +1,5 @@
 """Gradio demo: upload a concrete photo, see every processing stage, the crack mask and the
-measurement (MEM5).
+measurement (MEM6).
 
     python app/app.py            # then open the printed local URL
 

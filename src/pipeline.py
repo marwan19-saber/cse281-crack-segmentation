@@ -69,22 +69,22 @@ METHODS.update(baseline_trivial=baseline_trivial, baseline_simple=baseline_simpl
 # Every stage takes the previous output (uint8 image or bool mask) plus keyword parameters.
 # Stages call the team's NumPy modules; owner in brackets.
 def _gaussian(img, ksize=5, sigma=0):
-    """[MEM2] Gaussian smoothing."""
+    """[MEM3] Gaussian smoothing."""
     return enhancement.gaussian_filter(img, ksize, sigma)
 
 
 def _mean(img, ksize=3):
-    """[MEM2] Box smoothing."""
+    """[MEM3] Box smoothing."""
     return enhancement.mean_filter(img, ksize)
 
 
 def _median(img, ksize=3):
-    """[MEM3] Median filter."""
+    """[MEM4] Median filter."""
     return restoration.median_filter(img, ksize)
 
 
 def _flatten_background(img, d0=6.0):
-    """[MEM3] Divide by the low-frequency background (Gaussian low-pass, cutoff d0) to remove
+    """[MEM4] Divide by the low-frequency background (Gaussian low-pass, cutoff d0) to remove
     shadows and vignetting; the result is rescaled to the image's mean brightness."""
     f = img.astype(np.float64)
     shape = (2 * img.shape[0], 2 * img.shape[1])
@@ -99,24 +99,24 @@ def _threshold_fixed(img, t=127):
 
 
 def _threshold_otsu(img):
-    """[MEM4] Crack = pixels at or below Otsu's threshold."""
+    """[MEM5] Crack = pixels at or below Otsu's threshold."""
     return segmentation.threshold_dark(img, segmentation.otsu_threshold(img))
 
 
 def _threshold_adaptive(img, block=31, c=10, method="mean"):
-    """[MEM4] Crack = pixel <= local mean - c."""
+    """[MEM5] Crack = pixel <= local mean - c."""
     return segmentation.adaptive_threshold(img, block, c, method)
 
 
 def _threshold_adaptive_or_otsu(img, block=31, c=15):
-    """[MEM4] Failure-analysis fix for wide cracks: adaptive mask OR Otsu mask. Inside a dark
+    """[MEM5] Failure-analysis fix for wide cracks: adaptive mask OR Otsu mask. Inside a dark
     region wider than the block the local mean is dark too, so adaptive alone misses it."""
     return (segmentation.adaptive_threshold(img, block, c)
             | segmentation.threshold_dark(img, segmentation.otsu_threshold(img)))
 
 
 def _edges_top_percent(img, operator="sobel", percent=3.0):
-    """[MEM4] Detector comparison: mark the `percent` % pixels with the strongest response
+    """[MEM5] Detector comparison: mark the `percent` % pixels with the strongest response
     of one operator (gradient magnitude, |Laplacian|, or LoG / dark-line response)."""
     if operator in ("roberts", "prewitt", "sobel"):
         response = getattr(segmentation, operator)(img)[2]
@@ -130,44 +130,44 @@ def _edges_top_percent(img, operator="sobel", percent=3.0):
 
 
 def _threshold_lines(img, t=60):
-    """[MEM4] Crack = dark-line mask response (max over 4 directions) >= t."""
+    """[MEM5] Crack = dark-line mask response (max over 4 directions) >= t."""
     return segmentation.line_detect(img, t)
 
 
 def _threshold_log(img, sigma=2.0, t=2.0):
-    """[MEM4] Crack = LoG response >= t (dark thin structures give a positive LoG)."""
+    """[MEM5] Crack = LoG response >= t (dark thin structures give a positive LoG)."""
     return segmentation.log_filter(img, sigma) >= t
 
 
 def _link_gaps(mask, max_gap=3):
-    """[MEM4] Bridge short gaps along rows and columns."""
+    """[MEM5] Bridge short gaps along rows and columns."""
     return segmentation.link_gaps(mask, max_gap)
 
 
 def _opening(mask, size=3, shape="square"):
-    """[MEM5] Opening: remove specks smaller than the structuring element."""
+    """[MEM6] Opening: remove specks smaller than the structuring element."""
     return morphology.opening(mask, morphology.structuring_element(shape, size))
 
 
 def _closing(mask, size=3, shape="disk"):
-    """[MEM5] Closing: bridge narrow gaps along cracks."""
+    """[MEM6] Closing: bridge narrow gaps along cracks."""
     return morphology.closing(mask, morphology.structuring_element(shape, size))
 
 
 def _fill_small_holes(mask, max_area=30):
-    """[MEM5] Fill holes up to max_area pixels. Large holes (background enclosed by crossing
+    """[MEM6] Fill holes up to max_area pixels. Large holes (background enclosed by crossing
     cracks) are kept: filling them would turn concrete into crack."""
     holes = morphology.fill_holes(mask) & ~mask
     return mask | (holes & ~morphology.remove_small_objects(holes, max_area + 1))
 
 
 def _select_objects(mask, min_area=30, max_circularity=0.5):
-    """[MEM5] Keep long thin objects: drop specks and round stains."""
+    """[MEM6] Keep long thin objects: drop specks and round stains."""
     return morphology.select_objects(mask, min_area, max_circularity)
 
 
 def _lowpass(img, d0=80.0):
-    """[MEM3] Gaussian low-pass smoothing in the frequency domain (cutoff d0 on the 2x padded
+    """[MEM4] Gaussian low-pass smoothing in the frequency domain (cutoff d0 on the 2x padded
     grid); the frequency-domain counterpart of the spatial Gaussian (ablation AB2)."""
     shape = (2 * img.shape[0], 2 * img.shape[1])
     return frequency.apply_filter(img, frequency.gaussian_lowpass(shape, d0))

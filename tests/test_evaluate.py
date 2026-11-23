@@ -1,4 +1,4 @@
-"""Tests for src/evaluate.py and src/run_pipeline.py (MEM5)."""
+"""Tests for src/evaluate.py and src/run_pipeline.py (MEM6)."""
 import json
 
 import cv2

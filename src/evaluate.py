@@ -1,4 +1,4 @@
-"""Per-image evaluation of a pipeline config, worst cases and failure panels (MEM5).
+"""Per-image evaluation of a pipeline config, worst cases and failure panels (MEM6).
 
     python -m src.evaluate --config configs/pipeline_c.yaml --split dev --out res.csv
 
@@ -100,7 +100,7 @@ def main(argv=None):
     p.add_argument("--size", type=int, default=WORKING_SIZE)
     p.add_argument("--out", required=True)
     p.add_argument("--panels", default=None, help="folder for the 20 worst failure panels")
-    p.add_argument("--author", default="MEM5")
+    p.add_argument("--author", default="MEM6")
     p.add_argument("--stage", default="evaluation")
     p.add_argument("--log", default="experiments/experiment_log.csv")
     args = p.parse_args(argv)

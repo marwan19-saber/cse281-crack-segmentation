@@ -1,4 +1,4 @@
-"""Point transforms, histograms, histogram equalization, smoothing and sharpening (MEM2).
+"""Point transforms, histograms, histogram equalization, smoothing and sharpening (MEM3).
 
 All functions take and return uint8 gray images (H, W) unless stated otherwise.
 Neighbourhood operations use reflect-101 borders (np.pad "reflect" = cv2.BORDER_REFLECT_101)

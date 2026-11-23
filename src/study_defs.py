@@ -17,7 +17,7 @@ def _ref():
 
 
 def threshold_method():
-    """MEM4: threshold method after the same noise removal and illumination flattening."""
+    """MEM5: threshold method after the same noise removal and illumination flattening."""
     base = {"name": "thr", "stages": [{"stage": "median", "ksize": 3},
                                       {"stage": "flatten_background", "d0": 6.0}]}
     options = {
@@ -30,23 +30,23 @@ def threshold_method():
         "line masks t=60": {"stage": "threshold_lines", "t": 60},
         "LoG sigma=2 t=2": {"stage": "threshold_log", "sigma": 2.0, "t": 2.0},
     }
-    return "MEM4", [(k, {**base, "name": "threshold_method",
+    return "MEM5", [(k, {**base, "name": "threshold_method",
                          "stages": base["stages"] + [v]}, None) for k, v in options.items()]
 
 
 def kernel_size():
-    """MEM2: smoothing filter type and kernel size (3, 5, 7) as the first stage."""
+    """MEM3: smoothing filter type and kernel size (3, 5, 7) as the first stage."""
     ref = _ref()
     out = [("no smoothing", replace_stage(ref, "gaussian", None), None)]
     for kind in ("mean", "gaussian", "median"):
         for k in (3, 5, 7):
             out.append((f"{kind} k={k}",
                         replace_stage(ref, "gaussian", {"stage": kind, "ksize": k}), None))
-    return "MEM2", out
+    return "MEM3", out
 
 
 def enhancement_methods():
-    """MEM2: each enhancement method in front of the same adaptive threshold (raw image)."""
+    """MEM3: each enhancement method in front of the same adaptive threshold (raw image)."""
     methods = {
         "none": [], "negative": [{"stage": "negative"}], "log": [{"stage": "log"}],
         "gamma 0.5": [{"stage": "gamma", "gamma": 0.5}],
@@ -59,44 +59,44 @@ def enhancement_methods():
         "laplacian sharpen": [{"stage": "laplacian_sharpen"}],
         "gradient sharpen": [{"stage": "gradient_sharpen"}],
     }
-    return "MEM2", [(k, {"name": "enhancement", "stages": v + [ADAPTIVE]}, None)
+    return "MEM3", [(k, {"name": "enhancement", "stages": v + [ADAPTIVE]}, None)
                     for k, v in methods.items()]
 
 
 def cutoff_d0():
-    """MEM3: background-flattening cutoff D0 (Gaussian low-pass on the 2x padded grid)."""
+    """MEM4: background-flattening cutoff D0 (Gaussian low-pass on the 2x padded grid)."""
     ref = _ref()
     out = [(f"d0={d}", vary(ref, "flatten_background", d0=d), None) for d in (6.0, 12.0, 24.0)]
     out.append(("no flattening", replace_stage(ref, "flatten_background", None), None))
-    return "MEM3", out
+    return "MEM4", out
 
 
 def se_size_shape():
-    """MEM5: closing structuring-element size (3, 5, 7) and shape (disk, square)."""
+    """MEM6: closing structuring-element size (3, 5, 7) and shape (disk, square)."""
     ref = _ref()
     out = [("no closing", replace_stage(ref, "closing", None), None)]
     for shape in ("disk", "square"):
         for size in (3, 5, 7):
             out.append((f"{shape} {size}", vary(ref, "closing", size=size, shape=shape), None))
-    return "MEM5", out
+    return "MEM6", out
 
 
 def object_selection():
-    """MEM5: object selection by minimum area and maximum circularity."""
+    """MEM6: object selection by minimum area and maximum circularity."""
     ref = _ref()
     out = [(f"min_area={a}", vary(ref, "select_objects", min_area=a), None)
            for a in (30, 60, 120, 240)]
     out += [(f"max_circ={c}", vary(ref, "select_objects", max_circularity=c), None)
             for c in (0.3, 0.8)]
-    return "MEM5", out
+    return "MEM6", out
 
 
 def gap_linking():
-    """MEM4: edge linking gap length."""
+    """MEM5: edge linking gap length."""
     ref = _ref()
     out = [("no linking", replace_stage(ref, "link_gaps", None), None)]
     out += [(f"max_gap={g}", vary(ref, "link_gaps", max_gap=g), None) for g in (3, 6, 10)]
-    return "MEM4", out
+    return "MEM5", out
 
 
 def pipeline_a_threshold():
@@ -107,13 +107,13 @@ def pipeline_a_threshold():
 
 
 def adaptive_params():
-    """MEM4: classic adaptive threshold block size and offset c, on the reference."""
+    """MEM5: classic adaptive threshold block size and offset c, on the reference."""
     ref = _ref()
     out = [(f"block={b}", vary(ref, "threshold_adaptive", block=b), None)
            for b in (15, 31, 61)]
     out += [(f"c={c}", vary(ref, "threshold_adaptive", c=c), None) for c in (10, 20, 25)]
     out.append(("method=gaussian", vary(ref, "threshold_adaptive", method="gaussian"), None))
-    return "MEM4", out
+    return "MEM5", out
 
 
 def _final():
@@ -189,7 +189,7 @@ def failure_fixes():
     f = _final()
     wide = replace_stage(f, "threshold_adaptive",
                          {"stage": "threshold_adaptive_or_otsu", "block": 31, "c": 15})
-    return "MEM5", [
+    return "MEM6", [
         ("final pipeline", f, None),
         ("fix wide cracks: adaptive OR Otsu", wide, None),
         ("fix texture: min_area 120, max_circularity 0.3",
@@ -198,10 +198,10 @@ def failure_fixes():
 
 
 def detectors():
-    """MEM4: edge/line detectors with the same rule (top 3 % strongest responses) after the
+    """MEM5: edge/line detectors with the same rule (top 3 % strongest responses) after the
     final pipeline's smoothing and flattening."""
     front = [s for s in _final()["stages"] if s["stage"] in ("gaussian", "flatten_background")]
-    return "MEM4", [(op, {"name": "detectors", "stages": front + [
+    return "MEM5", [(op, {"name": "detectors", "stages": front + [
         {"stage": "edges_top_percent", "operator": op, "percent": 3.0}]}, None)
         for op in ("roberts", "prewitt", "sobel", "laplacian", "log", "lines")]
 

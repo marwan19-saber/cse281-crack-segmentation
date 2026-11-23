@@ -13,7 +13,7 @@
 | Masks | JPEG, mostly 3-channel; crack = gray > 127 (JPEG blur affects ~0.005% of pixels) |
 | Foreground | 1.36% crack pixels on average (0.39–8.67%); every image contains a crack |
 
-Checked by MEM1 on 12 Nov 2026. Second-member check (MEM5): pending.
+Checked by MEM1 on 12 Nov 2026. Second-member check (MEM6): pending.
 
 ## Download
 

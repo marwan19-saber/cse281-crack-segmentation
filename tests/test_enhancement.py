@@ -1,4 +1,4 @@
-"""Tests for src/enhancement.py (MEM2): hand examples, library comparisons, edge cases."""
+"""Tests for src/enhancement.py (MEM3): hand examples, library comparisons, edge cases."""
 import cv2
 import numpy as np
 import pytest

@@ -34,6 +34,7 @@ b.hi { color: #2f5bea; }
 .title .bar { background: linear-gradient(#2f5bea, #0e9384, #7a3cdb, #d9480f, #2b8a3e); }
 .m1 { --c: #2f5bea; } .m2 { --c: #0e9384; } .m3 { --c: #7a3cdb; } .m4 { --c: #d9480f; }
 .m5 { --c: #2b8a3e; }
+.m6 { --c: #b8326e; }
 </style>
 </head>
 <body>
@@ -43,7 +44,7 @@ b.hi { color: #2f5bea; }
   <h1>Finding and Measuring Cracks in Concrete</h1>
   <ul style="list-style:none;padding:0;font-size:13pt;color:#c9d5f2">
     <li>Classical image processing only: no learned models</li>
-    <li>Marwan Saber &middot; Hassan Hisham &middot; Mohamed Wageh &middot; Saad Mohamed &middot; Ahmed Abdelwahed</li><li>Alamein International University</li>
+    <li>Marwan Saber &middot; Mahmoud Abdelrahman &middot; Hassan Hisham &middot; Mohamed Wageh &middot; Saad Mohamed &middot; Ahmed Abdelwahed</li><li>Alamein International University</li>
   </ul>
 </section>
 
@@ -62,7 +63,7 @@ b.hi { color: #2f5bea; }
   <div class="speaker">Marwan Saber (MEM1) &middot; 0:45</div><div class="num">2</div>
 </section>
 
-<section class="slide m1"><div class="bar"></div><div class="kicker">Data and analysis</div>
+<section class="slide m2"><div class="bar"></div><div class="kicker">Data and analysis</div>
   <h1>458 real photos, four difficulties</h1>
   <div class="row">
     <ul>
@@ -74,10 +75,10 @@ b.hi { color: #2f5bea; }
     </ul>
     <img src="../../experiments/figures/analysis_illumination.png" alt="illumination">
   </div>
-  <div class="speaker">Marwan Saber (MEM1) &middot; 0:45</div><div class="num">3</div>
+  <div class="speaker">Mahmoud Abdelrahman (MEM2) &middot; 0:45</div><div class="num">3</div>
 </section>
 
-<section class="slide m1"><div class="bar"></div><div class="kicker">Approach</div>
+<section class="slide m2"><div class="bar"></div><div class="kicker">Approach</div>
   <h1>Two baselines, three pipelines</h1>
   <table>
     <tr><th>Method</th><th>Stages</th></tr>
@@ -87,10 +88,10 @@ b.hi { color: #2f5bea; }
     <tr><td>B</td><td>Gaussian 7&times;7 &rarr; frequency-domain flattening &rarr; adaptive threshold 31/15 &rarr; gap linking</td></tr>
     <tr><td><b>C (final)</b></td><td>B &rarr; closing (disk 3) &rarr; small-hole filling &rarr; keep long thin objects &rarr; measure</td></tr>
   </table>
-  <div class="speaker">Marwan Saber (MEM1) &middot; 0:30</div><div class="num">4</div>
+  <div class="speaker">Mahmoud Abdelrahman (MEM2) &middot; 0:30</div><div class="num">4</div>
 </section>
 
-<section class="slide m2"><div class="bar"></div><div class="kicker">Enhancement (MEM2)</div>
+<section class="slide m3"><div class="bar"></div><div class="kicker">Enhancement (MEM3)</div>
   <h1>Smoothing helps, equalisation hurts</h1>
   <div class="row">
     <img src="../../experiments/figures/fig_enhancement_images.png" alt="enhancement">
@@ -99,10 +100,10 @@ b.hi { color: #2f5bea; }
     <li>Gaussian 5&ndash;7 best smoother (IoU .68); median erases thin cracks (.47 at 7&times;7)</li>
     <li>Equalisation / stretching spread the bright background and amplify texture (.03)</li>
   </ul>
-  <div class="speaker">Hassan Hisham (MEM2) &middot; 1:30</div><div class="num">5</div>
+  <div class="speaker">Hassan Hisham (MEM3) &middot; 1:30</div><div class="num">5</div>
 </section>
 
-<section class="slide m3"><div class="bar"></div><div class="kicker">Restoration and frequency (MEM3)</div>
+<section class="slide m4"><div class="bar"></div><div class="kicker">Restoration and frequency (MEM4)</div>
   <h1>The right filter depends on the noise</h1>
   <div class="row">
     <img src="../../experiments/figures/fig_restoration_psnr.png" alt="psnr">
@@ -113,10 +114,10 @@ b.hi { color: #2f5bea; }
       <li>Flattening = divide by Gaussian LP background (D0 12)</li>
     </ul>
   </div>
-  <div class="speaker">Mohamed Wageh (MEM3) &middot; 1:30</div><div class="num">6</div>
+  <div class="speaker">Mohamed Wageh (MEM4) &middot; 1:30</div><div class="num">6</div>
 </section>
 
-<section class="slide m4"><div class="bar"></div><div class="kicker">Segmentation (MEM4)</div>
+<section class="slide m5"><div class="bar"></div><div class="kicker">Segmentation (MEM5)</div>
   <h1>Local threshold beats global and edges</h1>
   <div class="row">
     <img src="../../experiments/figures/fig_threshold_methods.png" alt="thresholds">
@@ -127,10 +128,10 @@ b.hi { color: #2f5bea; }
       <li>Global Otsu instead of adaptive: &minus;0.098 (AB3)</li>
     </ul>
   </div>
-  <div class="speaker">Saad Mohamed (MEM4) &middot; 1:30</div><div class="num">7</div>
+  <div class="speaker">Saad Mohamed (MEM5) &middot; 1:30</div><div class="num">7</div>
 </section>
 
-<section class="slide m5"><div class="bar"></div><div class="kicker">Morphology (MEM5)</div>
+<section class="slide m6"><div class="bar"></div><div class="kicker">Morphology (MEM6)</div>
   <h1>Morphology adds +0.15 IoU</h1>
   <div class="row">
     <img src="../../experiments/figures/fig_ablations.png" alt="ablations">
@@ -141,7 +142,7 @@ b.hi { color: #2f5bea; }
       <li>Shape test: cracks long and thin, stains round</li>
     </ul>
   </div>
-  <div class="speaker">Ahmed Abdelwahed (MEM5) &middot; 0:45</div><div class="num">8</div>
+  <div class="speaker">Ahmed Abdelwahed (MEM6) &middot; 0:45</div><div class="num">8</div>
 </section>
 
 <section class="slide m1"><div class="bar"></div><div class="kicker">Results (test set, run once)</div>
@@ -164,7 +165,7 @@ b.hi { color: #2f5bea; }
   <div class="speaker">Marwan Saber (MEM1) &middot; 0:40</div><div class="num">9</div>
 </section>
 
-<section class="slide m5"><div class="bar"></div><div class="kicker">Failures (MEM5)</div>
+<section class="slide m6"><div class="bar"></div><div class="kicker">Failures (MEM6)</div>
   <h1>Where it breaks, and why</h1>
   <div class="row" style="flex-direction:column;align-items:stretch">
     <img src="../../experiments/figures/failures/final_pipeline_079.png" alt="failure 079" style="max-height:38mm">
@@ -174,10 +175,10 @@ b.hi { color: #2f5bea; }
     <li>20 worst: texture / pits 9 &middot; faint branches 6 &middot; wide cracks 4 &middot; GT width 1</li>
     <li>Two fixes tested on dev, neither beat the final &rarr; next: texture-dependent threshold</li>
   </ul>
-  <div class="speaker">Ahmed Abdelwahed (MEM5) &middot; 0:45</div><div class="num">10</div>
+  <div class="speaker">Ahmed Abdelwahed (MEM6) &middot; 0:45</div><div class="num">10</div>
 </section>
 
-<section class="slide m5"><div class="bar"></div><div class="kicker">Demo (MEM5)</div>
+<section class="slide m6"><div class="bar"></div><div class="kicker">Demo (MEM6)</div>
   <h1>Upload a photo, see every stage</h1>
   <div class="row">
     <ul>
@@ -189,19 +190,19 @@ b.hi { color: #2f5bea; }
     </ul>
     <img src="../../experiments/figures/fig_measurement_scatter.png" alt="measurement">
   </div>
-  <div class="speaker">Ahmed Abdelwahed (MEM5) &middot; 0:30</div><div class="num">11</div>
+  <div class="speaker">Ahmed Abdelwahed (MEM6) &middot; 0:30</div><div class="num">11</div>
 </section>
 
-<section class="slide m3"><div class="bar"></div><div class="kicker">Bonus</div>
+<section class="slide m4"><div class="bar"></div><div class="kicker">Bonus</div>
   <h1>Faster, smaller, and tested elsewhere</h1>
   <table style="font-size:11.5pt">
     <tr><th>Bonus</th><th>Result</th></tr>
     <tr><td>Speed (MEM1)</td><td>0.92 &rarr; 0.50 s/img (1.84&times;), identical masks</td></tr>
-    <tr><td>Compression (MEM3)</td><td>RLE on masks: ratio 441 (PNG 164); Huffman on gray 1.36</td></tr>
-    <tr><td>Second dataset (MEM1 + MEM5)</td><td>DeepCrack, no retuning: IoU .520 vs .346 trivial</td></tr>
+    <tr><td>Compression (MEM4)</td><td>RLE on masks: ratio 441 (PNG 164); Huffman on gray 1.36</td></tr>
+    <tr><td>Second dataset (MEM1 + MEM6)</td><td>DeepCrack, no retuning: IoU .520 vs .346 trivial</td></tr>
     <tr><td>Tests + CI</td><td>157 tests on every push (Python 3.12, 3.13)</td></tr>
   </table>
-  <div class="speaker">Mohamed Wageh (MEM3) &middot; 0:20</div><div class="num">12</div>
+  <div class="speaker">Mohamed Wageh (MEM4) &middot; 0:20</div><div class="num">12</div>
 </section>
 
 <section class="slide m1"><div class="bar"></div><div class="kicker">Lessons</div>

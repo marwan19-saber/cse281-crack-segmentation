@@ -1,4 +1,4 @@
-"""Noise-removal (restoration) filters: mean-type and order-statistic filters (MEM3).
+"""Noise-removal (restoration) filters: mean-type and order-statistic filters (MEM4).
 
 All filters take a uint8 gray image and an odd window size k, use reflect-101 borders
 (np.pad "reflect" = cv2.BORDER_REFLECT_101 = scipy.ndimage mode "mirror") and return uint8.

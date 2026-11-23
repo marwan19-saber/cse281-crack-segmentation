@@ -1,4 +1,4 @@
-"""Tests for bonus/compression/codec.py (MEM3, Bonus 4): exact round trips and edge cases."""
+"""Tests for bonus/compression/codec.py (MEM4, Bonus 4): exact round trips and edge cases."""
 import numpy as np
 import pytest
 

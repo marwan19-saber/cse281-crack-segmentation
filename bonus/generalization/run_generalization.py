@@ -1,4 +1,4 @@
-"""Frozen final pipeline on a second dataset, DeepCrack (MEM1 + MEM5, Bonus 3).
+"""Frozen final pipeline on a second dataset, DeepCrack (MEM1 + MEM6, Bonus 3).
 
     python -m bonus.generalization.run_generalization
 

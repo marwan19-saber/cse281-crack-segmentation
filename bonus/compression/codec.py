@@ -1,4 +1,4 @@
-"""Lossless compression of pipeline outputs (MEM3, Bonus 4).
+"""Lossless compression of pipeline outputs (MEM4, Bonus 4).
 
 RLE for binary crack masks: the mask is read row by row as one long sequence of runs.
     bytes = height, width (uint32 each) | first value (1 byte) | run lengths as LEB128 varints

@@ -1,4 +1,4 @@
-# Bonus 3 — Second dataset and generalization (owners MEM1 + MEM5, reviewer MEM2)
+# Bonus 3 — Second dataset and generalization (owners MEM1 + MEM6, reviewer MEM3)
 
 ## Dataset
 

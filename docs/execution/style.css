@@ -27,6 +27,7 @@
 .m3 { --c: #7a3cdb; --c-soft: #f2ecfd; }
 .m4 { --c: #d9480f; --c-soft: #fff0e8; }
 .m5 { --c: #2b8a3e; --c-soft: #eaf6ec; }
+.m6 { --c: #b8326e; --c-soft: #fbe9f1; }
 
 * { box-sizing: border-box; }
 html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -180,7 +181,7 @@ table th.check { width: 7%; }
   font-size: 9pt;
 }
 .toc-grid div.m1 b, .toc-grid div.m2 b, .toc-grid div.m3 b, .toc-grid div.m4 b,
-.toc-grid div.m5 b { background: var(--c); }
+.toc-grid div.m5 b, .toc-grid div.m6 b { background: var(--c); }
 
 /* Member legend chips */
 .legend { display: flex; gap: 6pt; flex-wrap: wrap; margin: 4pt 0 10pt; }

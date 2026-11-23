@@ -1,4 +1,4 @@
-"""Single entry point: raw image file in, crack mask + measurement + decision out (MEM5).
+"""Single entry point: raw image file in, crack mask + measurement + decision out (MEM6).
 
     python -m src.run_pipeline --image photo.jpg --out out/   (config: --config, default final)
 

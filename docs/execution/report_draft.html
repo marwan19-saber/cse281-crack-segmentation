@@ -52,10 +52,10 @@ Every number must come from the repository's CSVs.</div>
 <h1 class="title">Classical Crack Segmentation and Measurement on Concrete Surfaces [working title]</h1>
 <div class="authors">
   <span>MEM1<br><i>Tech Lead, Data &amp; Baselines</i></span>
-  <span>MEM2<br><i>Enhancement</i></span>
-  <span>MEM3<br><i>Restoration &amp; Frequency</i></span>
-  <span>MEM4<br><i>Segmentation</i></span>
-  <span>MEM5<br><i>Morphology, Evaluation &amp; Demo</i></span><br>
+  <span>MEM3<br><i>Enhancement</i></span>
+  <span>MEM4<br><i>Restoration &amp; Frequency</i></span>
+  <span>MEM5<br><i>Segmentation</i></span>
+  <span>MEM6<br><i>Morphology, Evaluation &amp; Demo</i></span><br>
   <span><i>Faculty of Computer Science &amp; Engineering, Alamein International University</i></span>
 </div>
 
@@ -87,7 +87,7 @@ JPEG and are binarized at 127.</p>
 formats and sizes. Dev/test split (counts, seed, grouping). Labelling procedure and second-member
 check, if the team made labels. Ethics note if the domain is sensitive.</div>
 <h3>B. Image Analysis</h3>
-<div class="todo"><b>Owners:</b> MEM1 (lead), MEM2 (histograms), MEM3 (spectra). Size, dtype,
+<div class="todo"><b>Owners:</b> MEM1 (lead), MEM3 (histograms), MEM4 (spectra). Size, dtype,
 range; histograms of typical vs difficult images; noise; illumination profile; centred
 log-magnitude spectrum; resolution and gray-level reduction with the lowest workable setting.
 <b>End with a table: finding &rarr; design decision.</b></div>
@@ -105,17 +105,17 @@ seeds). Metric definitions with a hand-checked example.</div>
 &nbsp;&nbsp; IoU = |A &cap; B| / |A &cup; B|</p>
 <div class="todo">Trivial baseline (threshold 127 on raw gray / unprocessed input) and simple
 baseline (Otsu + 3&times;3 opening / 3&times;3 median).</div>
-<h3>B. Spatial Enhancement <span class="owner">MEM2</span></h3>
+<h3>B. Spatial Enhancement <span class="owner">MEM3</span></h3>
 <div class="todo">Point transforms, histogram equalization, mean, Gaussian and median smoothing,
 Laplacian and gradient sharpening: the equations, which defect each one corrects, the NumPy
 implementation vs library (max abs diff), border handling, a hand-worked 3&times;3 example.</div>
-<h3>C. Restoration and Frequency-Domain Filtering <span class="owner">MEM3</span></h3>
+<h3>C. Restoration and Frequency-Domain Filtering <span class="owner">MEM4</span></h3>
 <div class="todo">Noise models; mean-type and order-statistic filters; DFT, centring, ideal,
 Butterworth and Gaussian H(u,v); padding; NumPy vs library; a hand example.</div>
-<h3>D. Segmentation <span class="owner">MEM4</span></h3>
+<h3>D. Segmentation <span class="owner">MEM5</span></h3>
 <div class="todo">Roberts, Prewitt, Sobel, Laplacian, LoG; global, Otsu and adaptive thresholding;
 point and line masks, edge linking or Hough if used; NumPy vs library; a hand example.</div>
-<h3>E. Morphology and Measurement <span class="owner">MEM5</span></h3>
+<h3>E. Morphology and Measurement <span class="owner">MEM6</span></h3>
 <div class="todo">Erosion, dilation, opening, closing, hole filling, small-object removal,
 connected components, measurements, decision rule; SE choice justified; NumPy vs library; a hand
 example.</div>
@@ -125,19 +125,19 @@ example.</div>
 <p class="tcap">Table II &middot; NumPy implementations vs library</p>
 <table><tr><th>Member</th><th>Operation</th><th>Library ref.</th><th>Border</th><th>Max |diff|</th></tr>
 <tr><td>MEM1</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
-<tr><td>MEM2</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
 <tr><td>MEM3</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
 <tr><td>MEM4</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
-<tr><td>MEM5</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr></table>
+<tr><td>MEM5</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+<tr><td>MEM6</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr></table>
 
 <h2>IV. Experiments</h2>
 <h3>A. Setup</h3>
 <div class="todo"><b>Owner:</b> MEM1. Hardware (Colab CPU), versions, seeds, experiment log
 schema, reference configuration, dev-only selection rule.</div>
 <h3>B. Parameter Studies (one factor at a time)</h3>
-<div class="todo">Kernel size &times;3 (MEM2), D0 &times;3 (MEM3), threshold method &times;3
-(MEM4), SE size &times;3 and shape &times;2 (MEM5), restoration PSNR per noise type, level and
-filter (MEM3). Each with a plot and 2&ndash;4 sentences of interpretation.</div>
+<div class="todo">Kernel size &times;3 (MEM3), D0 &times;3 (MEM4), threshold method &times;3
+(MEM5), SE size &times;3 and shape &times;2 (MEM6), restoration PSNR per noise type, level and
+filter (MEM4). Each with a plot and 2&ndash;4 sentences of interpretation.</div>
 <p class="tcap">Table III &middot; Restoration PSNR (dB) by noise type, level and filter (dev)</p>
 <table><tr><th>Noise / level</th><th>Input</th><th>Mean</th><th>Median</th><th>Min</th><th>Max</th><th>Midpt</th><th>&alpha;-trim</th></tr>
 <tr><td>Gauss / &mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
@@ -151,7 +151,7 @@ filter (MEM3). Each with a plot and 2&ndash;4 sentences of interpretation.</div>
 <tr><td>4</td><td>No morphology / reversed order</td><td>&mdash;</td><td>&mdash;</td></tr></table>
 
 <h2>V. Results and Failure Analysis</h2>
-<h3>A. Test-Set Results <span class="owner">MEM5 + MEM1</span></h3>
+<h3>A. Test-Set Results <span class="owner">MEM6 + MEM1</span></h3>
 <p class="tcap">Table V &middot; Test set: final pipeline vs baselines</p>
 <table><tr><th>Method</th><th>Mean</th><th>Std</th><th>Best</th><th>Worst</th><th>Time/img</th></tr>
 <tr><td>Trivial baseline</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
@@ -164,14 +164,14 @@ filter (MEM3). Each with a plot and 2&ndash;4 sentences of interpretation.</div>
 <tr><td>Low</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
 <tr><td>Medium</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
 <tr><td>High</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr></table>
-<h3>B. Failure Analysis <span class="owner">MEM5</span></h3>
+<h3>B. Failure Analysis <span class="owner">MEM6</span></h3>
 <div class="todo">At least 20 worst test images, grouped into categories (uneven illumination, low
 contrast, touching objects, heavy noise, unusual scale, blur, holes). For each category: examples
 with every intermediate stage, why the pipeline failed, which stage is responsible, one concrete
 fix, and the fix tested on dev if time allows.</div>
 <div class="fig">Fig. 3 placeholder: failure panel, input &rarr; each stage &rarr; output vs GT</div>
 <p class="caption">Fig. 3. [Caption.]</p>
-<h3>C. Measurement Output <span class="owner">MEM5</span></h3>
+<h3>C. Measurement Output <span class="owner">MEM6</span></h3>
 <div class="todo">The spec requires an output table for every test image. Show an excerpt here
 and put the full table in the appendix
 (<code>experiments/results/measurements_test.csv</code>).</div>
@@ -180,7 +180,7 @@ and put the full table in the appendix
 <tr><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr></table>
 
 <h2>VI. Deployment: Runnable Pipeline and Demo</h2>
-<div class="todo"><b>Owner:</b> MEM5 (+ MEM1, MEM3). Single entry point; final config file; time
+<div class="todo"><b>Owner:</b> MEM6 (+ MEM1, MEM4). Single entry point; final config file; time
 per stage; demo description; public URL. Bonus work (CI, compression ratio, speedup, second
 dataset), reported only with evidence.</div>
 
@@ -192,10 +192,10 @@ that this is not a diagnostic or production tool if the domain is sensitive, and
 <p class="tcap">Table VIII &middot; Contribution table</p>
 <table><tr><th>Member</th><th>Work package</th><th>Files</th><th>Experiments</th></tr>
 <tr><td>MEM1</td><td>Lead, data, metrics, baselines</td><td>data.py, metrics.py, pipeline.py, configs</td><td>Res./gray, baselines, A vs base, robustness</td></tr>
-<tr><td>MEM2</td><td>Enhancement</td><td>enhancement.py</td><td>Enh. comparison, kernel size</td></tr>
-<tr><td>MEM3</td><td>Restoration, frequency</td><td>restoration.py, frequency.py</td><td>PSNR study, D0, spatial vs freq</td></tr>
-<tr><td>MEM4</td><td>Segmentation</td><td>segmentation.py</td><td>Detectors, thresholds</td></tr>
-<tr><td>MEM5</td><td>Morphology, eval, demo</td><td>morphology.py, evaluate.py, run_pipeline.py, app/</td><td>SE size/shape, failure analysis</td></tr></table>
+<tr><td>MEM3</td><td>Enhancement</td><td>enhancement.py</td><td>Enh. comparison, kernel size</td></tr>
+<tr><td>MEM4</td><td>Restoration, frequency</td><td>restoration.py, frequency.py</td><td>PSNR study, D0, spatial vs freq</td></tr>
+<tr><td>MEM5</td><td>Segmentation</td><td>segmentation.py</td><td>Detectors, thresholds</td></tr>
+<tr><td>MEM6</td><td>Morphology, eval, demo</td><td>morphology.py, evaluate.py, run_pipeline.py, app/</td><td>SE size/shape, failure analysis</td></tr></table>
 <div class="todo"><b>AI-assistance disclosure (required by the course rules):</b> state where AI
 coding assistants were used (e.g. planning documents, code review, test scaffolding) and confirm
 that every member can explain every line they submitted.</div>

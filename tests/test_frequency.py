@@ -1,4 +1,4 @@
-"""Tests for src/frequency.py (MEM3): DFT round trip, transfer functions at D0, filtering."""
+"""Tests for src/frequency.py (MEM4): DFT round trip, transfer functions at D0, filtering."""
 import cv2
 import numpy as np
 import pytest

@@ -1,4 +1,4 @@
-"""Assemble the Hugging Face Static Space into out/space/ (MEM5, Bonus 1).
+"""Assemble the Hugging Face Static Space into out/space/ (MEM6, Bonus 1).
 
     python -m bonus.deployment.build_space
 

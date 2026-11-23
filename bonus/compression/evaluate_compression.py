@@ -1,4 +1,4 @@
-"""Measure RLE and Huffman on real final-pipeline outputs (MEM3, Bonus 4).
+"""Measure RLE and Huffman on real final-pipeline outputs (MEM4, Bonus 4).
 
     python -m bonus.compression.evaluate_compression
 

@@ -1,1 +1,1 @@
-"""Bonus 4: lossless compression of pipeline outputs (MEM3)."""
+"""Bonus 4: lossless compression of pipeline outputs (MEM4)."""

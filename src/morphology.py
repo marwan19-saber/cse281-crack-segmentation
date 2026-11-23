@@ -1,4 +1,4 @@
-"""Binary morphology, hole filling, connected components, measurement and decision (MEM5).
+"""Binary morphology, hole filling, connected components, measurement and decision (MEM6).
 
 Masks are bool (H, W), True = crack. Border convention matches OpenCV's default: pixels
 outside the image count as 1 for erosion and 0 for dilation, so borders never erode away.

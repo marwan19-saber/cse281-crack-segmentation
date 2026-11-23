@@ -9,9 +9,9 @@ Speedup = original time / optimized time.
 
 | Stage | Owner | Original (s/img) | Optimized (s/img) | Speedup | Change |
 |---|---|---|---|---|---|
-| flatten_background | MEM3 | 0.621 | 0.375 | 1.66× | real-input FFT (`rfft2`/`irfft2`) |
-| fill_small_holes | MEM5 | 0.185 | 0.031 | 6.0× | one background labelling instead of repeated dilation |
-| select_objects | MEM5 | 2.87* | 0.04* | ~70× | area and perimeter for all objects with `np.bincount` |
+| flatten_background | MEM4 | 0.621 | 0.375 | 1.66× | real-input FFT (`rfft2`/`irfft2`) |
+| fill_small_holes | MEM6 | 0.185 | 0.031 | 6.0× | one background labelling instead of repeated dilation |
+| select_objects | MEM6 | 2.87* | 0.04* | ~70× | area and perimeter for all objects with `np.bincount` |
 | other stages | — | 0.116 | 0.095 | — | unchanged (run-to-run variation) |
 | **Total per image** | | **0.922** | **0.502** | **1.84×** | |
 

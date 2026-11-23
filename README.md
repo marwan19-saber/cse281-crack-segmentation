@@ -31,11 +31,12 @@ pytest
 
 | Member | Name | Work package | Main files |
 |---|---|---|---|
-| MEM1 | Marwan Saber | Tech lead, data, metrics, baselines | `src/data.py`, `src/metrics.py`, `src/pipeline.py`, `configs/` |
-| MEM2 | Hassan Hisham | Enhancement | `src/enhancement.py` |
-| MEM3 | Mohamed Wageh | Restoration and frequency | `src/restoration.py`, `src/frequency.py` |
-| MEM4 | Saad Mohamed | Segmentation | `src/segmentation.py` |
-| MEM5 | Ahmed Abdelwahed | Morphology, evaluation, demo | `src/morphology.py`, `src/evaluate.py`, `src/run_pipeline.py`, `app/` |
+| MEM1 | Marwan Saber | Tech lead: integration, configs, final pipeline, results | `src/pipeline.py`, `src/studies.py`, `configs/` |
+| MEM2 | Mahmoud Abdelrahman | Data, metrics, baselines | `src/data.py`, `src/metrics.py`, `data/` |
+| MEM3 | Hassan Hisham | Enhancement | `src/enhancement.py` |
+| MEM4 | Mohamed Wageh | Restoration and frequency | `src/restoration.py`, `src/frequency.py` |
+| MEM5 | Saad Mohamed | Segmentation | `src/segmentation.py` |
+| MEM6 | Ahmed Abdelwahed | Morphology, evaluation, demo | `src/morphology.py`, `src/evaluate.py`, `src/run_pipeline.py`, `app/` |
 
 ## Results
 

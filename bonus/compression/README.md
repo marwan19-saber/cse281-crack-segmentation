@@ -1,4 +1,4 @@
-# Bonus 4 — Lossless compression (owner MEM3, reviewer MEM1)
+# Bonus 4 — Lossless compression (owner MEM4, reviewer MEM1)
 
 Code: `codec.py` (RLE and canonical Huffman, encoder + decoder). Tests: `tests/test_compression.py`
 (hand examples, exact round trips with `np.array_equal`, empty / constant / 1-pixel inputs).

@@ -1,4 +1,4 @@
-"""Tests for src/morphology.py (MEM5): hand example, OpenCV/SciPy/skimage comparisons."""
+"""Tests for src/morphology.py (MEM6): hand example, OpenCV/SciPy/skimage comparisons."""
 import cv2
 import numpy as np
 import pytest

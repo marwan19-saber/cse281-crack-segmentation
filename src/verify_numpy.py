@@ -51,41 +51,41 @@ def rows(gray, mask):
     add("MEM1", "PSNR", lambda: metrics.psnr(gray, enhancement.mean_filter(gray, 3)),
         lambda: __import__("skimage.metrics").metrics.peak_signal_noise_ratio(
             gray, enhancement.mean_filter(gray, 3), data_range=255), "n/a")
-    add("MEM2", "convolve2d (random 5x5)", lambda: enhancement.convolve2d(gray, k5),
+    add("MEM3", "convolve2d (random 5x5)", lambda: enhancement.convolve2d(gray, k5),
         lambda: cv2.filter2D(f, -1, k5, borderType=r101), "reflect-101", "float64 round-off")
-    add("MEM2", "histogram equalization", lambda: enhancement.hist_equalize(gray, "cv"),
+    add("MEM3", "histogram equalization", lambda: enhancement.hist_equalize(gray, "cv"),
         lambda: cv2.equalizeHist(gray), "n/a")
-    add("MEM2", "Gaussian smoothing k=5", lambda: enhancement.gaussian_filter(gray, 5),
+    add("MEM3", "Gaussian smoothing k=5", lambda: enhancement.gaussian_filter(gray, 5),
         lambda: cv2.GaussianBlur(gray, (5, 5), 0, borderType=r101), "reflect-101",
         "OpenCV 8-bit fixed-point arithmetic")
-    add("MEM2", "gamma 0.5", lambda: enhancement.gamma_transform(gray, 0.5),
+    add("MEM3", "gamma 0.5", lambda: enhancement.gamma_transform(gray, 0.5),
         lambda: adjust_gamma(gray, 0.5), "n/a", "rounding vs truncation")
-    add("MEM3", "median 5x5", lambda: restoration.median_filter(gray, 5),
+    add("MEM4", "median 5x5", lambda: restoration.median_filter(gray, 5),
         lambda: ndimage.median_filter(gray, 5, mode="mirror"), "reflect-101 (= mirror)")
-    add("MEM3", "max 3x3", lambda: restoration.max_filter(gray, 3),
+    add("MEM4", "max 3x3", lambda: restoration.max_filter(gray, 3),
         lambda: ndimage.maximum_filter(gray, 3, mode="mirror"), "reflect-101 (= mirror)")
-    add("MEM3", "centred spectrum", lambda: frequency.centered_spectrum(gray),
+    add("MEM4", "centred spectrum", lambda: frequency.centered_spectrum(gray),
         lambda: np.log1p(np.abs(np.fft.fftshift(np.fft.fft2(f)))), "n/a",
         "(-1)^(x+y) centring vs fftshift")
-    add("MEM4", "Sobel magnitude", lambda: segmentation.sobel(gray)[2],
+    add("MEM5", "Sobel magnitude", lambda: segmentation.sobel(gray)[2],
         lambda: np.hypot(cv2.Sobel(f, cv2.CV_64F, 1, 0, ksize=3, borderType=r101),
                          cv2.Sobel(f, cv2.CV_64F, 0, 1, ksize=3, borderType=r101)),
         "reflect-101")
-    add("MEM4", "Otsu threshold", lambda: segmentation.otsu_threshold(gray),
+    add("MEM5", "Otsu threshold", lambda: segmentation.otsu_threshold(gray),
         lambda: threshold_otsu(gray), "n/a", "skimage foreground is > t")
     ours_ad = segmentation.adaptive_threshold(gray, 31, 15)
     ref_ad = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C,
                                    cv2.THRESH_BINARY_INV, 31, 15) > 0
-    add("MEM4", "adaptive mean 31/15", lambda: ours_ad.astype(float),
+    add("MEM5", "adaptive mean 31/15", lambda: ours_ad.astype(float),
         lambda: ref_ad.astype(float), "replicate",
         f"OpenCV rounds the local mean; {np.mean(ours_ad != ref_ad):.3%} of pixels differ")
     se = morphology.structuring_element("disk", 5)
-    add("MEM5", "erosion disk 5", lambda: morphology.erode(mask, se),
+    add("MEM6", "erosion disk 5", lambda: morphology.erode(mask, se),
         lambda: cv2.erode(mask.astype(np.uint8), se.astype(np.uint8)) > 0,
         "outside = 1 (OpenCV default)")
-    add("MEM5", "hole filling", lambda: morphology.fill_holes(mask),
+    add("MEM6", "hole filling", lambda: morphology.fill_holes(mask),
         lambda: ndimage.binary_fill_holes(mask), "border-seeded")
-    add("MEM5", "labelling (object count difference)", lambda: morphology.label(mask)[1],
+    add("MEM6", "labelling (object count difference)", lambda: morphology.label(mask)[1],
         lambda: sk_label(mask, connectivity=2).max(), "n/a", "8-connectivity")
     return out
 

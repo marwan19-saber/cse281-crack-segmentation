@@ -124,7 +124,7 @@ NOISES = [("gaussian", 10), ("gaussian", 20), ("gaussian", 30),
 
 def _restoration_filters():
     """name -> function(uint8) -> uint8: spatial restoration filters (k = 3) and frequency
-    low-pass filters at three cutoffs D0 on the 2x padded grid (MEM3)."""
+    low-pass filters at three cutoffs D0 on the 2x padded grid (MEM4)."""
     from src import frequency as fq
     from src import restoration as rs
 
@@ -170,7 +170,7 @@ def _psnr_task(noise):
 
 
 def run_psnr_study(workers=9):
-    """MEM3: restoration filters vs noise type and level, scored against the clean image."""
+    """MEM4: restoration filters vs noise type and level, scored against the clean image."""
     names = image_names("tune")[:20]
     with ProcessPoolExecutor(workers, initializer=_load, initargs=(names,)) as pool:
         rows = [r for chunk in pool.map(_psnr_task, NOISES) for r in chunk]
@@ -185,7 +185,7 @@ def run_psnr_study(workers=9):
         base = next(r for r in part if r["filter"].startswith("none"))
         print(f"{kind:12} {level:<5} input {base['psnr_db']:.2f} dB | best {best['filter']} "
               f"{best['psnr_db']:.2f} dB")
-        pipeline.log_run("experiments/experiment_log.csv", author="MEM3",
+        pipeline.log_run("experiments/experiment_log.csv", author="MEM4",
                          pipeline="restoration", stage="restoration_psnr",
                          method=best["filter"], params={"noise": kind, "level": level},
                          seed=0, split="dev:tune20", n_images=20, metric="psnr_db_best",

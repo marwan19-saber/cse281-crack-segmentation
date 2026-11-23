@@ -1,4 +1,4 @@
-"""DFT, centred spectrum and ideal / Butterworth / Gaussian frequency-domain filters (MEM3).
+"""DFT, centred spectrum and ideal / Butterworth / Gaussian frequency-domain filters (MEM4).
 
 Filtering steps (Gonzalez & Woods): pad the M x N image to P x Q (normally 2M x 2N) to avoid
 wrap-around, multiply by (-1)^(x+y) to centre the spectrum, DFT, multiply by H(u, v), inverse

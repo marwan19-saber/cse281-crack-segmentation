@@ -1,4 +1,4 @@
-"""Tests for src/restoration.py (MEM3): hand window, SciPy/OpenCV comparisons, edge cases."""
+"""Tests for src/restoration.py (MEM4): hand window, SciPy/OpenCV comparisons, edge cases."""
 import cv2
 import numpy as np
 import pytest
