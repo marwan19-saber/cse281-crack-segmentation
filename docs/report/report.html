@@ -296,7 +296,7 @@ speckle noise, and the best cutoff decreases as noise increases (D0 400&rarr;200
 they lose against the median on salt-and-pepper noise; the contraharmonic filter needs the sign of Q
 to match the impulse polarity (Q&nbsp;&gt;&nbsp;0 removes pepper). For Gaussian and speckle noise the
 frequency-domain low-pass filters win because their cutoff can be set wider than a 3&times;3 window;
-the spatial vs frequency comparison is completed by ablation AB2 inside the segmentation pipeline,
+a Gaussian low-pass with cutoff D0 equals a spatial Gaussian with &sigma; = P/(2&pi;D0); a unit test checks that the two filtered images agree (mean difference below 3 gray levels), and the spatial vs frequency comparison is completed by ablation AB2 inside the segmentation pipeline,
 where the spatial Gaussian wins by 0.017 IoU.</p>
 <figure class="wide"><img src="../../experiments/figures/fig_frequency_spectra.png" alt="Spectra before and after filtering"><figcaption>Fig. 6a. Noisy input (&sigma; = 20), its centred spectrum, the spectrum after a Gaussian low-pass (D0 = 100) and the filtered image: the high-frequency ring that carried the noise (and the finest texture) is removed; the crack, mostly mid frequencies, remains.</figcaption></figure>
 <figure class="wide"><img src="../../experiments/figures/fig_frequency_cutoffs.png" alt="Ideal, Butterworth and Gaussian low-pass at four cutoffs">
@@ -454,7 +454,7 @@ morphological reconstruction to recover wide cracks from their detected edges.</
 <tr><td>Ahmed Abdelwahed<br>(MEM6)</td><td class="l">Morphology, evaluation, demo</td><td class="l">morphology.py, evaluate.py, run_pipeline.py, app</td><td class="l">SE size/shape, failure analysis</td></tr>
 </table>
 <p><b>Disclosure of AI assistance.</b> We used an AI coding assistant (Claude Code) during the
-project. Each module was reviewed, tested and run by its owner, every number in this report comes
+project as a helper for the planning documents, module code and unit tests, the experiment and figure scripts, the demo page, and the wording of this report and the slides. Each module was reviewed, tested and run by its owner, every number in this report comes
 from the CSV files in the repository, and each of us can explain our own work package and the whole
 pipeline.</p>
 

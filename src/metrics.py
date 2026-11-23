@@ -1,4 +1,4 @@
-"""Evaluation metrics used everywhere in the project (MEM1).
+"""Evaluation metrics used everywhere in the project (MEM2).
 
 Write once, test on hand-worked arrays, reuse in every experiment:
     MSE  = mean((a - b)^2)

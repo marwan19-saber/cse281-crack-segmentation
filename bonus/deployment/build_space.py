@@ -30,8 +30,8 @@ Dataset for the examples: Ç. F. Özgenel, Concrete Crack Segmentation Dataset, 
 2019, doi:10.17632/jwsn7tfbrp.1 (CC BY 4.0).
 
 Files: `index.html` (page), `src/` (pipeline modules), `configs/final_pipeline.yaml` (frozen
-configuration), `examples/` (three test-set photos), `data/` (split and download script, used by
-the Colab timing check).
+configuration), `examples/` (three test-set photos), `data/` (split and download script,
+used by the Colab timing check).
 """
 
 

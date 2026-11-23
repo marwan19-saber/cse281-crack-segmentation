@@ -260,7 +260,7 @@ def main(argv=None):
     p.add_argument("--split-file", default="data/split.json")
     p.add_argument("--out", required=True, help="per-image CSV to write")
     p.add_argument("--log", default="experiments/experiment_log.csv")
-    p.add_argument("--author", default="MEM1")
+    p.add_argument("--author", default="MEM2")
     p.add_argument("--stage", default="baseline")
     args = p.parse_args(argv)
     if args.split == "test":

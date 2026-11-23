@@ -1,4 +1,4 @@
-"""Data loading, dev/test split, controlled degradation and resolution study helpers (MEM1).
+"""Data loading, dev/test split, controlled degradation and resolution study helpers (MEM2).
 
 Conventions used by the whole project:
     images between stages: np.uint8, values 0-255, shape (H, W)

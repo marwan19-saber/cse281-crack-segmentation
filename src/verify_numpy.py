@@ -37,6 +37,7 @@ def rows(gray, mask):
     out = []
 
     def add(member, op, ours_fn, ref_fn, border, note=""):
+        """Time our NumPy function and its library twin and record the max difference."""
         ours, t_ours = _timed(ours_fn)
         ref, t_ref = _timed(ref_fn)
         out.append({"member": member, "operation": op, "max_abs_diff": _diff(ours, ref),
@@ -45,10 +46,10 @@ def rows(gray, mask):
                     "note": note})
 
     k5 = np.random.default_rng(0).normal(size=(5, 5))
-    add("MEM1", "block-average downsampling x4", lambda: data.reduce_resolution(gray, 4),
+    add("MEM2", "block-average downsampling x4", lambda: data.reduce_resolution(gray, 4),
         lambda: cv2.resize(gray, (gray.shape[1] // 4, gray.shape[0] // 4),
                            interpolation=cv2.INTER_AREA), "n/a", "rounding of .5 averages")
-    add("MEM1", "PSNR", lambda: metrics.psnr(gray, enhancement.mean_filter(gray, 3)),
+    add("MEM2", "PSNR", lambda: metrics.psnr(gray, enhancement.mean_filter(gray, 3)),
         lambda: __import__("skimage.metrics").metrics.peak_signal_noise_ratio(
             gray, enhancement.mean_filter(gray, 3), data_range=255), "n/a")
     add("MEM3", "convolve2d (random 5x5)", lambda: enhancement.convolve2d(gray, k5),

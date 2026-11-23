@@ -129,7 +129,9 @@ def _restoration_filters():
     from src import restoration as rs
 
     def lowpass(kind, d0):
+        """Frequency-domain low-pass of the given kind and cutoff, as an image function."""
         def f(img):
+            """Filter one uint8 image on the 2x padded grid."""
             shape = (2 * img.shape[0], 2 * img.shape[1])
             h = {"ideal": fq.ideal_lowpass(shape, d0),
                  "butterworth": fq.butterworth_lowpass(shape, d0, 2),

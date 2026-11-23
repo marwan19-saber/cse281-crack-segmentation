@@ -100,9 +100,9 @@ def gap_linking():
 
 
 def pipeline_a_threshold():
-    """MEM1: global threshold value for Pipeline A (after Gaussian smoothing)."""
+    """MEM2: global threshold value for Pipeline A (after Gaussian smoothing)."""
     ref = pipeline.load_config("configs/pipeline_a.yaml")
-    return "MEM1", [(f"t={t}", vary(ref, "threshold_fixed", t=t), None)
+    return "MEM2", [(f"t={t}", vary(ref, "threshold_fixed", t=t), None)
                     for t in (100, 115, 127, 140, 150)]
 
 
@@ -157,7 +157,7 @@ def robustness():
 def gray_levels():
     """Gray-level study on the final pipeline: quantize the input to K levels first."""
     f = _final()
-    return "MEM1", [(f"{k} levels", {**f, "stages": [{"stage": "quantize", "levels": k}]
+    return "MEM2", [(f"{k} levels", {**f, "stages": [{"stage": "quantize", "levels": k}]
                                      + f["stages"]}, None) for k in (256, 64, 32, 16, 8, 4)]
 
 

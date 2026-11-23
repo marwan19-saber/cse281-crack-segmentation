@@ -1,6 +1,6 @@
 member,operation,max_abs_diff,border,numpy_s,library_s,note
-MEM1,block-average downsampling x4,0.0,n/a,0.0028,0.0003,rounding of .5 averages
-MEM1,PSNR,0.0,n/a,0.0263,0.3658,
+MEM2,block-average downsampling x4,0.0,n/a,0.0028,0.0003,rounding of .5 averages
+MEM2,PSNR,0.0,n/a,0.0263,0.3658,
 MEM3,convolve2d (random 5x5),5.684341886080801e-13,reflect-101,0.0204,0.0033,float64 round-off
 MEM3,histogram equalization,0.0,n/a,0.0039,0.0019,
 MEM3,Gaussian smoothing k=5,1.0,reflect-101,0.0203,0.0005,OpenCV 8-bit fixed-point arithmetic
