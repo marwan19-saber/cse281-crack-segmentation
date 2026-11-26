@@ -32,6 +32,8 @@ def mse(a, b):
 
 def psnr(a, b, data_range=255.0):
     """Peak signal-to-noise ratio in dB; returns math.inf for identical images."""
+    if data_range <= 0:
+        raise ValueError(f"data_range must be positive, got {data_range}")
     error = mse(a, b)
     if error == 0:
         return math.inf

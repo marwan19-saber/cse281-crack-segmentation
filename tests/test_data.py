@@ -43,6 +43,15 @@ def test_load_image_missing_file_raises(tmp_path):
         data.load_image(tmp_path / "nope.jpg")
 
 
+def test_load_image_invalid_mode_and_size_raise(dataset):
+    with pytest.raises(ValueError):
+        data.load_image(dataset / "rgb" / "001.jpg", mode="bgr")
+    with pytest.raises(ValueError):
+        data.load_image(dataset / "rgb" / "001.jpg", size=0)
+    with pytest.raises(ValueError):
+        data.load_ground_truth(dataset / "BW" / "001.png", size=-10)
+
+
 def test_load_ground_truth_is_bool_and_binarized(dataset):
     gt = data.load_ground_truth(dataset / "BW" / "001.png")
     assert gt.dtype == bool and gt.shape == (40, 80)
@@ -133,6 +142,31 @@ def test_unknown_noise_kind_raises():
         data.add_noise(FLAT, "blur", 1, seed=0)
 
 
+def test_speckle_noise_scales_with_intensity():
+    dark = np.full((100, 100), 40, np.uint8)
+    bright = np.full((100, 100), 200, np.uint8)
+    std_dark = data.add_noise(dark, "speckle", 0.1, seed=0).astype(float).std()
+    std_bright = data.add_noise(bright, "speckle", 0.1, seed=0).astype(float).std()
+    assert std_bright > std_dark * 3
+
+
+def test_poisson_noise_variance_matches_mean_divided_by_level():
+    noisy = data.add_noise(FLAT, "poisson", 1.0, seed=0).astype(float)
+    assert noisy.mean() == pytest.approx(128.0, abs=1.0)
+    assert noisy.var() == pytest.approx(128.0, rel=0.1)
+
+
+def test_invalid_noise_levels_raise():
+    with pytest.raises(ValueError):
+        data.add_noise(FLAT, "gaussian", -1, seed=0)
+    with pytest.raises(ValueError):
+        data.add_noise(FLAT, "salt_pepper", 1.5, seed=0)
+    with pytest.raises(ValueError):
+        data.add_noise(FLAT, "speckle", -0.1, seed=0)
+    with pytest.raises(ValueError):
+        data.add_noise(FLAT, "poisson", 0, seed=0)
+
+
 # ---------------------------------------------------------------- resolution / gray levels
 def test_reduce_resolution_hand_example():
     # each 2x2 block is averaged: (0+2+4+6)/4 = 3, (8+10+12+14)/4 = 11
@@ -157,3 +191,19 @@ def test_quantize_gray_levels_hand_example():
 def test_quantize_256_levels_is_identity():
     x = np.arange(256, dtype=np.uint8).reshape(16, 16)
     assert np.array_equal(data.quantize_gray_levels(x, 256), x)
+
+
+def test_reduce_resolution_drops_incomplete_edges_and_validates():
+    x = np.arange(15, dtype=np.uint8).reshape(3, 5)
+    out = data.reduce_resolution(x, 2)
+    assert out.shape == (1, 2)
+    with pytest.raises(ValueError):
+        data.reduce_resolution(x, 0)
+    with pytest.raises(ValueError):
+        data.reduce_resolution(x, 4)
+
+
+@pytest.mark.parametrize("bad_levels", [1, 257])
+def test_quantize_invalid_levels_raises(bad_levels):
+    with pytest.raises(ValueError):
+        data.quantize_gray_levels(FLAT, bad_levels)
