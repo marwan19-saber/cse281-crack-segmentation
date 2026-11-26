@@ -34,6 +34,13 @@ def test_psnr_identical_images_is_infinite():
     assert psnr(A, A) == math.inf
 
 
+def test_psnr_custom_data_range_and_validation():
+    # MSE(A, B) = 5.0; with data_range = 100.0 -> 10 * log10(100^2 / 5) = 10 * log10(2000)
+    assert psnr(A, B, data_range=100.0) == pytest.approx(10.0 * math.log10(2000.0))
+    with pytest.raises(ValueError):
+        psnr(A, B, data_range=0)
+
+
 def test_mse_and_psnr_match_skimage():
     rng = np.random.default_rng(0)
     x = rng.integers(0, 256, (64, 64), dtype=np.uint8)
@@ -58,6 +65,13 @@ def test_iou_and_dice_two_empty_masks_score_one():
 
 def test_iou_empty_prediction_against_crack_is_zero():
     assert iou(np.zeros((3, 3), dtype=bool), GT) == 0.0
+
+
+def test_dice_empty_and_disjoint_masks_are_zero():
+    empty = np.zeros((3, 3), dtype=bool)
+    assert dice(empty, GT) == 0.0
+    assert iou(GT, ~GT) == 0.0
+    assert dice(GT, ~GT) == 0.0
 
 
 def test_iou_accepts_0_255_uint8_masks():
