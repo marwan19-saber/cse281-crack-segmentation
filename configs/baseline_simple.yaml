@@ -1,6 +1,0 @@
-# Spec simple baseline: Otsu threshold (inverted: cracks are dark), then one 3x3 opening.
-name: baseline_simple
-stages:
-  - stage: threshold_otsu
-  - stage: opening
-    size: 3
