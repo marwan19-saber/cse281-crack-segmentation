@@ -1,9 +1,3 @@
-"""Edge, point and line detection, thresholding, edge linking and Hough transform (MEM5).
-
-Cracks are DARK on bright concrete, so thresholds return True for pixels at or below T and
-line detectors respond positively to dark lines by default. Neighbourhood operations reuse
-MEM3's convolve2d (reflect-101 borders, correlation).
-"""
 import numpy as np
 
 from src.enhancement import convolve2d, gaussian_kernel
