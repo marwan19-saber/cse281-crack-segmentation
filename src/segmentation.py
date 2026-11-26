@@ -91,7 +91,7 @@ def line_detect(img, t, direction="max", polarity="dark"):
     return line_response(img, direction, polarity) >= t
 
 
-# ---------------------------------------------------------------- thresholds
+# ----------------------------------------------------------------- thresholds
 def threshold_dark(img, t):
     """Crack mask: pixels at or below t."""
     return img <= t
