@@ -39,6 +39,8 @@ def load_image(path, mode="gray", size=None):
     """
     if mode not in ("gray", "rgb"):
         raise ValueError(f"mode must be 'gray' or 'rgb', got {mode!r}")
+    if size is not None and size <= 0:
+        raise ValueError(f"size must be positive, got {size}")
     img = _read(path, cv2.IMREAD_COLOR)
     code = cv2.COLOR_BGR2GRAY if mode == "gray" else cv2.COLOR_BGR2RGB
     img = cv2.cvtColor(img, code)
@@ -53,6 +55,8 @@ def load_ground_truth(path, size=None):
     The dataset stores masks as JPEG, so values near 0/255 are blurred: threshold at 127.
     When resizing, the 0/1 mask is area-averaged and kept where at least half is crack.
     """
+    if size is not None and size <= 0:
+        raise ValueError(f"size must be positive, got {size}")
     mask = _read(path, cv2.IMREAD_GRAYSCALE) > 127
     if size is not None:
         mask = _resize_long_side(mask.astype(np.float32), size) >= 0.5
@@ -112,15 +116,23 @@ def add_noise(img, kind, level, seed):
     rng = np.random.default_rng(seed)
     f = img.astype(np.float64)
     if kind == "gaussian":
+        if level < 0:
+            raise ValueError("gaussian level must be non-negative")
         out = f + rng.normal(0.0, level, f.shape)
     elif kind == "salt_pepper":
+        if not 0.0 <= level <= 1.0:
+            raise ValueError("salt_pepper level must be between 0 and 1")
         u = rng.random(f.shape)
         out = f.copy()
         out[u < level / 2] = 0
         out[u > 1 - level / 2] = 255
     elif kind == "speckle":
+        if level < 0:
+            raise ValueError("speckle level must be non-negative")
         out = f + f * rng.normal(0.0, level, f.shape)
     elif kind == "poisson":
+        if level <= 0:
+            raise ValueError("poisson level must be positive")
         out = rng.poisson(f * level) / level
     else:
         raise ValueError(f"unknown noise kind: {kind!r}")
@@ -132,6 +144,10 @@ def reduce_resolution(img, factor):
 
     Edge rows/columns that do not fill a whole block are dropped.
     """
+    if factor < 1:
+        raise ValueError(f"factor must be >= 1, got {factor}")
+    if img.shape[0] < factor or img.shape[1] < factor:
+        raise ValueError(f"image shape {img.shape[:2]} is smaller than factor {factor}")
     h, w = img.shape[0] // factor * factor, img.shape[1] // factor * factor
     blocks = img[:h, :w].astype(np.float64).reshape(h // factor, factor, w // factor, factor)
     return np.rint(blocks.mean(axis=(1, 3))).astype(np.uint8)
