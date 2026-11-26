@@ -21,7 +21,7 @@ def _to_uint8(x):
     return np.clip(np.rint(x), 0, 255).astype(np.uint8)
 
 
-# ---------------------------------------------------------------- mean-type filters
+#mean-type filters
 def arithmetic_mean(img, k=3):
     """Average of the window: reduces Gaussian noise, blurs edges."""
     return _to_uint8(_windows(img, k).mean(axis=-1))
@@ -47,7 +47,7 @@ def contraharmonic_mean(img, k=3, q=1.5):
     return _to_uint8((w ** (q + 1)).sum(axis=-1) / (w ** q).sum(axis=-1) - 1)
 
 
-# ---------------------------------------------------------------- order-statistic filters
+# order-statistic filters
 def median_filter(img, k=3):
     """Median of the window: removes salt-and-pepper impulses (outliers do not move it)."""
     return _to_uint8(np.median(_windows(img, k), axis=-1))
