@@ -120,7 +120,7 @@ def gaussian_filter(img, k=5, sigma=0):
     """Gaussian smoothing."""
     return _to_uint8(convolve2d(img, gaussian_kernel(k, sigma)))
 
-
+# غقف
 # ---------------------------------------------------------------- sharpening
 def laplacian_sharpen(img, kernel="8n"):
     """g = f - laplacian(f), using a centre-negative Laplacian kernel."""
